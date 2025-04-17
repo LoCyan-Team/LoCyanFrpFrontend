@@ -1,0 +1,13 @@
+.*/
+node_modules/
+public/
+server/
+
+bun.lock
+
+eslint.config.mjs
+
+package.json
+tsconfig.json
+
+README.md

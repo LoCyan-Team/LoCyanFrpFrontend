@@ -1,0 +1,8 @@
+a {
+  text-decoration: none;
+  transition: 0.3s;
+}
+
+a:hover {
+  color: #33c37b;
+}

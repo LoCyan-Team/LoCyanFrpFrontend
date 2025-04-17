@@ -36,6 +36,7 @@
     </n-space>
   </n-space>
 </template>
+
 <script setup>
 import { MdNotifications } from "@vicons/ionicons4";
 import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";

@@ -1,7 +1,6 @@
 <template></template>
 <script setup lang="ts">
 definePageMeta({
-  title: "注册",
-  needLogin: false,
+  title: "仪表盘",
 });
 </script>

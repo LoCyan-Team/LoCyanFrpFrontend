@@ -7,7 +7,13 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   ssr: false,
-  modules: ["@nuxt/eslint", "nuxtjs-naive-ui", "nuxt-umami"],
+  modules: [
+    "@nuxt/eslint",
+    "nuxtjs-naive-ui",
+    "nuxt-umami",
+    "@pinia/nuxt",
+    "pinia-plugin-persistedstate/nuxt",
+  ],
   vite: {
     plugins: [
       AutoImport({
@@ -27,11 +33,15 @@ export default defineNuxtConfig({
       }),
     ],
   },
+  piniaPluginPersistedstate: {
+    storage: "localStorage",
+  },
   umami: {
+    enabled: true,
     id: "321f68d2-1667-450a-ac30-22166d693b6d",
     host: "https://analytics.locyan.cn",
     autoTrack: true,
-    enabled: true,
+    ignoreLocalhost: true,
   },
   build: {
     transpile: ["naive-ui", "vueuc"],

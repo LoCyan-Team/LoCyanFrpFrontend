@@ -38,170 +38,196 @@ import {
   Person,
   Key,
   CompassSharp,
-  GameController
-} from '@vicons/ionicons5'
-import { GuiManagement, Api, Gift } from '@vicons/carbon'
-import { MoreCircle20Filled, Box24Filled } from '@vicons/fluent'
+  GameController,
+  LogInOutline,
+  MailOpenOutline,
+} from "@vicons/ionicons5";
+import { GuiManagement, Api, Gift } from "@vicons/carbon";
+import {
+  MoreCircle20Filled,
+  Box24Filled,
+  KeyReset20Regular,
+} from "@vicons/fluent";
 import {
   AttachMoneyFilled,
   AccountTreeOutlined,
   AnchorTwotone,
-  MessageOutlined
-} from '@vicons/material'
+  MessageOutlined,
+} from "@vicons/material";
 
-const activeKey = ref<string>("");
-const collapsed = ref<boolean>(false);
+import { usePageStore } from "@/store/page";
 
-const menuOptions: MenuOption[] = [
+const pageStore = usePageStore();
+
+const pageSidebarMode = computed(() => pageStore.sidebarMode);
+
+const guestMenuOptions: MenuOption[] = [
   {
-    path: '/dashboard',
-    label: '仪表盘',
-    key: 'dashboard',
-    icon: renderIcon(CompassSharp)
+    path: "/auth/login",
+    label: "登录",
+    key: "login",
+    icon: renderIcon(LogInOutline),
   },
   {
-    label: '新年活动',
-    key: 'newyear',
-    icon: renderIcon(AnchorTwotone),
-    show: false,
-    children: [
-      {
-        path: '/newyear/comment',
-        label: '留言',
-        key: 'comment',
-        icon: renderIcon(MessageOutlined)
-      },
-      {
-        path: '/newyear/prize',
-        label: '抽奖',
-        key: 'prize',
-        icon: renderIcon(Gift)
-      }
-    ]
+    path: "/auth/register",
+    label: "注册",
+    key: "register",
+    icon: renderIcon(MailOpenOutline),
   },
   {
-    path: '/verification',
-    label: '身份认证',
-    key: 'verification',
-    icon: renderIcon(Person)
+    path: "/auth/reset-password",
+    label: "重置密码",
+    key: "password-reset",
+    icon: renderIcon(KeyReset20Regular),
+  },
+];
+
+const loginedMenuOptions: MenuOption[] = [
+  {
+    path: "/dashboard",
+    label: "仪表盘",
+    key: "dashboard",
+    icon: renderIcon(CompassSharp),
   },
   {
-    path: '/sign',
-    label: '签到',
-    key: 'sign',
-    icon: renderIcon(PencilSharp)
+    path: "/verification",
+    label: "身份认证",
+    key: "verification",
+    icon: renderIcon(Person),
   },
   {
-    label: '隧道操作',
-    key: 'proxy-actions',
+    path: "/sign",
+    label: "签到",
+    key: "sign",
+    icon: renderIcon(PencilSharp),
+  },
+  {
+    label: "隧道操作",
+    key: "proxy-actions",
     icon: renderIcon(PaperPlane),
     children: [
       {
-        path: '/proxies',
-        label: '隧道列表',
-        key: 'proxies-list',
-        icon: renderIcon(List)
+        path: "/proxies",
+        label: "隧道列表",
+        key: "proxies-list",
+        icon: renderIcon(List),
       },
       {
-        path: '/proxies/add',
-        label: '添加隧道',
-        key: 'proxies-add',
-        icon: renderIcon(Add)
+        path: "/proxies/add",
+        label: "添加隧道",
+        key: "proxies-add",
+        icon: renderIcon(Add),
       },
       {
-        path: '/proxies/config',
-        label: '配置文件',
-        key: 'proxies-config',
-        icon: renderIcon(FileTrayFull)
-      }
-    ]
+        path: "/proxies/config",
+        label: "配置文件",
+        key: "proxies-config",
+        icon: renderIcon(FileTrayFull),
+      },
+    ],
   },
   {
-    path: '/donate',
-    label: '赞助',
-    key: 'donate',
-    icon: renderIcon(AttachMoneyFilled)
+    path: "/donate",
+    label: "赞助",
+    key: "donate",
+    icon: renderIcon(AttachMoneyFilled),
   },
   {
-    path: '/icp',
-    label: '域名白名单',
-    key: 'icp',
-    icon: renderIcon(Key)
+    path: "/icp",
+    label: "域名白名单",
+    key: "icp",
+    icon: renderIcon(Key),
   },
   {
-    label: '游戏联机',
-    key: 'games',
+    label: "游戏联机",
+    key: "games",
     icon: renderIcon(GameController),
     children: [
       {
-        path: '/games/minecraft',
-        label: 'Minecraft',
-        key: 'games-minecraft',
-        icon: renderIcon(AccountTreeOutlined)
-      }
-    ]
+        path: "/games/minecraft",
+        label: "Minecraft",
+        key: "games-minecraft",
+        icon: renderIcon(AccountTreeOutlined),
+      },
+    ],
   },
   {
-    label: '应用程序',
-    key: 'apps',
+    label: "应用程序",
+    key: "apps",
     icon: renderIcon(Box24Filled),
     children: [
       {
-        path: '/apps/management',
-        label: '应用管理',
-        key: 'apps-management',
-        icon: renderIcon(GuiManagement)
+        path: "/apps/management",
+        label: "应用管理",
+        key: "apps-management",
+        icon: renderIcon(GuiManagement),
       },
       {
-        path: '/apps/access',
-        label: '授权管理',
-        key: 'apps-access',
-        icon: renderIcon(Api)
-      }
-    ]
+        path: "/apps/access",
+        label: "授权管理",
+        key: "apps-access",
+        icon: renderIcon(Api),
+      },
+    ],
   },
   {
-    label: '其他功能',
-    key: 'other',
+    label: "其他功能",
+    key: "other",
     icon: renderIcon(MoreCircle20Filled),
     children: [
       {
         label: () =>
           h(
-            'a',
+            "a",
             {
-              href: 'https://status.locyanfrp.cn',
-              target: '_blank'
+              href: "https://status.locyanfrp.cn",
+              target: "_blank",
             },
-            '服务状态'
+            "服务状态",
           ),
-        key: 'other-status',
-        icon: renderIcon(List)
+        key: "other-status",
+        icon: renderIcon(List),
       },
       {
-        path: '/other/software',
-        label: '软件下载',
-        key: 'other-software',
-        icon: renderIcon(CloudDownloadOutline)
+        path: "/other/software",
+        label: "软件下载",
+        key: "other-software",
+        icon: renderIcon(CloudDownloadOutline),
       },
       {
         label: () =>
           h(
-            'a',
+            "a",
             {
-              href: 'https://docs.locyanfrp.cn',
-              target: '_blank'
+              href: "https://docs.locyanfrp.cn",
+              target: "_blank",
             },
-            '帮助文档'
+            "帮助文档",
           ),
-        key: 'help-document',
-        icon: renderIcon(BookOutline)
-      }
-    ]
-  }
+        key: "help-document",
+        icon: renderIcon(BookOutline),
+      },
+    ],
+  },
 ];
 
+const menuOptions = computed(() => {
+  switch (pageSidebarMode) {
+    case "logined":
+      return loginedMenuOptions;
+    case "guest":
+    default:
+      return guestMenuOptions;
+  }
+});
+
+const activeKey = ref<string>("");
+const collapsed = ref<boolean>(false);
+
+const route = useRoute();
+
 function handleUpdateValue(_: any, item: MenuOption) {
+  computeActiveKey(menuOptions.value, item.path);
   navigateTo(item.path as string);
 }
 function computeActiveKey(menuOptions: MenuOption[], path: string) {
@@ -214,4 +240,8 @@ function computeActiveKey(menuOptions: MenuOption[], path: string) {
     }
   }
 }
+
+onMounted(() => {
+  computeActiveKey(menuOptions.value, route.path);
+});
 </script>

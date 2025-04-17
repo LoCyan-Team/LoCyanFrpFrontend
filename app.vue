@@ -4,15 +4,15 @@
       <n-message-provider>
         <n-dialog-provider>
           <n-notification-provider>
-            <n-layout style="height: 100dvh">
+            <n-layout style="height: 100dvh" :native-scrollbar="false">
               <n-layout-header bordered>
                 <site-header />
               </n-layout-header>
               <n-layout has-sider style="height: calc(100dvh - 61px)">
-                <n-el class="sidebar-container">
+                <n-el class="sidebar-container" v-if="pageSidebar">
                   <sidebar />
                 </n-el>
-                <n-layout-content :native-scrollbar="false">
+                <n-layout-content :native-scrollbar="false" style="width: 100%">
                   <nuxt-page />
                 </n-layout-content>
               </n-layout>
@@ -40,6 +40,8 @@ import hljs from "highlight.js/lib/core";
 import ini from "highlight.js/lib/languages/ini";
 import nginx from "highlight.js/lib/languages/nginx";
 
+import { usePageStore } from "@/store/page";
+
 useHead({
   htmlAttrs: {
     lang: "zh-CN",
@@ -49,6 +51,9 @@ useHead({
 
 hljs.registerLanguage("ini", ini);
 hljs.registerLanguage("nginx", nginx);
+
+const pageStore = usePageStore();
+const pageSidebar = computed(() => pageStore.sidebar);
 
 const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));

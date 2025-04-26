@@ -43,7 +43,4 @@ export default defineNuxtConfig({
     autoTrack: true,
     ignoreLocalhost: true,
   },
-  build: {
-    transpile: ["naive-ui", "vueuc"],
-  },
 });

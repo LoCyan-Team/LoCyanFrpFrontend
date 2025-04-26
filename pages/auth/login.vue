@@ -1,7 +1,7 @@
 <template>
   <n-el class="login-box">
     <n-h1>登录</n-h1>
-    <n-card>
+    <n-card title="账户登录">
       <n-form>
         <n-form-item label="用户名 / 邮箱" path="username">
           <n-input
@@ -18,30 +18,17 @@
           />
         </n-form-item>
         <n-el>
-          <n-space justify="space-between">
+          <n-space style="margin-bottom: 1rem">
+            <n-button
+              ghost
+              text
+              type="success"
+              @click="() => router.push({ name: 'Register' })"
+            >
+              没有账户？去注册
+            </n-button>
+          </n-space>
             <n-space>
-              <n-spin :show="loading.threeSide">
-                <n-button type="info" @click="handleQqLogin" circle>
-                  <n-icon>
-                    <Qq />
-                  </n-icon>
-                </n-button>
-              </n-spin>
-              <n-spin :show="loading.passkey">
-                <n-button @click="startPasskeyLogin" ghost
-                  >通行密钥登录</n-button
-                >
-              </n-spin>
-            </n-space>
-            <n-space justify="end">
-              <n-button
-                ghost
-                style="--n-border: none"
-                type="success"
-                @click="() => router.push({ name: 'Register' })"
-              >
-                没有账户？去注册
-              </n-button>
               <n-button type="success" @click="loadCaptcha"> 登录</n-button>
               <captcha-component
                 :show="captcha.show"
@@ -60,10 +47,27 @@
                 "
                 @callback="captchaCallback"
               />
-            </n-space>
-          </n-space>
+              </n-space>
         </n-el>
       </n-form>
+    </n-card>
+    <br />
+    <n-spin :show="loading.passkey" style="width: 100%">
+      <n-button @click="startPasskeyLogin" type="success" secondary style="width: 100%">
+          通行密钥登录
+        </n-button>
+    </n-spin>
+    <br />
+    <n-card title="第三方登录">
+      <n-space>
+        <n-spin :show="loading.threeSide">
+          <n-button type="info" @click="handleQqLogin" circle>
+            <n-icon>
+              <Qq />
+            </n-icon>
+          </n-button>
+        </n-spin>
+      </n-space>
     </n-card>
   </n-el>
 </template>
@@ -102,13 +106,16 @@ const captcha = ref({
 
 <style scoped>
 .login-box {
-  margin: 1rem;
-  margin-top: 3rem;
   margin-inline: auto;
-  max-width: 600px;
+  max-width: 400px;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
+}
+@media screen and (max-width: 500px) {
+  .login-box {
+    margin-inline: 1rem;
+  }
 }
 </style>

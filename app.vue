@@ -13,13 +13,13 @@
                   <sidebar />
                 </n-el>
                 <n-layout-content :native-scrollbar="false" style="width: 100%">
-                  <nuxt-page />
+                  <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                  <n-layout-footer bordered>
+                    <site-footer />
+                    <n-back-top :right="50" />
+                  </n-layout-footer>
                 </n-layout-content>
               </n-layout>
-              <n-layout-footer bordered>
-                <site-footer />
-                <n-back-top :right="50" />
-              </n-layout-footer>
             </n-layout>
           </n-notification-provider>
         </n-dialog-provider>

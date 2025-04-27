@@ -12,11 +12,11 @@
                 <n-el class="sidebar-container" v-if="pageSidebar">
                   <sidebar />
                 </n-el>
-                <n-layout-content :native-scrollbar="false" style="width: 100%">
+                <n-layout-content :native-scrollbar="false" class="content" style="width: 100%">
                   <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                  <n-back-top :right="50" />
                   <n-layout-footer bordered>
                     <site-footer />
-                    <n-back-top :right="50" />
                   </n-layout-footer>
                 </n-layout-content>
               </n-layout>
@@ -33,8 +33,8 @@ import "@/assets/css/style.css";
 
 import { useOsTheme, darkTheme } from "naive-ui";
 
-import SiteHeader from "@/components/header.vue";
-import SiteFooter from "@/components/footer.vue";
+import SiteHeader from "@/components/Header.vue";
+import SiteFooter from "@/components/Footer.vue";
 
 import hljs from "highlight.js/lib/core";
 import ini from "highlight.js/lib/languages/ini";
@@ -58,3 +58,16 @@ const pageSidebar = computed(() => pageStore.sidebar);
 const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
 </script>
+
+<style scoped>
+@media screen and (max-width: 700px) {
+  .sidebar-container {
+    position: absolute;
+    z-index: 2;
+    height: 100%;
+  }
+  .content {
+    margin-left: 64px;
+  }
+}
+</style>

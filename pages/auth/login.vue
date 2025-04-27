@@ -5,14 +5,14 @@
       <n-form>
         <n-form-item label="用户名 / 邮箱" path="username">
           <n-input
-            v-model:value="formData.username"
+            v-model:value="loginForm.username"
             type="text"
             placeholder="用户名"
           />
         </n-form-item>
         <n-form-item label="密码" path="password">
           <n-input
-            v-model:value="formData.password"
+            v-model:value="loginForm.password"
             type="password"
             placeholder="密码"
           />
@@ -23,19 +23,19 @@
               ghost
               text
               type="success"
-              @click="() => router.push({ name: 'Register' })"
+              @click="() => navigateTo('/auth/register')"
             >
               没有账户？去注册
             </n-button>
           </n-space>
             <n-space>
-              <n-button type="success" @click="loadCaptcha"> 登录</n-button>
-              <captcha-component
+              <n-button type="success" @click="loadCaptcha">登录</n-button>
+              <captcha-dialog
                 :show="captcha.show"
-                :type="captcha.preData.type"
+                :type="captcha.config.type"
                 :vaptcha-scene="2"
                 @error="
-                  (code) => {
+                  (code: unknown) => {
                     message.error('发生错误: ' + code);
                     capcha.show = false;
                   }
@@ -88,9 +88,9 @@ const loading = ref<{
   passkey: false,
 });
 
-const formData = ref<{
-  username: string;
-  password: string;
+const loginForm = ref<{
+  username: string | null;
+  password: string | null;
 }>({
   username: null,
   password: null,
@@ -98,7 +98,7 @@ const formData = ref<{
 
 const captcha = ref({
   show: false,
-  preData: {
+  config: {
     type: null,
   },
 });

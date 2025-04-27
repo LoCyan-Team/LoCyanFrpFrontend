@@ -33,7 +33,7 @@
                 '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
               )
             "
-            @callback="captchaCallback"
+            @callback="handleEmailCodeSend"
           />
         </n-form-item>
         <n-form-item label="新密码" path="password">
@@ -55,7 +55,7 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success">重置</n-button>
+            <n-button type="success" @click="handleResetPassword">重置</n-button>
           </n-space>
         </n-el>
       </n-form>
@@ -86,6 +86,12 @@ const captcha = ref({
     type: null,
   },
 });
+
+function loadCaptcha() {}
+
+function handleEmailCodeSend(token: string, server: string | null) {}
+
+function handleResetPassword() {}
 </script>
 
 <style scoped>

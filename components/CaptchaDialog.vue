@@ -44,7 +44,7 @@ const env = {
 
 const props = defineProps<{
   show: boolean;
-  type: string;
+  type: string | null;
   vaptchaScene?: number;
 }>();
 

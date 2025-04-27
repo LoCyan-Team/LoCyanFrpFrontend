@@ -24,7 +24,13 @@
             clearable
             style="width: 100%; margin-right: 1rem"
           />
-          <n-button type="success" secondary>获取验证码</n-button>
+          <n-button
+            type="success"
+            secondary
+            @click="loadCaptcha"
+          >
+            获取验证码
+          </n-button>
           <captcha-dialog
             :show="captcha.show"
             :type="captcha.config.type"
@@ -40,7 +46,7 @@
                 '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
               )
             "
-            @callback="captchaCallback"
+            @callback="handleEmailCodeSend"
           />
         </n-form-item>
         <n-form-item label="密码" path="password">
@@ -69,7 +75,7 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="register">注册</n-button>
+            <n-button type="success" @click="handleRegister">注册</n-button>
           </n-space>
         </n-el>
       </n-form>
@@ -103,6 +109,12 @@ const captcha = ref({
     type: null,
   },
 });
+
+function loadCaptcha() {}
+
+function handleEmailCodeSend(token: string, server: string | null) {}
+
+function handleRegister() {}
 </script>
 
 <style scoped>

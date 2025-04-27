@@ -14,14 +14,15 @@
                 </n-el>
                 <n-layout-content
                   :native-scrollbar="false"
+                  :ref="pageLayout"
                   class="content"
                   style="width: 100%"
                 >
                   <nuxt-page style="min-height: calc(100dvh - 61px)" />
-                  <n-back-top :right="50" />
                   <n-layout-footer bordered>
                     <site-footer />
                   </n-layout-footer>
+                  <n-back-top :right="50" />
                 </n-layout-content>
               </n-layout>
             </n-layout>
@@ -61,6 +62,8 @@ const pageSidebar = computed(() => pageStore.sidebar);
 
 const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
+
+const pageLayout = ref();
 </script>
 
 <style scoped>

@@ -45,7 +45,7 @@
                   '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
                 )
               "
-              @callback="captchaCallback"
+              @callback="handleLogin"
             />
           </n-space>
         </n-el>
@@ -54,7 +54,7 @@
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
       <n-button
-        @click="startPasskeyLogin"
+        @click="handlePasskeyLogin"
         type="success"
         secondary
         style="width: 100%"
@@ -66,7 +66,7 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button type="info" @click="handleQqLogin" circle>
+          <n-button type="info" @click="handleThirdPartyLogin(ThirdParty.QQ)" circle>
             <n-icon>
               <Qq />
             </n-icon>
@@ -108,6 +108,18 @@ const captcha = ref({
     type: null,
   },
 });
+
+function loadCaptcha() {}
+
+function handleLogin(token: string, server: string | null) {}
+
+function handlePasskeyLogin() {}
+
+function handleThirdPartyLogin(type: ThirdParty) {}
+
+enum ThirdParty {
+  QQ
+}
 </script>
 
 <style scoped>

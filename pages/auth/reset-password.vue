@@ -67,6 +67,7 @@
 definePageMeta({
   title: "重置密码",
   needLogin: false,
+  redirectLogined: true,
 });
 
 const resetPasswordForm = ref<{

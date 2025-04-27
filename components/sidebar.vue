@@ -212,7 +212,7 @@ const loginedMenuOptions: MenuOption[] = [
 ];
 
 const menuOptions = computed(() => {
-  switch (pageSidebarMode) {
+  switch (pageSidebarMode.value) {
     case "logined":
       return loginedMenuOptions;
     case "guest":

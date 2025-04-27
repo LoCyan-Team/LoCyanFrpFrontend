@@ -80,6 +80,7 @@
 definePageMeta({
   title: "注册",
   needLogin: false,
+  redirectLogined: true,
 });
 
 const registerForm = ref<{

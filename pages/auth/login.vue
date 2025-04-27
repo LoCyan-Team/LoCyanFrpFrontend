@@ -83,6 +83,7 @@ import { Qq } from "@vicons/fa";
 definePageMeta({
   title: "登录",
   needLogin: false,
+  redirectLogined: true,
 });
 
 const loading = ref<{

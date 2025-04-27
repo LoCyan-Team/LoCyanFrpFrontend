@@ -10,6 +10,9 @@
     "preview": "nuxt preview",
     "postinstall": "nuxt prepare"
   },
+  "devDependencies": {
+    "@types/bun": "latest"
+  },
   "dependencies": {
     "@nuxt/eslint": "1.3.0",
     "@pinia/nuxt": "^0.11.0",
@@ -19,6 +22,7 @@
     "@vicons/ionicons4": "^0.13.0",
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
+    "api": "./api",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",

@@ -18,10 +18,10 @@
           />
         </n-form-item>
         <n-form-item label="邮件验证代码" path="verifyCode">
-          <n-input
+          <n-input-number
             v-model:value="registerForm.verifyCode"
-            type="number"
             placeholder="邮件验证代码"
+            clearable
             style="width: 100%; margin-right: 1rem"
           />
           <n-button type="success" secondary>获取验证码</n-button>
@@ -68,9 +68,9 @@
               已有账户？去登录
             </n-button>
           </n-space>
-            <n-space>
-              <n-button type="success" @click="register">注册</n-button>
-            </n-space>
+          <n-space>
+            <n-button type="success" @click="register">注册</n-button>
+          </n-space>
         </n-el>
       </n-form>
     </n-card>

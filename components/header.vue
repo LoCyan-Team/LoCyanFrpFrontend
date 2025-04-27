@@ -29,9 +29,9 @@
           round
           size="medium"
           style="margin-top: 15px; margin-right: 23px"
+          :src="userStore.avatar"
+          v-show="mainStore.token !== null"
         />
-        <!--:src="avatar"-->
-        <!--v-show="userData.getters.get_token !== '' && userData.getters.get_token !== null"-->
       </n-dropdown>
     </n-space>
   </n-space>
@@ -40,6 +40,11 @@
 <script setup>
 import { MdNotifications } from "@vicons/ionicons4";
 import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
+import { useMainStore } from '@/store/main'
+import { useUserStore } from '@/store/user'
+
+const mainStore = useMainStore()
+const userStore = useUserStore()
 
 const avatarOptions = [
   {

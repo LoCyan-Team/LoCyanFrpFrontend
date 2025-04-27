@@ -224,7 +224,7 @@ const menuOptions = computed(() => {
 const activeKey = ref<string>("");
 const collapsed = ref<boolean>(true);
 
-if (document.body.clientWidth >= 1000) collapsed.value = false
+if (document.body.clientWidth >= 1000) collapsed.value = false;
 
 const route = useRoute();
 

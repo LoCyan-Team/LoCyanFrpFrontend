@@ -3,9 +3,9 @@
     <n-h1>登录</n-h1>
     <n-card title="账户登录">
       <n-form>
-        <n-form-item label="用户名 / 邮箱" path="username">
+        <n-form-item label="用户名 / 邮箱" path="user">
           <n-input
-            v-model:value="loginForm.username"
+            v-model:value="loginForm.user"
             type="text"
             placeholder="用户名"
           />
@@ -28,34 +28,39 @@
               没有账户？去注册
             </n-button>
           </n-space>
-            <n-space>
-              <n-button type="success" @click="loadCaptcha">登录</n-button>
-              <captcha-dialog
-                :show="captcha.show"
-                :type="captcha.config.type"
-                :vaptcha-scene="2"
-                @error="
-                  (code: unknown) => {
-                    message.error('发生错误: ' + code);
-                    capcha.show = false;
-                  }
-                "
-                @unsupported="
-                  message.error(
-                    '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-                  )
-                "
-                @callback="captchaCallback"
-              />
-              </n-space>
+          <n-space>
+            <n-button type="success" @click="loadCaptcha">登录</n-button>
+            <captcha-dialog
+              :show="captcha.show"
+              :type="captcha.config.type"
+              :vaptcha-scene="2"
+              @error="
+                (code: unknown) => {
+                  message.error('发生错误: ' + code);
+                  capcha.show = false;
+                }
+              "
+              @unsupported="
+                message.error(
+                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+                )
+              "
+              @callback="captchaCallback"
+            />
+          </n-space>
         </n-el>
       </n-form>
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button @click="startPasskeyLogin" type="success" secondary style="width: 100%">
-          通行密钥登录
-        </n-button>
+      <n-button
+        @click="startPasskeyLogin"
+        type="success"
+        secondary
+        style="width: 100%"
+      >
+        通行密钥登录
+      </n-button>
     </n-spin>
     <br />
     <n-card title="第三方登录">
@@ -89,10 +94,10 @@ const loading = ref<{
 });
 
 const loginForm = ref<{
-  username: string | null;
+  user: string | null;
   password: string | null;
 }>({
-  username: null,
+  user: null,
   password: null,
 });
 

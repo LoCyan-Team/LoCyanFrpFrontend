@@ -12,7 +12,11 @@
                 <n-el class="sidebar-container" v-if="pageSidebar">
                   <sidebar />
                 </n-el>
-                <n-layout-content :native-scrollbar="false" class="content" style="width: 100%">
+                <n-layout-content
+                  :native-scrollbar="false"
+                  class="content"
+                  style="width: 100%"
+                >
                   <nuxt-page style="min-height: calc(100dvh - 61px)" />
                   <n-back-top :right="50" />
                   <n-layout-footer bordered>

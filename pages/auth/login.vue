@@ -66,7 +66,11 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button type="info" @click="handleThirdPartyLogin(ThirdParty.QQ)" circle>
+          <n-button
+            type="info"
+            @click="handleThirdPartyLogin(ThirdParty.QQ)"
+            circle
+          >
             <n-icon>
               <Qq />
             </n-icon>
@@ -109,16 +113,24 @@ const captcha = ref({
   },
 });
 
-function loadCaptcha() {}
+function loadCaptcha() {
+  // TODO
+}
 
-function handleLogin(token: string, server: string | null) {}
+function handleLogin(token: string, server: string | null) {
+  // TODO
+}
 
-function handlePasskeyLogin() {}
+function handlePasskeyLogin() {
+  // TODO
+}
 
-function handleThirdPartyLogin(type: ThirdParty) {}
+function handleThirdPartyLogin(type: ThirdParty) {
+  // TODO
+}
 
 enum ThirdParty {
-  QQ
+  QQ,
 }
 </script>
 

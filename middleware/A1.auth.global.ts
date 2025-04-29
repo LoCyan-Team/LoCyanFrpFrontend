@@ -2,6 +2,7 @@ import { useMainStore } from "@/store/main";
 import { usePageStore } from "@/store/page";
 
 export default defineNuxtRouteMiddleware((to, _) => {
+  return;
   const mainStore = useMainStore();
   const { token } = mainStore;
 

@@ -55,7 +55,9 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="handleResetPassword">重置</n-button>
+            <n-button type="success" @click="handleResetPassword"
+              >重置</n-button
+            >
           </n-space>
         </n-el>
       </n-form>
@@ -87,11 +89,17 @@ const captcha = ref({
   },
 });
 
-function loadCaptcha() {}
+function loadCaptcha() {
+  // TODO
+}
 
-function handleEmailCodeSend(token: string, server: string | null) {}
+function handleEmailCodeSend(token: string, server: string | null) {
+  // TODO
+}
 
-function handleResetPassword() {}
+function handleResetPassword() {
+  // TODO
+}
 </script>
 
 <style scoped>

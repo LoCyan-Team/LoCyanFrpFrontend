@@ -40,11 +40,11 @@
 <script setup>
 import { MdNotifications } from "@vicons/ionicons4";
 import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
-import { useMainStore } from '@/store/main'
-import { useUserStore } from '@/store/user'
+import { useMainStore } from "@/store/main";
+import { useUserStore } from "@/store/user";
 
-const mainStore = useMainStore()
-const userStore = useUserStore()
+const mainStore = useMainStore();
+const userStore = useUserStore();
 
 const avatarOptions = [
   {

@@ -24,11 +24,7 @@
             clearable
             style="width: 100%; margin-right: 1rem"
           />
-          <n-button
-            type="success"
-            secondary
-            @click="loadCaptcha"
-          >
+          <n-button type="success" secondary @click="loadCaptcha">
             获取验证码
           </n-button>
           <captcha-dialog
@@ -110,11 +106,17 @@ const captcha = ref({
   },
 });
 
-function loadCaptcha() {}
+function loadCaptcha() {
+  // TODO
+}
 
-function handleEmailCodeSend(token: string, server: string | null) {}
+function handleEmailCodeSend(token: string, server: string | null) {
+  // TODO
+}
 
-function handleRegister() {}
+function handleRegister() {
+  // TODO
+}
 </script>
 
 <style scoped>

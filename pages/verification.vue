@@ -178,18 +178,17 @@
       </n-spin>
     </n-space>
     <n-modal
-      v-model:show="showScanCodeModal"
+      v-model:show="modal.realPerson.show"
       :mask-closable="false"
       preset="card"
       style="max-width: 600px"
       title="请使用支付宝扫描二维码"
       :bordered="false"
-      :segmented="segmented"
       content-style="text-align: center;"
       footer-style="text-align: center;"
     >
       <n-qr-code
-        :value="url.realPerson"
+        :value="modal.realPerson.qrCodeUrl"
         :size="200"
         :error-correction-level="'L'"
       />
@@ -216,6 +215,13 @@ const data = ref<object>({
   realPerson: false,
   accreditations: 0,
 });
+
+const modal = ref<object>({
+  realPerson: {
+    show: false,
+    qrCodeUrl: null,
+  },
+})
 
 const verificationForm = ref<object>({
   name: null,
@@ -248,10 +254,6 @@ const options = {
     },
   ],
 };
-
-const url = ref<object>({
-  realPerson: null,
-});
 
 function handleBuyRealPersonAccreditation() {
   // TODO

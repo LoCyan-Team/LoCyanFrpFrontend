@@ -12,7 +12,7 @@ export const useUserStore = defineStore(
       },
       group: {
         id: 0,
-        name: '未知权限组',
+        name: "未知权限组",
       },
       traffic: null,
       avatar: "https://weavatar.com/avatar/",

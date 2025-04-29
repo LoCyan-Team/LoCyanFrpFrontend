@@ -4,7 +4,7 @@
   "type": "module",
   "scripts": {
     "build": "nuxt build",
-    "dev": "nuxt dev",
+    "dev": "nuxt dev --dotenv .env.development",
     "format": "prettier -w .",
     "generate": "nuxt generate",
     "preview": "nuxt preview",

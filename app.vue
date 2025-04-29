@@ -1,35 +1,49 @@
 <template>
   <n-config-provider :hljs="hljs" :theme="osTheme">
-    <n-loading-bar-provider>
-      <n-message-provider>
-        <n-dialog-provider>
-          <n-notification-provider>
-            <n-layout style="height: 100dvh" :native-scrollbar="false">
-              <n-layout-header bordered>
-                <site-header />
-              </n-layout-header>
-              <n-layout has-sider style="height: calc(100dvh - 61px)">
-                <n-el class="sidebar-container" v-if="pageSidebar">
-                  <sidebar />
-                </n-el>
-                <n-layout-content
-                  :native-scrollbar="false"
-                  :ref="pageLayout"
-                  class="content"
-                  style="width: 100%"
-                >
-                  <nuxt-page style="min-height: calc(100dvh - 61px)" />
-                  <n-layout-footer bordered>
-                    <site-footer />
-                  </n-layout-footer>
-                  <n-back-top :right="50" />
-                </n-layout-content>
+    <n-watermark
+      content="开发版本，不代表最终品质"
+      cross
+      selectable
+      :font-size="16"
+      :line-height="48"
+      :width="512"
+      :height="512"
+      :x-offset="128"
+      :y-offset="128"
+      :rotate="-15"
+      :show="env.devMode"
+    >
+      <n-loading-bar-provider>
+        <n-message-provider>
+          <n-dialog-provider>
+            <n-notification-provider>
+              <n-layout style="height: 100dvh" :native-scrollbar="false">
+                <n-layout-header bordered>
+                  <site-header />
+                </n-layout-header>
+                <n-layout has-sider style="height: calc(100dvh - 61px)">
+                  <n-el class="sidebar-container" v-if="pageSidebar">
+                    <sidebar />
+                  </n-el>
+                  <n-layout-content
+                    :native-scrollbar="false"
+                    :ref="pageLayout"
+                    class="content"
+                    style="width: 100%"
+                  >
+                    <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                    <n-layout-footer bordered>
+                      <site-footer />
+                    </n-layout-footer>
+                    <n-back-top :right="50" />
+                  </n-layout-content>
+                </n-layout>
               </n-layout>
-            </n-layout>
-          </n-notification-provider>
-        </n-dialog-provider>
-      </n-message-provider>
-    </n-loading-bar-provider>
+            </n-notification-provider>
+          </n-dialog-provider>
+        </n-message-provider>
+      </n-loading-bar-provider>
+    </n-watermark>
   </n-config-provider>
 </template>
 
@@ -46,6 +60,12 @@ import ini from "highlight.js/lib/languages/ini";
 import nginx from "highlight.js/lib/languages/nginx";
 
 import { usePageStore } from "@/store/page";
+
+const { public: publicConfig } = useRuntimeConfig();
+
+const env = {
+  devMode: publicConfig.DEV_MODE === 'true',
+}
 
 useHead({
   htmlAttrs: {

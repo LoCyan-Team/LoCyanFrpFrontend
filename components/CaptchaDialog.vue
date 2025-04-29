@@ -37,9 +37,11 @@ import "@chongying-star/vue-vaptcha/style.css";
 import { VaptchaButton } from "@chongying-star/vue-vaptcha";
 import { ref, watch } from "vue";
 
+const { public: publicConfig } = useRuntimeConfig();
+
 const env = {
-  turnstileSiteKey: process.env.TURNSTILE_SITEKEY,
-  vaptchaVid: process.env.VAPTCHA_VID,
+  turnstileSiteKey: publicConfig.TURNSTILE_SITEKEY,
+  vaptchaVid: publicConfig.VAPTCHA_VID,
 };
 
 const props = defineProps<{

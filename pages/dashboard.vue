@@ -4,7 +4,7 @@
       <n-gi span="0:3 700:1">
         <n-space vertical>
           <n-card title="数据报表">
-            <n-grid  :y-gap="12" :x-gap="12" cols="2">
+            <n-grid :y-gap="12" :x-gap="12" cols="2">
               <n-gi span="1">
                 <n-statistic label="上行限速" tabular-nums>
                   <n-number-animation :from="0" :to="userStore.limit.inbound" />
@@ -33,13 +33,17 @@
           </n-card>
           <n-card title="流量重置">
             <n-space vertical>
-              <n-text>如果流量真的太多，想要恢复到默认，那么您可以点击这个按钮重置。</n-text>
+              <n-text
+                >如果流量真的太多，想要恢复到默认，那么您可以点击这个按钮重置。</n-text
+              >
               <n-button @click="handleResetTraffic">重置流量</n-button>
             </n-space>
           </n-card>
           <n-card title="快捷导航">
             <n-space vertical>
-              <n-text>我们在这里放了一些导航，避免有的用户真的会找不到入口。</n-text>
+              <n-text
+                >我们在这里放了一些导航，避免有的用户真的会找不到入口。</n-text
+              >
             </n-space>
           </n-card>
         </n-space>

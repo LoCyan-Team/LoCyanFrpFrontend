@@ -5,8 +5,15 @@ export const useUserStore = defineStore(
       username: null,
       email: null,
       frpToken: null,
-      inbound: 0,
-      outbound: 0,
+      limit: {
+        tunnels: 0,
+        inbound: 0,
+        outbound: 0,
+      },
+      group: {
+        id: 0,
+        name: '未知权限组',
+      },
       traffic: null,
       avatar: "https://weavatar.com/avatar/",
     }),
@@ -21,11 +28,14 @@ export const useUserStore = defineStore(
       setFrpToken(frpToken: string) {
         this.frpToken = frpToken;
       },
-      setInbound(inbound: number) {
-        this.inbound = inbound;
+      setLimitTunnels(tunnels: number) {
+        this.limit.tunnels = tunnels;
       },
-      setOutbound(outbound: number) {
-        this.outbound = outbound;
+      setLimitInbound(inbound: number) {
+        this.limit.inbound = inbound;
+      },
+      setLimitOutbound(outbound: number) {
+        this.limit.outbound = outbound;
       },
     },
   },

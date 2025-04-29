@@ -1,6 +1,5 @@
 <template>
-  <page-content>
-    <n-h1 prefix="bar">身份认证</n-h1>
+  <page-content title="身份认证">
     <n-space vertical>
       <n-alert title="说明" type="info">
         请填写您的姓名和身份证证件号码进行身份认证（请确保信息真实准确，认证一旦成功除特殊情况外无法修改）
@@ -221,7 +220,7 @@ const modal = ref<object>({
     show: false,
     qrCodeUrl: null,
   },
-})
+});
 
 const verificationForm = ref<object>({
   name: null,

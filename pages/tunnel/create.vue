@@ -5,7 +5,7 @@
         <tunnel-config
           :node="selectedNode"
           @submit="handleCreate"
-        ></tunnel-config>
+        />
       </n-el>
       <n-el v-else>
         <n-empty v-if="nodes.length === 0" />

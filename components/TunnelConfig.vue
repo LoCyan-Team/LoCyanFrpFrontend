@@ -1,6 +1,6 @@
 <template>
   <n-space vertical>
-    <node-card :node="props.node"></node-card>
+    <node-card :node="props.node" />
     <n-card title="隧道信息">
       <n-form>
         <n-grid :y-gap="8" :x-gap="12" :cols="2" item-responsive>

@@ -55,9 +55,9 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="handleResetPassword"
-              >重置</n-button
-            >
+            <n-button type="success" @click="handleResetPassword">
+              重置
+            </n-button>
           </n-space>
         </n-el>
       </n-form>
@@ -73,20 +73,18 @@ definePageMeta({
 });
 
 const resetPasswordForm = ref<{
-  user: string | null;
-  verifyCode: string | null;
-  password: string | null;
-}>({
-  user: null,
-  verifyCode: null,
-  password: null,
-});
+  user: string;
+  verifyCode: string;
+  password: string;
+}>();
 
-const captcha = ref({
-  show: false,
+const captcha = ref<{
+  show: boolean;
   config: {
-    type: null,
-  },
+    type: string;
+  };
+}>({
+  show: false,
 });
 
 function loadCaptcha() {

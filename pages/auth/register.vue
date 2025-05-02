@@ -86,24 +86,20 @@ definePageMeta({
 });
 
 const registerForm = ref<{
-  username: string | null;
-  email: string | null;
-  verifyCode: number | null;
-  password: string | null;
-  confirmPassword: string | null;
-}>({
-  username: null,
-  email: null,
-  verifyCode: null,
-  password: null,
-  confirmPassword: null,
-});
+  username: string;
+  email: string;
+  verifyCode: number;
+  password: string;
+  confirmPassword: string;
+}>();
 
-const captcha = ref({
-  show: false,
+const captcha = ref<{
+  show: boolean;
   config: {
-    type: null,
-  },
+    type: string;
+  };
+}>({
+  show: false,
 });
 
 function loadCaptcha() {

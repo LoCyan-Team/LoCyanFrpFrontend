@@ -1,5 +1,10 @@
 <template>
-  <n-config-provider :hljs="hljs" :theme="osTheme">
+  <n-config-provider
+    :hljs="hljs"
+    :theme="osTheme"
+    :locale="zhCN"
+    :date-locale="dateZhCN"
+  >
     <n-watermark
       content="开发版本，不代表最终品质"
       cross
@@ -50,7 +55,7 @@
 <script setup lang="ts">
 import "@/assets/css/style.css";
 
-import { useOsTheme, darkTheme } from "naive-ui";
+import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
 
 import SiteHeader from "@/components/Header.vue";
 import SiteFooter from "@/components/Footer.vue";
@@ -64,8 +69,8 @@ import { usePageStore } from "@/store/page";
 const { public: publicConfig } = useRuntimeConfig();
 
 const env = {
-  devMode: publicConfig.DEV_MODE === 'true',
-}
+  devMode: publicConfig.DEV_MODE === "true",
+};
 
 useHead({
   htmlAttrs: {

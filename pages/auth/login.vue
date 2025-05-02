@@ -101,16 +101,15 @@ const loading = ref<{
 const loginForm = ref<{
   user: string | null;
   password: string | null;
-}>({
-  user: null,
-  password: null,
-});
+}>();
 
-const captcha = ref({
-  show: false,
+const captcha = ref<{
+  show: boolean;
   config: {
-    type: null,
-  },
+    type: string;
+  };
+}>({
+  show: false,
 });
 
 function loadCaptcha() {

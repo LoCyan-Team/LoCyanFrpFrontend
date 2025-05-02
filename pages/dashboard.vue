@@ -73,7 +73,9 @@ definePageMeta({
 
 const userStore = useUserStore();
 
-const data = ref<object>({
+const data = ref<{
+  announcement: string | null;
+}>({
   announcement: null,
 });
 

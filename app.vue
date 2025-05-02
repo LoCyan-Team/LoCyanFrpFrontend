@@ -43,12 +43,14 @@
                     class="content"
                     style="width: 100%"
                   >
-                    <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                    <transition name="fade" mode="out-in">
+                      <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                    </transition>
                     <n-layout-footer bordered>
                       <site-footer />
                     </n-layout-footer>
-                    <n-back-top :right="50" />
                   </n-layout-content>
+                  <n-back-top :listen-to="pageLayout" :right="50" />
                 </n-layout>
               </n-layout>
             </n-notification-provider>
@@ -99,7 +101,7 @@ const naiveOsTheme = useOsTheme(),
 
 const pageLayout = ref();
 
-onMounted(() => loaded.value = true)
+onMounted(() => (loaded.value = true));
 </script>
 
 <style scoped>

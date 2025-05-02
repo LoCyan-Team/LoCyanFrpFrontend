@@ -73,18 +73,25 @@ definePageMeta({
 });
 
 const resetPasswordForm = ref<{
-  user: string;
-  verifyCode: string;
-  password: string;
-}>();
+  user: string | null;
+  verifyCode: string | null;
+  password: string | null;
+}>({
+  user: null,
+  verifyCode: null,
+  password: null,
+});
 
 const captcha = ref<{
   show: boolean;
   config: {
-    type: string;
+    type: string | null;
   };
 }>({
   show: false,
+  config: {
+    type: null,
+  },
 });
 
 function loadCaptcha() {

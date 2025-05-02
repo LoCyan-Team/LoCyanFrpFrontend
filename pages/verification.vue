@@ -209,20 +209,34 @@ definePageMeta({
 
 const loading = ref(true);
 
-const data = ref<object>({
+const data = ref<{
+  realName: boolean;
+  realPerson: boolean;
+  accreditations: number;
+}>({
   realName: false,
   realPerson: false,
   accreditations: 0,
 });
 
-const modal = ref<object>({
+const modal = ref<{
+  realPerson: {
+    show: boolean;
+    qrCodeUrl: string | null;
+  };
+}>({
   realPerson: {
     show: false,
     qrCodeUrl: null,
   },
 });
 
-const verificationForm = ref<object>({
+const verificationForm = ref<{
+  name: string | null;
+  idCard: string | null;
+  idType: string;
+  giftAccreditationUserId: number | null;
+}>({
   name: null,
   idCard: null,
   idType: "IDENTITY_CARD",

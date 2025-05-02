@@ -118,30 +118,35 @@ const props = defineProps<{
       needIcp: boolean;
     };
   };
-  default: {
-    name: string | undefined;
-    type: string | undefined;
-    localIp: string | undefined;
-    localPort: number | undefined;
-    remotePort: number | undefined;
-    domain: string | undefined;
-    locations: string[] | undefined;
-    secretKey: string | undefined;
-  } | undefined;
+  default:
+    | {
+        name: string | undefined;
+        type: string | undefined;
+        localIp: string | undefined;
+        localPort: number | undefined;
+        remotePort: number | undefined;
+        domain: string | undefined;
+        locations: string[] | undefined;
+        secretKey: string | undefined;
+      }
+    | undefined;
 }>();
 
 const emit = defineEmits<{
-  (e: 'submit', tunnel: {
-    name: string;
-    type: string;
-    localIp: string;
-    localPort: number;
-    remotePort: number | null;
-    domain: string | null;
-    locations: string[] | null;
-    secretKey: string | null;
-  }): void
-}>()
+  (
+    e: "submit",
+    tunnel: {
+      name: string;
+      type: string;
+      localIp: string;
+      localPort: number;
+      remotePort: number | null;
+      domain: string | null;
+      locations: string[] | null;
+      secretKey: string | null;
+    },
+  ): void;
+}>();
 
 const form = ref<{
   name: string | null;
@@ -154,8 +159,8 @@ const form = ref<{
   secretKey: string | null;
 }>({
   name: props.default?.name ?? null,
-  type: props.default?.type ?? 'tcp',
-  localIp: props.default?.localIp ?? '127.0.0.1',
+  type: props.default?.type ?? "tcp",
+  localIp: props.default?.localIp ?? "127.0.0.1",
   localPort: props.default?.localPort ?? null,
   remotePort: props.default?.remotePort ?? null,
   domain: props.default?.domain ?? null,
@@ -175,7 +180,7 @@ function handleRandomRemotePort() {
 }
 
 function handleSubmit() {
-  emit('submit', {
+  emit("submit", {
     name: form.value.name,
     type: form.value.type,
     localIp: form.value.localIp,
@@ -184,6 +189,6 @@ function handleSubmit() {
     domain: form.value.domain,
     locations: form.value.locations,
     secretKey: form.value.secretKey,
-  })
+  });
 }
 </script>

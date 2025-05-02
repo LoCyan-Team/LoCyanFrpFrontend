@@ -22,7 +22,14 @@
         <n-message-provider>
           <n-dialog-provider>
             <n-notification-provider>
-              <n-layout style="height: 100dvh" :native-scrollbar="false">
+              <n-layout v-if="!loaded" style="height: 100dvh">
+                <n-spin :show="true" class="load-container">
+                  <template #description>
+                    <n-text>加载中，稍安勿躁......</n-text>
+                  </template>
+                </n-spin>
+              </n-layout>
+              <n-layout v-else style="height: 100dvh" :native-scrollbar="false">
                 <n-layout-header bordered>
                   <site-header />
                 </n-layout-header>
@@ -79,6 +86,8 @@ useHead({
   title: "LoCyanFrp Dashboard",
 });
 
+const loaded = ref<boolean>(false);
+
 hljs.registerLanguage("ini", ini);
 hljs.registerLanguage("nginx", nginx);
 
@@ -89,9 +98,18 @@ const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
 
 const pageLayout = ref();
+
+onMounted(() => loaded.value = true)
 </script>
 
 <style scoped>
+.load-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100%;
+}
+
 @media screen and (max-width: 700px) {
   .sidebar-container {
     position: absolute;

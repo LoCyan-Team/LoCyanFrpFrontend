@@ -2,10 +2,7 @@
   <page-content title="创建隧道">
     <transition name="fade" mode="out-in">
       <n-el v-if="selectedNode !== null">
-        <tunnel-config
-          :node="selectedNode"
-          @submit="handleCreate"
-        />
+        <tunnel-config :node="selectedNode" @submit="handleCreate" />
       </n-el>
       <n-el v-else>
         <n-empty v-if="nodes.length === 0" />
@@ -69,14 +66,14 @@ function handleNodeSelect(node: Node) {
 }
 
 function handleCreate(tunnel: {
-    name: string;
-    type: string;
-    localIp: string;
-    localPort: number;
-    remotePort: number | null;
-    domain: string | null;
-    locations: string[] | null;
-    secretKey: string | null;
+  name: string;
+  type: string;
+  localIp: string;
+  localPort: number;
+  remotePort: number | null;
+  domain: string | null;
+  locations: string[] | null;
+  secretKey: string | null;
 }) {
   // TODO
 }

@@ -21,6 +21,7 @@ declare module 'vue' {
     NDynamicInput: typeof import('naive-ui')['NDynamicInput']
     NEl: typeof import('naive-ui')['NEl']
     NEmpty: typeof import('naive-ui')['NEmpty']
+    NFlex: typeof import('naive-ui')['NFlex']
     NForm: typeof import('naive-ui')['NForm']
     NFormItem: typeof import('naive-ui')['NFormItem']
     NGi: typeof import('naive-ui')['NGi']

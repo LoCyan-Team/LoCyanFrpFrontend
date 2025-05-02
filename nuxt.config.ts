@@ -43,6 +43,9 @@ export default defineNuxtConfig({
     autoTrack: true,
     ignoreLocalhost: true,
   },
+  app: {
+    pageTransition: { name: 'fade', mode: 'out-in' },
+  },
   devServer: {
     host: "0.0.0.0",
     port: 8090,

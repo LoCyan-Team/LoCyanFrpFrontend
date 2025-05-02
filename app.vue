@@ -43,9 +43,7 @@
                   class="content"
                   style="width: 100%"
                 >
-                  <transition name="fade" mode="out-in">
-                    <nuxt-page style="min-height: calc(100dvh - 61px)" />
-                  </transition>
+                  <nuxt-page style="min-height: calc(100dvh - 61px)" />
                   <n-layout-footer bordered>
                     <site-footer />
                   </n-layout-footer>
@@ -84,6 +82,12 @@ useHead({
   htmlAttrs: {
     lang: "zh-CN",
   },
+  script: [
+    {
+      src: 'https://v-cn.vaptcha.com/v3.js',
+      async: true,
+    }
+  ],
   title: "LoCyanFrp Dashboard",
 });
 

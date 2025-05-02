@@ -120,15 +120,28 @@ const props = defineProps<{
   };
 }>();
 
+const emit = defineEmits<{
+  (e: 'submit', tunnel: {
+    name: string;
+    type: string;
+    localIp: string;
+    localPort: number;
+    remotePort: number | null;
+    domain: string | null;
+    locations: string[] | null;
+    secretKey: string | null;
+  }): void
+}>()
+
 const form = ref<{
   name: string | null;
   type: string | null;
   localIp: string | null;
   localPort: number | null;
-  remotePort: number | null | undefined;
-  domain: string | null | undefined;
-  locations: string[] | null | undefined;
-  secretKey: string | null | undefined;
+  remotePort: number | null;
+  domain: string | null;
+  locations: string[] | null;
+  secretKey: string | null;
 }>({
   name: null,
   type: null,
@@ -152,6 +165,15 @@ function handleRandomRemotePort() {
 }
 
 function handleSubmit() {
-  // TODO
+  emit('submit', {
+    name: form.value.name,
+    type: form.value.type,
+    localIp: form.value.localIp,
+    localPort: form.value.localPort,
+    remotePort: form.value.remotePort,
+    domain: form.value.domain,
+    locations: form.value.locations,
+    secretKey: form.value.secretKey,
+  })
 }
 </script>

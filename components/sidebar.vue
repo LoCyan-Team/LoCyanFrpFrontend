@@ -103,25 +103,25 @@ const loginedMenuOptions: MenuOption[] = [
   },
   {
     label: "隧道操作",
-    key: "proxy-actions",
+    key: "tunnel-actions",
     icon: renderIcon(PaperPlane),
     children: [
       {
-        path: "/proxies",
-        label: "隧道列表",
-        key: "proxies-list",
+        path: "/tunnel/manage",
+        label: "隧道管理",
+        key: "tunnel-manage",
         icon: renderIcon(List),
       },
       {
-        path: "/proxies/add",
-        label: "添加隧道",
-        key: "proxies-add",
+        path: "/tunnel/create",
+        label: "创建隧道",
+        key: "tunnel-add",
         icon: renderIcon(Add),
       },
       {
-        path: "/proxies/config",
+        path: "/tunnel/config",
         label: "配置文件",
-        key: "proxies-config",
+        key: "tunnel-config",
         icon: renderIcon(FileTrayFull),
       },
     ],
@@ -157,9 +157,9 @@ const loginedMenuOptions: MenuOption[] = [
     icon: renderIcon(Box24Filled),
     children: [
       {
-        path: "/apps/management",
+        path: "/apps/manage",
         label: "应用管理",
-        key: "apps-management",
+        key: "apps-manage",
         icon: renderIcon(GuiManagement),
       },
       {

@@ -1,4 +1,5 @@
 <template>
+  <nuxt-loading-indicator />
   <n-config-provider
     :hljs="hljs"
     :theme="osTheme"
@@ -18,45 +19,43 @@
       :rotate="-15"
       :show="env.devMode"
     >
-      <n-loading-bar-provider>
-        <n-message-provider>
-          <n-dialog-provider>
-            <n-notification-provider>
-              <n-layout v-if="!loaded" style="height: 100dvh">
-                <n-spin :show="true" class="load-container">
-                  <template #description>
-                    <n-text>加载中，稍安勿躁......</n-text>
-                  </template>
-                </n-spin>
+      <n-message-provider>
+        <n-dialog-provider>
+          <n-notification-provider>
+            <n-layout v-if="!loaded" style="height: 100dvh">
+              <n-spin :show="true" class="load-container">
+                <template #description>
+                  <n-text>加载中，稍安勿躁......</n-text>
+                </template>
+              </n-spin>
+            </n-layout>
+            <n-layout v-else style="height: 100dvh" :native-scrollbar="false">
+              <n-layout-header bordered>
+                <site-header />
+              </n-layout-header>
+              <n-layout has-sider style="height: calc(100dvh - 61px)">
+                <n-el class="sidebar-container" v-if="pageSidebar">
+                  <sidebar />
+                </n-el>
+                <n-layout-content
+                  :native-scrollbar="false"
+                  :ref="pageLayout"
+                  class="content"
+                  style="width: 100%"
+                >
+                  <transition name="fade" mode="out-in">
+                    <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                  </transition>
+                  <n-layout-footer bordered>
+                    <site-footer />
+                  </n-layout-footer>
+                </n-layout-content>
+                <n-back-top :listen-to="pageLayout" :right="50" />
               </n-layout>
-              <n-layout v-else style="height: 100dvh" :native-scrollbar="false">
-                <n-layout-header bordered>
-                  <site-header />
-                </n-layout-header>
-                <n-layout has-sider style="height: calc(100dvh - 61px)">
-                  <n-el class="sidebar-container" v-if="pageSidebar">
-                    <sidebar />
-                  </n-el>
-                  <n-layout-content
-                    :native-scrollbar="false"
-                    :ref="pageLayout"
-                    class="content"
-                    style="width: 100%"
-                  >
-                    <transition name="fade" mode="out-in">
-                      <nuxt-page style="min-height: calc(100dvh - 61px)" />
-                    </transition>
-                    <n-layout-footer bordered>
-                      <site-footer />
-                    </n-layout-footer>
-                  </n-layout-content>
-                  <n-back-top :listen-to="pageLayout" :right="50" />
-                </n-layout>
-              </n-layout>
-            </n-notification-provider>
-          </n-dialog-provider>
-        </n-message-provider>
-      </n-loading-bar-provider>
+            </n-layout>
+          </n-notification-provider>
+        </n-dialog-provider>
+      </n-message-provider>
     </n-watermark>
   </n-config-provider>
 </template>
@@ -101,7 +100,9 @@ const naiveOsTheme = useOsTheme(),
 
 const pageLayout = ref();
 
-onMounted(() => (loaded.value = true));
+onMounted(() => {
+  loaded.value = true;
+});
 </script>
 
 <style scoped>

@@ -118,6 +118,16 @@ const props = defineProps<{
       needIcp: boolean;
     };
   };
+  default: {
+    name: string | undefined;
+    type: string | undefined;
+    localIp: string | undefined;
+    localPort: number | undefined;
+    remotePort: number | undefined;
+    domain: string | undefined;
+    locations: string[] | undefined;
+    secretKey: string | undefined;
+  } | undefined;
 }>();
 
 const emit = defineEmits<{
@@ -135,22 +145,22 @@ const emit = defineEmits<{
 
 const form = ref<{
   name: string | null;
-  type: string | null;
-  localIp: string | null;
+  type: string;
+  localIp: string;
   localPort: number | null;
   remotePort: number | null;
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
 }>({
-  name: null,
-  type: null,
-  localIp: null,
-  localPort: null,
-  remotePort: null,
-  domain: null,
-  locations: null,
-  secretKey: null,
+  name: props.default?.name ?? null,
+  type: props.default?.type ?? 'tcp',
+  localIp: props.default?.localIp ?? '127.0.0.1',
+  localPort: props.default?.localPort ?? null,
+  remotePort: props.default?.remotePort ?? null,
+  domain: props.default?.domain ?? null,
+  locations: props.default?.locations ?? null,
+  secretKey: props.default?.secretKey ?? null,
 });
 
 const hasOption = {

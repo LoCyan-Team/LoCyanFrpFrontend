@@ -1,7 +1,7 @@
 import { API } from "../type/api";
 import { Method } from "../type/method";
 
-export class Captcha extends API {
+export class GetCaptcha extends API {
   constructor(params: {
     action: string;
   }) {

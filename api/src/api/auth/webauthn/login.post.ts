@@ -1,10 +1,8 @@
-import { API } from "../../type/api";
-import { Method } from "../../type/method";
+import { API } from "../../../type/api";
+import { Method } from "../../../type/method";
 
-export class PostRegister extends API {
-  constructor(params: {
-    credential: string;
-  }) {
-    super("/auth/register", Method.POST, params, {});
+export class PostLogin extends API {
+  constructor(params: { credential: string }) {
+    super("/auth/webauthn/login", Method.POST, params, {});
   }
 }

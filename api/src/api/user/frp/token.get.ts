@@ -1,8 +1,8 @@
 import { API } from "../../../type/api";
 import { Method } from "../../../type/method";
 
-export class GetPermissions extends API {
+export class GetToken extends API {
   constructor(params: { user_id: number }) {
-    super("/auth/permissions", Method.GET, params, {});
+    super("/user/frp/token", Method.GET, params, {});
   }
 }

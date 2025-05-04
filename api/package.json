@@ -6,7 +6,8 @@
     "format": "prettier -w ."
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/qs": "^6.9.18"
   },
   "peerDependencies": {
     "typescript": "^5"

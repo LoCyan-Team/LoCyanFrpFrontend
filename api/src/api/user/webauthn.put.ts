@@ -3,7 +3,7 @@ import { Method } from "../../type/method";
 
 export class PutWebAuthn extends API {
   constructor(params: {
-    user_id: string;
+    user_id: number;
     challenge_id: string;
     client_data_json: string;
     attestation_object: string;

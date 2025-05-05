@@ -44,7 +44,7 @@ export default defineNuxtConfig({
     ignoreLocalhost: true,
   },
   app: {
-    pageTransition: { name: 'fade', mode: 'out-in' },
+    pageTransition: { name: "fade", mode: "out-in" },
   },
   devServer: {
     host: "0.0.0.0",

@@ -35,7 +35,7 @@
                 :rotate="false"
               >
                 <template #icon>
-                  <n-icon :component="Error"></n-icon>
+                  <n-icon :component="Error" />
                 </template>
                 <template #description>已封禁</template>
                 <n-card :title="tunnel.name">
@@ -77,7 +77,7 @@
                   <n-td v-if="nodes[item.nodeId]">
                     <!-- TODO: Compute connect address -->
                   </n-td>
-                  <n-td v-else></n-td>
+                  <n-td v-else />
 
                   <n-td>
                     <n-spin
@@ -90,7 +90,7 @@
                       :rotate="false"
                     >
                       <template #icon>
-                        <n-icon :component="Error"></n-icon>
+                        <n-icon :component="Error" />
                       </template>
                       <template #description>已封禁</template>
                       <n-space>
@@ -104,7 +104,7 @@
           </n-scrollbar>
         </n-el>
       </n-el>
-      <n-space style="width: 100%" v-if="tunnels.length !== 0" justify="center">
+      <n-space v-if="tunnels.length !== 0" justify="center" style="width: 100%">
         <n-pagination
           v-model:page="page.current"
           v-model:page-size="page.size"

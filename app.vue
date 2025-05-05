@@ -84,9 +84,9 @@ useHead({
   },
   script: [
     {
-      src: 'https://v-cn.vaptcha.com/v3.js',
+      src: "https://v-cn.vaptcha.com/v3.js",
       async: true,
-    }
+    },
   ],
   title: "LoCyanFrp Dashboard",
 });

@@ -51,12 +51,14 @@
       <n-gi span="0:3 700:2">
         <n-space vertical>
           <n-card title="公告板">
-            <n-p v-if="data.annnouncement"></n-p>
-            <n-empty v-else></n-empty>
+            <n-p v-if="data.annnouncement">
+              <!-- Content -->
+            </n-p>
+            <n-empty v-else />
           </n-card>
           <n-card title="流量统计图">
-            <highcharts :options="speedChartOptions"></highcharts>
-            <highcharts :options="trafficChartOptions"></highcharts>
+            <highcharts :options="speedChartOptions" />
+            <highcharts :options="trafficChartOptions" />
           </n-card>
         </n-space>
       </n-gi>

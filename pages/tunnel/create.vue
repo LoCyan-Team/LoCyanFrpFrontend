@@ -7,7 +7,7 @@
       <n-el v-else>
         <n-empty v-if="nodes.length === 0" />
         <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
-          <n-grid-item span="0:3 1000:1" v-for="node in nodes" :key="node.id">
+          <n-grid-item v-for="node in nodes" :key="node.id" span="0:3 1000:1">
             <node-card :node="node">
               <template #action>
                 <n-button type="primary" @click="handleNodeSelect(node)">

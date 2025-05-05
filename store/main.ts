@@ -2,7 +2,7 @@ export const useMainStore = defineStore(
   "main",
   {
     state: () => ({
-      token: "null",
+      token: null,
       userId: null,
     }),
     getters: {},

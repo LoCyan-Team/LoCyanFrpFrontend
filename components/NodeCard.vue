@@ -1,5 +1,8 @@
 <template>
   <n-card :title="node.name">
+    <template #header-extra>
+      <slot name="header-extra" />
+    </template>
     <n-space vertical>
       <!-- 标签 -->
       <n-space>
@@ -40,13 +43,16 @@
         <n-text>节点地址: {{ node.host }}</n-text>
         <n-el>
           <n-text>可用端口范围: </n-text>
-          <n-tag :key="port" v-for="port in node.portRange">
+          <n-tag v-for="port in node.portRange" :key="port">
             {{ port.replace(":", "-") }}
           </n-tag>
         </n-el>
       </n-p>
     </n-space>
     <n-p>{{ node.description ?? "无" }}</n-p>
+    <template #footer>
+      <slot name="footer" />
+    </template>
     <template #action>
       <slot name="action" />
     </template>

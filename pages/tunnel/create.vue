@@ -2,7 +2,13 @@
   <page-content title="创建隧道">
     <transition name="fade" mode="out-in">
       <n-el v-if="selectedNode !== null">
-        <tunnel-config :node="selectedNode" @submit="handleCreate" />
+        <tunnel-config :node="selectedNode" @submit="handleCreate">
+          <template #node-footer>
+            <n-button type="warning" secondary @click="selectedNode = null">
+              重新选择
+            </n-button>
+          </template>
+        </tunnel-config>
       </n-el>
       <n-el v-else>
         <n-card title="请选择节点">
@@ -10,8 +16,12 @@
           <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
             <n-grid-item v-for="node in nodes" :key="node.id" span="0:3 1000:1">
               <node-card :node="node">
-                <template #action>
-                  <n-button type="primary" @click="handleNodeSelect(node)">
+                <template #header-extra>
+                  <n-button
+                    type="success"
+                    secondary
+                    @click="handleNodeSelect(node)"
+                  >
                     选择
                   </n-button>
                 </template>

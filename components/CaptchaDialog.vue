@@ -53,7 +53,7 @@ const props = defineProps<{
 const emit = defineEmits<{
   (e: "error", error: string): void;
   (e: "unsupported"): void;
-  (e: "callback", token: string, server: string | undefined): void;
+  (e: "callback", token: string, server?: string): void;
 }>();
 
 let showTurnstileInstance = ref(false),
@@ -82,7 +82,7 @@ watch(vaptchaToken, (token, _) => {
   callback(token, vaptchaServer.value);
 });
 
-function callback(token: string, server: string | undefined) {
+function callback(token: string, server?: string) {
   emit("callback", token, server);
 }
 

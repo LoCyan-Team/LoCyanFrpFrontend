@@ -5,18 +5,20 @@
         <tunnel-config :node="selectedNode" @submit="handleCreate" />
       </n-el>
       <n-el v-else>
-        <n-empty v-if="nodes.length === 0" />
-        <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
-          <n-grid-item v-for="node in nodes" :key="node.id" span="0:3 1000:1">
-            <node-card :node="node">
-              <template #action>
-                <n-button type="primary" @click="handleNodeSelect(node)">
-                  选择
-                </n-button>
-              </template>
-            </node-card>
-          </n-grid-item>
-        </n-grid>
+        <n-card title="请选择节点">
+          <n-empty v-if="nodes.length === 0" />
+          <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
+            <n-grid-item v-for="node in nodes" :key="node.id" span="0:3 1000:1">
+              <node-card :node="node">
+                <template #action>
+                  <n-button type="primary" @click="handleNodeSelect(node)">
+                    选择
+                  </n-button>
+                </template>
+              </node-card>
+            </n-grid-item>
+          </n-grid>
+        </n-card>
       </n-el>
     </transition>
   </page-content>

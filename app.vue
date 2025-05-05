@@ -22,6 +22,7 @@
       <n-message-provider>
         <n-dialog-provider>
           <n-notification-provider>
+            <notification-inject />
             <n-layout v-if="!loaded" style="height: 100dvh">
               <n-spin :show="true" class="load-container">
                 <template #description>
@@ -34,12 +35,12 @@
                 <site-header />
               </n-layout-header>
               <n-layout has-sider style="height: calc(100dvh - 61px)">
-                <n-el class="sidebar-container" v-if="pageSidebar">
+                <n-el v-if="pageSidebar" class="sidebar-container">
                   <sidebar />
                 </n-el>
                 <n-layout-content
-                  :native-scrollbar="false"
                   :ref="pageLayout"
+                  :native-scrollbar="false"
                   class="content"
                   style="width: 100%"
                 >
@@ -65,6 +66,8 @@ import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
 
 import SiteHeader from "@/components/Header.vue";
 import SiteFooter from "@/components/Footer.vue";
+
+import NotificationInject from "~/components/inject/Notification.vue";
 
 import hljs from "highlight.js/lib/core";
 import ini from "highlight.js/lib/languages/ini";

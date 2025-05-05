@@ -118,18 +118,16 @@ const props = defineProps<{
       needIcp: boolean;
     };
   };
-  default:
-    | {
-        name: string | undefined;
-        type: string | undefined;
-        localIp: string | undefined;
-        localPort: number | undefined;
-        remotePort: number | undefined;
-        domain: string | undefined;
-        locations: string[] | undefined;
-        secretKey: string | undefined;
-      }
-    | undefined;
+  default: {
+    name?: string;
+    type?: string;
+    localIp?: string;
+    localPort?: number;
+    remotePort?: number;
+    domain?: string;
+    locations?: string[];
+    secretKey?: string;
+  };
 }>();
 
 const emit = defineEmits<{

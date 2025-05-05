@@ -15,9 +15,22 @@
           </n-radio-group>
         </n-space>
       </n-space>
+      <transition name="fade">
+        <n-card v-if="batchSelected.length > 0" embedded>
+          <n-space>
+            <n-button type="error" secondary @click="handleDelete()">
+              删除
+            </n-button>
+            <n-button type="info" secondary @click="handleChangeNode()">
+              修改节点
+            </n-button>
+          </n-space>
+        </n-card>
+      </transition>
 
       <n-empty v-if="tunnels.length === 0" />
       <n-el v-else>
+        <!-- 卡片模式 -->
         <n-el v-if="viewMode === 'card'">
           <n-grid :y-gap="8" :x-gap="12" :cols="4" item-responsive>
             <n-grid-item
@@ -39,12 +52,20 @@
                 </template>
                 <template #description>已封禁</template>
                 <n-card :title="tunnel.name">
+                  <template #header-extra>
+                    <n-el @click="handleBatchSelect(tunnel.id)">
+                      <n-checkbox
+                        :checked="batchSelected.includes(tunnel.id)"
+                      />
+                    </n-el>
+                  </template>
                   <!-- TODO: Content -->
                 </n-card>
               </n-spin>
             </n-grid-item>
           </n-grid>
         </n-el>
+        <!-- 列表模式 -->
         <n-el v-if="viewMode === 'list'">
           <n-scrollbar x-scrollable>
             <n-table
@@ -54,6 +75,16 @@
             >
               <n-thead>
                 <n-tr>
+                  <n-th>
+                    <n-switch
+                      v-model:value="batchSelectState"
+                      :round="false"
+                      @update:value="handleSelectAll"
+                    >
+                      <template #checked>全选</template>
+                      <template #unchecked>全选</template>
+                    </n-switch>
+                  </n-th>
                   <n-th>隧道 ID</n-th>
                   <n-th>隧道名</n-th>
                   <n-th>隧道节点</n-th>
@@ -64,6 +95,13 @@
               </n-thead>
               <n-tbody>
                 <n-tr v-for="tunnel in tunnels" :key="tunnel.id">
+                  <n-td>
+                    <n-el @click="handleBatchSelect(tunnel.id)">
+                      <n-checkbox
+                        :checked="batchSelected.includes(tunnel.id)"
+                      />
+                    </n-el>
+                  </n-td>
                   <n-td>{{ tunnel.id }}</n-td>
                   <n-td>{{ tunnel.name }}</n-td>
 
@@ -74,7 +112,7 @@
 
                   <n-td>{{ tunnel.type.toUpperCase() }}</n-td>
 
-                  <n-td v-if="nodes[item.nodeId]">
+                  <n-td v-if="nodes[tunnel.nodeId]">
                     <!-- TODO: Compute connect address -->
                   </n-td>
                   <n-td v-else />
@@ -127,8 +165,33 @@ definePageMeta({
 
 const viewMode = ref<string>("card");
 
-const nodes = ref<[object[]]>([]);
-const tunnels = ref<object[]>([]);
+const nodes = ref<
+  {
+    id: number;
+    name: string;
+  }[]
+>([]);
+
+const tunnels = ref<
+  {
+    id: number;
+    name: string;
+    nodeId: number;
+    type: string;
+    status: number;
+  }[]
+>([
+  // {
+  //   id: 0,
+  //   name: "这是一条隧道",
+  //   nodeId: 0,
+  //   type: "tcp",
+  //   status: 0,
+  // },
+]);
+
+const batchSelectState = ref<boolean>(false);
+const batchSelected = ref<number[]>([]);
 
 const page = ref<{
   current: number;
@@ -139,4 +202,25 @@ const page = ref<{
   size: 10,
   count: 1,
 });
+
+function handleDelete(tunnelId?: number) {
+  // TODO
+}
+
+function handleChangeNode() {
+  // TODO
+}
+
+function handleBatchSelect(tunnelId: number) {
+  if (batchSelected.value.includes(tunnelId))
+    batchSelected.value = batchSelected.value.filter((id) => id !== tunnelId);
+  else batchSelected.value.push(tunnelId);
+  batchSelectState.value = tunnels.value
+    .map((tunnel) => tunnel.id)
+    .every((id) => batchSelected.value.includes(id));
+}
+function handleSelectAll(val: boolean) {
+  if (val) tunnels.value.forEach((it) => batchSelected.value.push(it.id));
+  else batchSelected.value.length = 0;
+}
 </script>

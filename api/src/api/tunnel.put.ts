@@ -9,12 +9,12 @@ export class PutTunnel extends API {
     type: string;
     local_ip: string;
     local_port: number;
-    remote_port: number | undefined;
+    remote_port?: number;
     use_encryption: boolean;
     use_compression: boolean;
-    secret_key: string | undefined;
-    domain: string | undefined;
-    locations: string[] | undefined;
+    secret_key?: string;
+    domain?: string;
+    locations?: string[];
   }) {
     super("/tunnel", Method.PUT, params, {});
   }

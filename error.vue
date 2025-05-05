@@ -8,7 +8,7 @@
       <n-layout-content>
         <n-el v-if="error.statusCode === 404">
           <n-el class="flex-center outbox">
-            <n-empty description="这里什么也找不到啊 QwQ"></n-empty>
+            <n-empty description="这里什么也找不到啊 QwQ" />
             <n-button
               style="margin-top: 10px"
               @click="() => clearError({ redirect: '/' })"
@@ -22,15 +22,21 @@
             <n-h1>{{ error!.statusCode }} :&lpar;</n-h1>
             <n-h3 style="margin-top: 0">在渲染时发生了未知的错误。</n-h3>
             <n-p>{{ error!.message }}</n-p>
-            <n-button style="margin-top: 10px" @click="() => reloadNuxtApp()">
-              重新载入
-            </n-button>
-            <n-button
-              style="margin-top: 10px"
-              @click="() => clearError({ redirect: '/' })"
-            >
-              带我去首页
-            </n-button>
+            <n-space>
+              <n-button
+                style="margin-top: 10px"
+                type="primary"
+                @click="() => reloadNuxtApp()"
+              >
+                重新载入
+              </n-button>
+              <n-button
+                style="margin-top: 10px"
+                @click="() => clearError({ redirect: '/' })"
+              >
+                带我去首页
+              </n-button>
+            </n-space>
           </n-el>
         </n-el>
       </n-layout-content>

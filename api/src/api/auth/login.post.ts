@@ -7,7 +7,7 @@ export class PostLogin extends API {
     password: string;
     captcha_id: string;
     captcha_token: string;
-    captcha_server: string | undefined;
+    captcha_server?: string;
   }) {
     super("/auth/login", Method.POST, params, {});
   }

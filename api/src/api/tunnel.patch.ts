@@ -5,17 +5,17 @@ export class PatchTunnel extends API {
   constructor(params: {
     user_id: number;
     tunnel_id: number;
-    name: string | undefined;
-    type: string | undefined;
-    local_ip: string | undefined;
-    local_port: number | undefined;
-    remote_port: number | undefined;
-    use_encryption: boolean | undefined;
-    use_compression: boolean | undefined;
-    node_id: number | undefined;
-    secret_key: string | undefined;
-    domain: string | undefined;
-    locations: string[] | undefined;
+    name?: string;
+    type?: string;
+    local_ip?: string;
+    local_port?: number;
+    remote_port?: number;
+    use_encryption?: boolean;
+    use_compression?: boolean;
+    node_id?: number;
+    secret_key?: string;
+    domain?: string;
+    locations?: string[];
   }) {
     super("/tunnel", Method.PATCH, params, {});
   }

@@ -5,7 +5,7 @@ export class DeleteSession extends API {
   constructor(params: {
     user_id: number;
     app_id: number;
-    session_id: string | undefined;
+    session_id?: string;
   }) {
     super("/auth/authorization/session", Method.DELETE, params, {});
   }

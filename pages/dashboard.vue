@@ -100,6 +100,9 @@ const speedChartOptions = ref({
       data: [11, 16, 25],
     },
   ],
+  credits: {
+    enabled: false,
+  }
 });
 
 const trafficChartOptions = ref({
@@ -117,6 +120,9 @@ const trafficChartOptions = ref({
       data: [5, 3, 4],
     },
   ],
+  credits: {
+    enabled: false,
+  }
 });
 
 function handleResetTraffic() {

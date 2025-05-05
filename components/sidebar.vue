@@ -1,15 +1,15 @@
 <template>
   <n-layout-sider
+    id="sider"
     bordered
     show-trigger
     :collapsed="collapsed"
-    @collapse="collapsed = true"
-    @expand="collapsed = false"
     collapse-mode="width"
     :collapsed-width="64"
     :native-scrollbar="false"
-    id="sider"
     style="height: 100%; bottom: 0"
+    @collapse="collapsed = true"
+    @expand="collapsed = false"
   >
     <n-menu
       ref="menuInstRef"
@@ -42,18 +42,13 @@ import {
   LogInOutline,
   MailOpenOutline,
 } from "@vicons/ionicons5";
-import { GuiManagement, Api, Gift } from "@vicons/carbon";
+import { GuiManagement, Api, ContentDeliveryNetwork } from "@vicons/carbon";
 import {
   MoreCircle20Filled,
   Box24Filled,
   KeyReset20Regular,
 } from "@vicons/fluent";
-import {
-  AttachMoneyFilled,
-  AccountTreeOutlined,
-  AnchorTwotone,
-  MessageOutlined,
-} from "@vicons/material";
+import { AttachMoneyFilled, AccountTreeOutlined } from "@vicons/material";
 
 import { usePageStore } from "@/store/page";
 
@@ -133,10 +128,23 @@ const loginedMenuOptions: MenuOption[] = [
     icon: renderIcon(AttachMoneyFilled),
   },
   {
-    path: "/icp",
-    label: "域名白名单",
-    key: "icp",
-    icon: renderIcon(Key),
+    label: "域名",
+    key: "domain",
+    icon: renderIcon(ContentDeliveryNetwork),
+    children: [
+      {
+        path: "/domain/verification",
+        label: "所有权验证",
+        key: "domain-verification",
+        icon: renderIcon(Key),
+      },
+      {
+        path: "/domain/icp",
+        label: "ICP 备案白名单",
+        key: "domain-icp",
+        icon: renderIcon(Key),
+      },
+    ],
   },
   {
     label: "游戏联机",

@@ -23,11 +23,12 @@
             <n-space vertical>
               <n-el>
                 <n-text>今日 {{ data.ranking.total }} 人已签到</n-text>
-                <br /><n-text>
+                <br /><n-text>上次签到在 {{ data.lastSign }}</n-text>
+                <br v-if="data.signed" /><n-text v-if="data.signed">
                   您是今天第 {{ data.ranking.me }} 位签到的用户
                 </n-text>
                 <br /><n-text>
-                  累记签到获取流量 {{ data.ranking.me }} GiB
+                  累计签到获取流量 {{ data.ranking.me }} GiB
                 </n-text>
               </n-el>
               <n-image
@@ -53,12 +54,14 @@ const loading = ref<boolean>(true);
 
 const data = ref<{
   signed: boolean;
+  lastSign: string | null;
   ranking: {
     total: number;
     me: number;
   };
 }>({
   signed: false,
+  lastSign: null,
   ranking: {
     total: 0,
     me: 0,

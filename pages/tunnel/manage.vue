@@ -18,11 +18,11 @@
       <transition name="fade">
         <n-card v-if="batchSelected.length > 0" embedded>
           <n-space>
-            <n-button type="error" secondary @click="handleDelete()">
-              删除
-            </n-button>
             <n-button type="info" secondary @click="handleChangeNode()">
               修改节点
+            </n-button>
+            <n-button type="error" secondary @click="handleDelete()">
+              删除
             </n-button>
           </n-space>
         </n-card>
@@ -203,11 +203,11 @@ const page = ref<{
   count: 1,
 });
 
-function handleDelete(tunnelId?: number) {
+function handleChangeNode() {
   // TODO
 }
 
-function handleChangeNode() {
+function handleDelete(tunnelId?: number) {
   // TODO
 }
 

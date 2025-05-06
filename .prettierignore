@@ -1,4 +1,5 @@
 .*
+*.d.ts
 node_modules/
 public/
 server/

@@ -7,6 +7,7 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   ssr: false,
+  target: "static",
   modules: [
     "@nuxt/eslint",
     "nuxtjs-naive-ui",

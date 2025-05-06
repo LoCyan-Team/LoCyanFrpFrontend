@@ -47,6 +47,29 @@
   </n-config-provider>
 </template>
 
+<script setup lang="ts">
+import "@/assets/css/style.css";
+
+import type { NuxtError } from "#app";
+
+import SiteHeader from "@/components/Header.vue";
+import SiteFooter from "@/components/Footer.vue";
+
+import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
+
+defineProps({
+  // eslint-disable-next-line vue/require-default-prop
+  error: Object as () => NuxtError,
+});
+
+const ldb = useLoadingIndicator();
+
+ldb.finish();
+
+const naiveOsTheme = useOsTheme(),
+  osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
+</script>
+
 <style scoped>
 .outbox {
   margin-inline: 1rem;
@@ -60,25 +83,3 @@
   justify-content: center;
 }
 </style>
-
-<script setup lang="ts">
-import "@/assets/css/style.css";
-
-import type { NuxtError } from "#app";
-
-import SiteHeader from "@/components/Header.vue";
-import SiteFooter from "@/components/Footer.vue";
-
-import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
-
-defineProps({
-  error: Object as () => NuxtError,
-});
-
-const ldb = useLoadingIndicator();
-
-ldb.finish();
-
-const naiveOsTheme = useOsTheme(),
-  osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
-</script>

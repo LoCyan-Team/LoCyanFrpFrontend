@@ -121,9 +121,9 @@ async function fetchSiteData() {
 }
 
 onMounted(() => {
-  loaded.value = true;
-
   fetchSiteData();
+
+  loaded.value = true;
 });
 </script>
 

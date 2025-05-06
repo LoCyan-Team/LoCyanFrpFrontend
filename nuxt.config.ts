@@ -17,8 +17,8 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       devMode: false,
-      turnstileSitekey: null,
-      vaptchaVid: null,
+      turnstileSitekey: "",
+      vaptchaVid: "",
     },
   },
   vite: {

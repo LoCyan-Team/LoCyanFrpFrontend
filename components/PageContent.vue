@@ -1,6 +1,6 @@
 <template>
   <n-el class="outbox">
-    <n-el class="container">
+    <n-el :ref="page" class="container">
       <n-h1 v-if="props.title" prefix="bar">
         <slot name="icon" />
         <n-text type="primary">
@@ -8,6 +8,7 @@
         </n-text>
       </n-h1>
       <slot />
+      <n-back-top :listen-to="page" :right="50" />
     </n-el>
   </n-el>
 </template>
@@ -16,6 +17,8 @@
 const props = defineProps<{
   title?: string;
 }>();
+
+const page = ref(undefined);
 </script>
 
 <style scoped>

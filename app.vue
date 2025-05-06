@@ -39,7 +39,6 @@
                   <sidebar />
                 </n-el>
                 <n-layout-content
-                  :ref="pageLayout"
                   :native-scrollbar="false"
                   class="content"
                   style="width: 100%"
@@ -49,7 +48,6 @@
                     <site-footer />
                   </n-layout-footer>
                 </n-layout-content>
-                <n-back-top :listen-to="pageLayout" :right="50" />
               </n-layout>
             </n-layout>
           </n-notification-provider>
@@ -104,8 +102,6 @@ const pageSidebar = computed(() => pageStore.sidebar);
 
 const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
-
-const pageLayout = ref();
 
 onMounted(() => {
   loaded.value = true;

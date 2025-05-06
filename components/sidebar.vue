@@ -47,8 +47,14 @@ import {
   MoreCircle20Filled,
   Box24Filled,
   KeyReset20Regular,
+  CommentMultiple16Regular,
 } from "@vicons/fluent";
-import { AttachMoneyFilled, AccountTreeOutlined } from "@vicons/material";
+import {
+  AttachMoneyFilled,
+  AccountTreeOutlined,
+  AccountBalanceWalletFilled,
+  VerifiedOutlined,
+} from "@vicons/material";
 
 import { usePageStore } from "@/store/page";
 
@@ -122,10 +128,23 @@ const loginedMenuOptions: MenuOption[] = [
     ],
   },
   {
-    path: "/donate",
-    label: "赞助",
+    label: "捐赠",
     key: "donate",
-    icon: renderIcon(AttachMoneyFilled),
+    icon: renderIcon(AccountBalanceWalletFilled),
+    children: [
+      {
+        path: "/donate",
+        label: "捐赠",
+        key: "donate-donate",
+        icon: renderIcon(AttachMoneyFilled),
+      },
+      {
+        path: "/donate/comment",
+        label: "留言",
+        key: "donate-comment",
+        icon: renderIcon(CommentMultiple16Regular),
+      },
+    ],
   },
   {
     label: "域名",
@@ -136,13 +155,13 @@ const loginedMenuOptions: MenuOption[] = [
         path: "/domain/verification",
         label: "所有权验证",
         key: "domain-verification",
-        icon: renderIcon(Key),
+        icon: renderIcon(VerifiedOutlined),
       },
       {
         path: "/domain/icp",
         label: "ICP 备案白名单",
         key: "domain-icp",
-        icon: renderIcon(Key),
+        icon: renderIcon(List),
       },
     ],
   },

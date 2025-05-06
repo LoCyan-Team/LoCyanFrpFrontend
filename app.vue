@@ -120,8 +120,8 @@ async function fetchSiteData() {
   }
 }
 
-onMounted(() => {
-  fetchSiteData();
+onMounted(async () => {
+  await fetchSiteData();
 
   loaded.value = true;
 });

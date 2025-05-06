@@ -17,17 +17,23 @@
             clearable
             style="width: 100%; margin-right: 1rem"
           />
-          <n-button type="success" secondary @click="loadCaptcha"
-            >获取验证码</n-button
+          <n-button
+            type="success"
+            secondary
+            :loading="loading.emailCode"
+            :disabled="loading.emailCode"
+            @click="loadCaptcha"
           >
+            获取验证码
+          </n-button>
           <captcha-dialog
             :show="captcha.show"
             :type="captcha.config.type"
-            :vaptcha-scene="2"
+            :vaptcha-scene="4"
             @error="
               (code: unknown) => {
                 message.error('发生错误: ' + code);
-                capcha.show = false;
+                captcha.show = false;
               }
             "
             @unsupported="
@@ -57,7 +63,12 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="handleResetPassword">
+            <n-button
+              type="success"
+              :loading="loading.reset"
+              :disabled="loading.reset"
+              @click="handleResetPassword"
+            >
               重置
             </n-button>
           </n-space>
@@ -71,6 +82,9 @@
 import { useMainStore } from "@/store/main";
 
 import { Client as ApiClient } from "@/api/src/client";
+import { GetCaptcha } from "@/api/src/api/captcha.get";
+import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
+import { PutPassword } from "@/api/src/api/user/password.put";
 
 definePageMeta({
   title: "重置密码",
@@ -79,19 +93,35 @@ definePageMeta({
 });
 
 const message = useMessage();
+const notification = useNotification();
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token);
+client.initClient();
+
+const loading = ref<{
+  reset: boolean;
+  emailCode: boolean;
+}>({
+  reset: false,
+  emailCode: false,
+});
 
 const resetPasswordForm = ref<{
   user: string | null;
-  verifyCode: string | null;
+  verifyCode: number | null;
   password: string | null;
 }>({
   user: null,
   verifyCode: null,
   password: null,
 });
+
+const data: {
+  userId: number | null;
+} = {
+  userId: null,
+};
 
 const captcha = ref<{
   show: boolean;
@@ -108,22 +138,55 @@ const captcha = ref<{
 });
 
 async function loadCaptcha() {
-  loading.value.login = true;
-  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  loading.value.emailCode = true;
+  const rs = await client.execute(new GetCaptcha({ action: "reset-password" }));
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;
     captcha.value.show = true;
   } else message.error(rs.message);
-  loading.value.login = false;
+  loading.value.emailCode = false;
 }
 
-function handleEmailCodeSend(token: string, server?: string) {
-  // TODO
+async function handleEmailCodeSend(token: string, server?: string) {
+  captcha.value.show = false;
+  loading.value.emailCode = true;
+  const rs = await client.execute(
+    new GetEmailCode({
+      user: resetPasswordForm.value.user!,
+      captcha_id: captcha.value.config.id!,
+      captcha_token: token,
+      captcha_server: server,
+    }),
+  );
+  if (rs.status === 200) {
+    data.userId = rs.data.user_id;
+    notification.success({
+      title: "已发送",
+      content: "若未收到请检查垃圾箱。",
+    });
+  } else message.error(rs.message);
+  loading.value.emailCode = false;
 }
 
-function handleResetPassword() {
-  // TODO
+async function handleResetPassword() {
+  loading.value.reset = true;
+  const rs = await client.execute(
+    new PutPassword({
+      user_id: data.userId!,
+      new_password: resetPasswordForm.value.password!,
+      verify_code: resetPasswordForm.value.verifyCode!,
+    }),
+  );
+  if (rs.status === 200) {
+    notification.success({
+      title: "重置密码成功",
+      content: "重置密码成功，已为您导航至登录。",
+      duration: 2500,
+    });
+    navigateTo("/auth/login");
+  } else message.error(rs.message);
+  loading.value.reset = false;
 }
 </script>
 

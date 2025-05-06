@@ -11,6 +11,7 @@ export default defineNuxtPlugin(() => {
         notification.success({
           title: "复制成功",
           content: "内容已成功复制到剪贴板！",
+          duration: 2500,
         });
         return true;
         // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -19,6 +20,7 @@ export default defineNuxtPlugin(() => {
         notification.error({
           title: "复制失败",
           content: error.message || "复制内容到剪贴板失败，请重试。",
+          duration: 2500,
         });
         return false;
       }
@@ -26,6 +28,7 @@ export default defineNuxtPlugin(() => {
       notification.warning({
         title: "不支持的浏览器",
         content: "您的浏览器不支持剪贴板 API，无法进行复制操作。",
+        duration: 2500,
       });
       return false;
     }

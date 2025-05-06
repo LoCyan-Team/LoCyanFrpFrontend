@@ -13,7 +13,7 @@
         <n-form-item label="邮箱" path="email">
           <n-input
             v-model:value="registerForm.email"
-            type="email"
+            type="text"
             placeholder="邮箱"
           />
         </n-form-item>
@@ -24,17 +24,23 @@
             clearable
             style="width: 100%; margin-right: 1rem"
           />
-          <n-button type="success" secondary @click="loadCaptcha">
+          <n-button
+            type="success"
+            secondary
+            :loading="loading.emailCode"
+            :disabled="loading.emailCode"
+            @click="loadCaptcha"
+          >
             获取验证码
           </n-button>
           <captcha-dialog
             :show="captcha.show"
             :type="captcha.config.type"
-            :vaptcha-scene="2"
+            :vaptcha-scene="3"
             @error="
               (code: unknown) => {
                 message.error('发生错误: ' + code);
-                capcha.show = false;
+                captcha.show = false;
               }
             "
             @unsupported="
@@ -71,7 +77,14 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="handleRegister">注册</n-button>
+            <n-button
+              type="success"
+              :loading="loading.register"
+              :disabled="loading.register"
+              @click="handleRegister"
+            >
+              注册
+            </n-button>
           </n-space>
         </n-el>
       </n-form>
@@ -82,6 +95,9 @@
 import { useMainStore } from "@/store/main";
 
 import { Client as ApiClient } from "@/api/src/client";
+import { GetCaptcha } from "@/api/src/api/captcha.get";
+import { PostRegister } from "@/api/src/api/auth/register.post";
+import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
 
 definePageMeta({
   title: "注册",
@@ -90,9 +106,19 @@ definePageMeta({
 });
 
 const message = useMessage();
+const notification = useNotification();
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token);
+client.initClient();
+
+const loading = ref<{
+  register: boolean;
+  emailCode: boolean;
+}>({
+  register: false,
+  emailCode: false,
+});
 
 const registerForm = ref<{
   username: string | null;
@@ -123,22 +149,60 @@ const captcha = ref<{
 });
 
 async function loadCaptcha() {
-  loading.value.login = true;
-  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  loading.value.emailCode = true;
+  const rs = await client.execute(new GetCaptcha({ action: "register" }));
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;
     captcha.value.show = true;
   } else message.error(rs.message);
-  loading.value.login = false;
+  loading.value.emailCode = false;
 }
 
-function handleEmailCodeSend(token: string, server?: string) {
-  // TODO
+async function handleEmailCodeSend(token: string, server?: string) {
+  captcha.value.show = false;
+  loading.value.emailCode = true;
+  const rs = await client.execute(
+    new GetEmailCode({
+      email: registerForm.value.email!,
+      captcha_id: captcha.value.config.id!,
+      captcha_token: token,
+      captcha_server: server,
+    }),
+  );
+  if (rs.status === 200) {
+    notification.success({
+      title: "已发送",
+      content: "若未收到请检查垃圾箱。",
+    });
+  } else message.error(rs.message);
+  loading.value.emailCode = false;
 }
 
-function handleRegister() {
-  // TODO
+async function handleRegister() {
+  if (registerForm.value.password !== registerForm.value.confirmPassword) {
+    message.error("两次输入的密码不匹配");
+    return;
+  }
+
+  loading.value.register = true;
+  const rs = await client.execute(
+    new PostRegister({
+      username: registerForm.value.username!,
+      password: registerForm.value.password!,
+      email: registerForm.value.email!,
+      verify_code: registerForm.value.verifyCode!,
+    }),
+  );
+  if (rs.status === 200) {
+    notification.success({
+      title: "注册成功",
+      content: "注册成功，已为您导航至登录。",
+      duration: 2500,
+    });
+    navigateTo("/auth/login");
+  } else message.error(rs.message);
+  loading.value.register = false;
 }
 </script>
 

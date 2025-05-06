@@ -44,7 +44,7 @@
               @error="
                 (code: unknown) => {
                   message.error('发生错误: ' + code);
-                  capcha.show = false;
+                  captcha.show = false;
                 }
               "
               @unsupported="
@@ -105,6 +105,7 @@ definePageMeta({
 });
 
 const message = useMessage();
+const notification = useNotification();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
@@ -155,6 +156,7 @@ async function loadCaptcha() {
 }
 
 async function handleLogin(token: string, server?: string) {
+  captcha.value.show = false;
   loading.value.login = true;
   const rs = await client.execute(
     new PostLogin({
@@ -165,7 +167,6 @@ async function handleLogin(token: string, server?: string) {
       captcha_server: server,
     }),
   );
-  console.log(rs);
   if (rs.status === 200) {
     mainStore.token = rs.data.token;
     userStore.frpToken = rs.data.frp_token;
@@ -177,11 +178,13 @@ async function handleLogin(token: string, server?: string) {
     userStore.avatar = rs.data.user_info.avatar;
     userStore.registerTime = rs.data.user_info.register_time;
 
+    notification.success({
+      title: "登录成功",
+      content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
+      duration: 2500,
+    });
     navigateTo("/dashboard");
-  } else {
-    message.error(rs.message);
-  }
-  captcha.value.show = false;
+  } else message.error(rs.message);
   loading.value.login = false;
 }
 

@@ -164,6 +164,7 @@ async function handleEmailCodeSend(token: string, server?: string) {
     notification.success({
       title: "已发送",
       content: "若未收到请检查垃圾箱。",
+      duration: 2500,
     });
   } else message.error(rs.message);
   loading.value.emailCode = false;

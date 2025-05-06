@@ -66,8 +66,8 @@ import "@/assets/css/style.css";
 
 import type { NuxtError } from "#app";
 
-import SiteHeader from "@/components/header.vue";
-import SiteFooter from "@/components/footer.vue";
+import SiteHeader from "@/components/Header.vue";
+import SiteFooter from "@/components/Footer.vue";
 
 import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
 

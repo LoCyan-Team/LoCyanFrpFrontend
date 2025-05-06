@@ -14,6 +14,13 @@ export default defineNuxtConfig({
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
   ],
+  runtimeConfig: {
+    public: {
+      devMode: false,
+      turnstileSitekey: null,
+      vaptchaVid: null,
+    },
+  },
   vite: {
     plugins: [
       AutoImport({

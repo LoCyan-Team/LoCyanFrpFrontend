@@ -25,7 +25,7 @@
               </n-gi>
               <n-gi span="1">
                 <n-statistic label="隧道数量限制" tabular-nums>
-                  <n-number-animation :from="0" :to="userStore.limit.tunnels" />
+                  <n-number-animation :from="0" :to="userStore.limit.tunnel" />
                   <template #suffix>条</template>
                 </n-statistic>
               </n-gi>

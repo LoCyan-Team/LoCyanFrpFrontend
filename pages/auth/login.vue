@@ -29,7 +29,14 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" @click="loadCaptcha">登录</n-button>
+            <n-button
+              type="success"
+              :loading="loading.login"
+              :disabled="loading.login"
+              @click="loadCaptcha"
+            >
+              登录
+            </n-button>
             <captcha-dialog
               :show="captcha.show"
               :type="captcha.config.type"
@@ -54,10 +61,10 @@
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
       <n-button
-        @click="handlePasskeyLogin"
         type="success"
         secondary
         style="width: 100%"
+        @click="handlePasskeyLogin"
       >
         通行密钥登录
       </n-button>
@@ -68,8 +75,8 @@
         <n-spin :show="loading.threeSide">
           <n-button
             type="info"
-            @click="handleThirdPartyLogin(ThirdParty.QQ)"
             circle
+            @click="handleThirdPartyLogin(ThirdParty.QQ)"
           >
             <n-icon>
               <Qq />
@@ -84,16 +91,32 @@
 <script setup lang="ts">
 import { Qq } from "@vicons/fa";
 
+import { useMainStore } from "@/store/main";
+import { useUserStore } from "@/store/user";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { GetCaptcha } from "@/api/src/api/captcha.get";
+import { PostLogin } from "@/api/src/api/auth/login.post";
+
 definePageMeta({
   title: "登录",
   needLogin: false,
   redirectLogined: true,
 });
 
+const message = useMessage();
+
+const mainStore = useMainStore();
+const userStore = useUserStore();
+const client = new ApiClient(mainStore.token);
+client.initClient();
+
 const loading = ref<{
+  login: boolean;
   threeSide: boolean;
   passkey: boolean;
 }>({
+  login: false,
   threeSide: false,
   passkey: false,
 });
@@ -109,28 +132,64 @@ const loginForm = ref<{
 const captcha = ref<{
   show: boolean;
   config: {
+    id: string | null;
     type: string | null;
   };
 }>({
   show: false,
   config: {
+    id: null,
     type: null,
   },
 });
 
-function loadCaptcha() {
+async function loadCaptcha() {
+  loading.value.login = true;
+  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  if (rs.status === 200) {
+    captcha.value.config.id = rs.data.id;
+    captcha.value.config.type = rs.data.type;
+    captcha.value.show = true;
+  } else message.error(rs.message);
+  loading.value.login = false;
+}
+
+async function handleLogin(token: string, server?: string) {
+  loading.value.login = true;
+  const rs = await client.execute(
+    new PostLogin({
+      user: loginForm.value.user!,
+      password: loginForm.value.password!,
+      captcha_id: captcha.value.config.id!,
+      captcha_token: token,
+      captcha_server: server,
+    }),
+  );
+  console.log(rs);
+  if (rs.status === 200) {
+    mainStore.token = rs.data.token;
+    userStore.frpToken = rs.data.frp_token;
+    userStore.username = rs.data.user_info.username;
+    userStore.email = rs.data.user_info.email;
+    userStore.group = rs.data.user_info.group;
+    userStore.limit = rs.data.user_info.limit;
+    userStore.traffic = rs.data.user_info.traffic;
+    userStore.avatar = rs.data.user_info.avatar;
+    userStore.registerTime = rs.data.user_info.register_time;
+
+    navigateTo("/dashboard");
+  } else {
+    message.error(rs.message);
+  }
+  captcha.value.show = false;
+  loading.value.login = false;
+}
+
+async function handlePasskeyLogin() {
   // TODO
 }
 
-function handleLogin(token: string, server: string | null) {
-  // TODO
-}
-
-function handlePasskeyLogin() {
-  // TODO
-}
-
-function handleThirdPartyLogin(type: ThirdParty) {
+async function handleThirdPartyLogin(type: ThirdParty) {
   // TODO
 }
 

@@ -71,12 +71,16 @@ import hljs from "highlight.js/lib/core";
 import ini from "highlight.js/lib/languages/ini";
 import nginx from "highlight.js/lib/languages/nginx";
 
+import { useMainStore } from "@/store/main";
 import { usePageStore } from "@/store/page";
 
-const { public: publicConfig } = useRuntimeConfig();
+import { Client as ApiClient } from "@/api/src/client";
+import { GetNotice } from "@/api/src/api/site/notice.get";
+
+const runtimeConfig = useRuntimeConfig();
 
 const env = {
-  devMode: publicConfig.DEV_MODE === "true",
+  devMode: runtimeConfig.public.devMode,
 };
 
 useHead({
@@ -92,6 +96,9 @@ useHead({
   title: "LoCyanFrp Dashboard",
 });
 
+const api = new ApiClient();
+api.initClient();
+
 const loaded = ref<boolean>(false);
 
 hljs.registerLanguage("ini", ini);
@@ -103,8 +110,20 @@ const pageSidebar = computed(() => pageStore.sidebar);
 const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
 
+const mainStore = useMainStore();
+
+async function fetchSiteData() {
+  const notice = await api.execute(new GetNotice());
+  if (notice.status === 200) {
+    mainStore.site.broadcast = notice.data.broadcast;
+    mainStore.site.announcement = notice.data.announcement;
+  }
+}
+
 onMounted(() => {
   loaded.value = true;
+
+  fetchSiteData();
 });
 </script>
 

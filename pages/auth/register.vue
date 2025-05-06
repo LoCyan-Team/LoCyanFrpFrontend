@@ -79,11 +79,20 @@
   </n-el>
 </template>
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
+
+import { Client as ApiClient } from "@/api/src/client";
+
 definePageMeta({
   title: "注册",
   needLogin: false,
   redirectLogined: true,
 });
+
+const message = useMessage();
+
+const mainStore = useMainStore();
+const client = new ApiClient(mainStore.token);
 
 const registerForm = ref<{
   username: string | null;
@@ -102,20 +111,29 @@ const registerForm = ref<{
 const captcha = ref<{
   show: boolean;
   config: {
+    id: string | null;
     type: string | null;
   };
 }>({
   show: false,
   config: {
+    id: null,
     type: null,
   },
 });
 
-function loadCaptcha() {
-  // TODO
+async function loadCaptcha() {
+  loading.value.login = true;
+  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  if (rs.status === 200) {
+    captcha.value.config.id = rs.data.id;
+    captcha.value.config.type = rs.data.type;
+    captcha.value.show = true;
+  } else message.error(rs.message);
+  loading.value.login = false;
 }
 
-function handleEmailCodeSend(token: string, server: string | null) {
+function handleEmailCodeSend(token: string, server?: string) {
   // TODO
 }
 

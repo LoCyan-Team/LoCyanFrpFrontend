@@ -1,12 +1,16 @@
 import axios from "axios";
 import QS from "qs";
 import { Method } from "./type/method";
-import type { AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import type { InternalAxiosRequestConfig, AxiosError, AxiosInstance, AxiosResponse } from "axios";
 import type { API } from "./type/api";
 import { Response } from "./type/response";
 
 export interface ApiUrlConfig {
   v2: {
+    main: string;
+    backup: string;
+  };
+  v3: {
     main: string;
     backup: string;
   };
@@ -17,17 +21,21 @@ export class DefaultApiUrlConfig implements ApiUrlConfig {
     main: "https://api.locyanfrp.cn/v2",
     backup: "https://backup.api.locyanfrp.cn/v2",
   };
+  v3 = {
+    main: "https://api.locyanfrp.cn/v3",
+    backup: "https://api.locyanfrp.cn/v3",
+  };
 }
 
 export class Client {
-  private token: string;
+  private token: string | undefined;
 
   private instance: AxiosInstance;
 
   private urlConfig: ApiUrlConfig;
 
   constructor(
-    token: string,
+    token?: string,
     timeout: number = 10000,
     apiUrlConfig: ApiUrlConfig = new DefaultApiUrlConfig(),
   ) {
@@ -35,7 +43,7 @@ export class Client {
     this.urlConfig = apiUrlConfig;
 
     this.instance = axios.create({
-      baseURL: apiUrlConfig.v2.main,
+      baseURL: apiUrlConfig.v3.main,
       timeout: timeout,
     });
   }
@@ -99,6 +107,15 @@ export class Client {
   }
 
   public initClient() {
+    this.instance.interceptors.request.use(
+      (config: InternalAxiosRequestConfig) => {
+        if (this.token) {
+          config.headers!.Authorization = `Bearer ${this.token}`
+        }
+        return config
+      },
+      (error) => Promise.reject(error)
+    )
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error: AxiosError) => {
@@ -107,8 +124,8 @@ export class Client {
         else {
           // 如果请求失败并且没有响应，尝试备用域名重试
           const config = error.config!;
-          if (config.baseURL === this.urlConfig.v2.backup) return error;
-          config.baseURL = this.urlConfig.v2.backup;
+          if (config.baseURL === this.urlConfig.v3.backup) return error;
+          config.baseURL = this.urlConfig.v3.backup;
 
           // 重试请求
           let response;

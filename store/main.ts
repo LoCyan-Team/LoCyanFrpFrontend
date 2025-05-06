@@ -4,16 +4,13 @@ export const useMainStore = defineStore(
     state: () => ({
       token: null,
       userId: null,
+      site: {
+        broadcast: null,
+        announcement: null,
+      },
     }),
     getters: {},
-    actions: {
-      setToken(token: string) {
-        this.token = token;
-      },
-      setUserId(userId: number) {
-        this.userId = userId;
-      },
-    },
+    actions: {},
   },
   {
     perist: true,

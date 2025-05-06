@@ -103,7 +103,7 @@ const loginedMenuOptions: MenuOption[] = [
     icon: renderIcon(PencilSharp),
   },
   {
-    label: "隧道操作",
+    label: "隧道",
     key: "tunnel-actions",
     icon: renderIcon(PaperPlane),
     children: [

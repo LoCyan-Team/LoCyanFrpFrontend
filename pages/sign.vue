@@ -29,7 +29,7 @@
                   您是今天第 {{ data.ranking.me }} 位签到的用户
                 </n-text>
                 <br /><n-text>
-                  累计签到 {{ data.totalSign }} 次，获取流量 {{ data.ranking.me }} GiB
+                  累计签到 {{ data.totalSign }} 次，获取流量 {{ data.totalGetTraffic }} GiB
                 </n-text>
               </n-el>
               <n-image
@@ -114,7 +114,7 @@ onMounted(async () => {
   if (rs.status === 200) {
     data.value.signed = rs.data.status;
     data.value.totalSign = rs.data.total_sign;
-    data.value.totalGetTraffic = rs.data.total_get_raffic;
+    data.value.totalGetTraffic = rs.data.total_get_traffic;
     data.value.lastSign = dayjs(rs.data.last_sign).format("L LT");
   } else message.error(rs.message);
 

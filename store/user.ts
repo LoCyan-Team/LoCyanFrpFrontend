@@ -1,7 +1,29 @@
+interface Group {
+  id: number;
+  name: string;
+}
+
+interface Limit {
+  tunnel: number;
+  inbound: number;
+  outbound: number;
+}
+
+interface UserState {
+  username: string | null;
+  email: string | null;
+  frpToken: string | null;
+  group: Group;
+  limit: Limit;
+  traffic: number;
+  avatar: string;
+  registerTime: string | null;
+}
+
 export const useUserStore = defineStore(
   "user",
-  {
-    state: () => ({
+  () => {
+    const state = reactive<UserState>({
       username: null,
       email: null,
       frpToken: null,
@@ -14,14 +36,14 @@ export const useUserStore = defineStore(
         inbound: 0,
         outbound: 0,
       },
-      traffic: null,
+      traffic: 0,
       avatar: "https://weavatar.com/avatar/",
       registerTime: null,
-    }),
-    getters: {},
-    actions: {},
+    });
+
+    return { ...toRefs(state) };
   },
   {
-    perist: true,
+    persist: true,
   },
 );

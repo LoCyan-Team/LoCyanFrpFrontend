@@ -26,11 +26,11 @@
       </n-button>
       <n-dropdown :options="avatarOptions" @select="handleAvatarOptionSelect">
         <n-avatar
+          v-show="mainStore.token !== null"
           round
           size="medium"
           style="margin-top: 15px; margin-right: 23px"
           :src="userStore.avatar"
-          v-show="mainStore.token !== null"
         />
       </n-dropdown>
     </n-space>

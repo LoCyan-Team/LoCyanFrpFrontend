@@ -169,6 +169,7 @@ async function handleLogin(token: string, server?: string) {
   );
   if (rs.status === 200) {
     mainStore.token = rs.data.token;
+    mainStore.userId = rs.data.user_id;
     userStore.frpToken = rs.data.frp_token;
     userStore.username = rs.data.user_info.username;
     userStore.email = rs.data.user_info.email;

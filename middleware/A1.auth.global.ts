@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware((to, _) => {
 
   if (token === null) {
     const router = useRouter();
-    const routeExists = router.hasRoute(to.name);
+    const routeExists = router.hasRoute(to.name!);
 
     if (routeExists) {
       pageStore.setSidebarMode("guest");

@@ -1,20 +1,27 @@
+interface PageState {
+  sidebar: boolean;
+  sidebarMode: string;
+}
+
 export const usePageStore = defineStore(
   "page",
-  {
-    state: () => ({
+  () => {
+    const state = reactive<PageState>({
       sidebar: true,
       sidebarMode: "guest",
-    }),
-    actions: {
+    });
+    const actions = {
       setSidebar(show: boolean) {
-        this.sidebar = show;
+        state.sidebar = show;
       },
       setSidebarMode(mode: string) {
-        this.sidebarMode = mode;
+        state.sidebarMode = mode;
       },
-    },
+    };
+
+    return { ...toRefs(state), ...actions };
   },
   {
-    perist: false,
+    persist: false,
   },
 );

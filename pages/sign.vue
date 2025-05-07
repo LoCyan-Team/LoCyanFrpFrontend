@@ -23,12 +23,13 @@
             <n-space vertical>
               <n-el>
                 <n-text>今日 {{ data.ranking.total }} 人已签到</n-text>
-                <br /><n-text>上次签到在 {{ data.lastSign }}</n-text>
+                <br /><n-text v-if="data.lastSign">上次签到在 {{ data.lastSign }}</n-text>
+                <n-text v-else>您还没有签过到</n-text>
                 <br v-if="data.signed" /><n-text v-if="data.signed">
                   您是今天第 {{ data.ranking.me }} 位签到的用户
                 </n-text>
                 <br /><n-text>
-                  累计签到获取流量 {{ data.ranking.me }} GiB
+                  累计签到 {{ data.totalSign }} 次，获取流量 {{ data.ranking.me }} GiB
                 </n-text>
               </n-el>
               <n-image
@@ -46,15 +47,32 @@
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { GetSign } from "@/api/src/api/sign.get";
+import { PostSign } from "@/api/src/api/sign.post";
+
 definePageMeta({
   title: "签到",
 });
+
+const dayjs = useDayjs()
+
+const mainStore = useMainStore();
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+const dialog = useDialog();
 
 const loading = ref<boolean>(true);
 
 const data = ref<{
   signed: boolean;
   lastSign: string | null;
+  totalSign: number;
+  totalGetTraffic: number;
   ranking: {
     total: number;
     me: number;
@@ -62,15 +80,44 @@ const data = ref<{
 }>({
   signed: false,
   lastSign: null,
+  totalSign: 0,
+  totalGetTraffic: 0,
   ranking: {
     total: 0,
     me: 0,
   },
 });
 
-function handleSign() {
-  // TODO
+async function handleSign() {
+  const rs = await client.execute(
+    new PostSign({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.signed = true
+    data.value.totalSign += rs.data.get_traffic
+    data.value.lastSign = dayjs().format("L LT")
+    dialog.success({
+      title: "签到成功",
+      content: `本次签到获得 ${rs.data.get_traffic} GiB 流量${rs.data.first_sign ? "，这是您的首次签到。" : "。"}`,
+    });
+  } else message.error(rs.message);
 }
 
-onMounted(() => (loading.value = false));
+onMounted(async () => {
+  const rs = await client.execute(
+    new GetSign({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.signed = rs.data.status;
+    data.value.totalSign = rs.data.total_sign;
+    data.value.totalGetTraffic = rs.data.total_get_raffic;
+    data.value.lastSign = dayjs(rs.data.last_sign).format("L LT");
+  } else message.error(rs.message);
+
+  loading.value = false;
+});
 </script>

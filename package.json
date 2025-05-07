@@ -23,6 +23,8 @@
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "api": "./api",
+    "dayjs": "^1.11.13",
+    "dayjs-nuxt": "^2.1.11",
     "eslint": "^9.0.0",
     "eslint-config-prettier": "^10.1.2",
     "eslint-plugin-prettier": "^5.2.6",

@@ -95,8 +95,7 @@ definePageMeta({
 const message = useMessage();
 const notification = useNotification();
 
-const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token);
+const client = new ApiClient();
 client.initClient();
 
 const loading = ref<{

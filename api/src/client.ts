@@ -22,8 +22,9 @@ export class DefaultApiUrlConfig implements ApiUrlConfig {
     backup: "https://backup.api.locyanfrp.cn/v2",
   };
   v3 = {
-    main: "https://api.locyanfrp.cn/v3",
-    backup: "https://api.locyanfrp.cn/v3",
+    main: "http://localhost:8081",
+    // main: "https://api.locyanfrp.cn/v3",
+    backup: "https://backup.api.locyanfrp.cn/v3",
   };
 }
 

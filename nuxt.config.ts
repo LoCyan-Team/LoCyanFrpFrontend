@@ -13,6 +13,7 @@ export default defineNuxtConfig({
     "nuxt-umami",
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
+    "dayjs-nuxt",
   ],
   runtimeConfig: {
     public: {
@@ -42,6 +43,12 @@ export default defineNuxtConfig({
   },
   piniaPluginPersistedstate: {
     storage: "localStorage",
+  },
+  dayjs: {
+    locales: ['zh-cn'],
+    defaultLocale: 'zh-cn',
+    plugins: ['timezone', 'localizedFormat'],
+    defaultTimezone: 'Asia/Shanghai',
   },
   umami: {
     enabled: true,

@@ -209,10 +209,11 @@ enum ThirdParty {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-block: 0.5rem;
 }
 @media screen and (max-width: 500px) {
   .login-box {
-    margin-inline: 1rem;
+    margin-inline: 0.5rem;
   }
 }
 </style>

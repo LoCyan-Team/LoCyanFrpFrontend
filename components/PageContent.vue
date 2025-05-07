@@ -22,7 +22,7 @@ const page = ref(undefined);
 </script>
 
 <style scoped>
-.outbox {
-  padding: 1rem;
+.container {
+  padding: 0.5rem;
 }
 </style>

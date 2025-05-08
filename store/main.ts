@@ -7,19 +7,25 @@ interface MainState {
   };
 }
 
+const defaultState = {
+  token: null,
+  userId: null,
+  site: {
+    broadcast: null,
+    announcement: null,
+  },
+};
+
 export const useMainStore = defineStore(
   "main",
   () => {
-    const state = reactive<MainState>({
-      token: null,
-      userId: null,
-      site: {
-        broadcast: null,
-        announcement: null,
-      },
-    });
+    const state = reactive<MainState>({ ...defaultState });
 
-    return { ...toRefs(state) };
+    function $reset() {
+      Object.assign(state, defaultState);
+    }
+
+    return { ...toRefs(state), $reset };
   },
   {
     persist: true,

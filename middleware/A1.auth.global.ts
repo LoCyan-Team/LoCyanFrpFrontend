@@ -14,6 +14,7 @@ export default defineNuxtRouteMiddleware((to, _) => {
         path: "/dashboard",
       });
     }
+    pageStore.setSidebarMode("guest");
     return;
   }
 

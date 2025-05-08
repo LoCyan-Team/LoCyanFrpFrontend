@@ -20,28 +20,34 @@ interface UserState {
   registerTime: string | null;
 }
 
+const defaultState = {
+  username: null,
+  email: null,
+  frpToken: null,
+  group: {
+    id: 0,
+    name: "未知权限组",
+  },
+  limit: {
+    tunnel: 0,
+    inbound: 0,
+    outbound: 0,
+  },
+  traffic: 0,
+  avatar: "https://weavatar.com/avatar/",
+  registerTime: null,
+};
+
 export const useUserStore = defineStore(
   "user",
   () => {
-    const state = reactive<UserState>({
-      username: null,
-      email: null,
-      frpToken: null,
-      group: {
-        id: 0,
-        name: "未知权限组",
-      },
-      limit: {
-        tunnel: 0,
-        inbound: 0,
-        outbound: 0,
-      },
-      traffic: 0,
-      avatar: "https://weavatar.com/avatar/",
-      registerTime: null,
-    });
+    const state = reactive<UserState>({ ...defaultState });
 
-    return { ...toRefs(state) };
+    function $reset() {
+      Object.assign(state, defaultState);
+    }
+
+    return { ...toRefs(state), $reset };
   },
   {
     persist: true,

@@ -42,9 +42,12 @@ import { MdNotifications } from "@vicons/ionicons4";
 import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
+import { usePageStore } from "@/store/page";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
+
+const notification = useNotification();
 
 const avatarOptions = [
   {
@@ -64,6 +67,14 @@ function handleAvatarOptionSelect(key) {
     case "profile":
       break;
     case "logout":
+      mainStore.$reset();
+      userStore.$reset();
+      notification.success({
+        title: "已登出",
+        content: "已登出，感谢您的使用。",
+        duration: 2500,
+      });
+      navigateTo("/auth/login");
   }
 }
 </script>

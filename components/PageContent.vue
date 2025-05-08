@@ -23,6 +23,6 @@ const page = ref(undefined);
 
 <style scoped>
 .container {
-  padding: 0.5rem;
+  padding: 1rem;
 }
 </style>

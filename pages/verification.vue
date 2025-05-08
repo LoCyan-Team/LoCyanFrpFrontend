@@ -7,7 +7,7 @@
       <n-alert title="请勿冒用他人信息实名" type="warning">
         我们允许未成年人注册，请勿冒用非本人身份证实名，已经实名过得既往不咎！
       </n-alert>
-      <n-spin :show="loading">
+      <n-spin :show="loading.page">
         <n-space vertical>
           <!-- 总览 -->
           <n-card title="认证总览">
@@ -40,6 +40,8 @@
                     <n-space>
                       <n-button
                         type="success"
+                        :loading="loading.buyAccreditation"
+                        :disabled="loading.buyAccreditation"
                         @click="handleBuyRealPersonAccreditation()"
                       >
                         购买
@@ -47,9 +49,11 @@
                       <n-button
                         type="success"
                         secondary
+                        :loading="loading.buyAccreditation"
+                        :disabled="loading.buyAccreditation"
                         @click="handleRefreshBuyRealPersonAccreditation()"
                       >
-                        刷新付款状态
+                        刷新状态
                       </n-button>
                     </n-space>
                   </n-tab-pane>
@@ -63,7 +67,7 @@
                         label="目标用户 ID"
                         path="giftAccreditationUserId"
                       >
-                        <n-input
+                        <n-input-number
                           v-model:value="
                             verificationForm.giftAccreditationUserId
                           "
@@ -72,6 +76,8 @@
                       </n-form-item>
                       <n-button
                         type="success"
+                        :loading="loading.giftAccreditation"
+                        :disabled="loading.giftAccreditation"
                         @click="handleGiftRealPersonAccreditation()"
                       >
                         赠送
@@ -122,12 +128,17 @@
                       <n-space>
                         <n-button
                           type="success"
+                          :loading="loading.realPerson"
+                          :disabled="loading.realPerson"
                           @click="handleRealPersonQrCode()"
-                          >提交</n-button
                         >
+                          提交
+                        </n-button>
                         <n-button
                           type="success"
                           secondary
+                          :loading="loading.realPerson"
+                          :disabled="loading.realPerson"
                           @click="handleRefreshRealPerson()"
                         >
                           刷新状态
@@ -135,6 +146,8 @@
                         <n-button
                           type="error"
                           secondary
+                          :loading="loading.realPerson"
+                          :disabled="loading.realPerson"
                           @click="handleResetRealPerson()"
                         >
                           重置认证状态
@@ -173,9 +186,14 @@
                     placeholder="您的身份证号"
                   />
                 </n-form-item>
-                <n-button type="success" @click="handleRealName()"
-                  >提交</n-button
+                <n-button
+                  type="success"
+                  :loading="loading.realName"
+                  :disabled="loading.realName"
+                  @click="handleRealName()"
                 >
+                  提交
+                </n-button>
               </n-form>
             </n-spin>
           </n-card>
@@ -187,7 +205,7 @@
       :mask-closable="false"
       preset="card"
       style="max-width: 600px"
-      title="请使用支付宝扫描二维码"
+      title="请使用支付宝扫描二维码进行认证"
       :bordered="false"
       content-style="text-align: center;"
       footer-style="text-align: center;"
@@ -198,22 +216,57 @@
         :error-correction-level="'L'"
       />
       <template #footer>
-        <n-button type="success" @click="handleRefreshRealPerson()"
-          >刷新状态</n-button
+        <n-button
+          type="success"
+          :loading="loading.realPerson"
+          :disabled="loading.realPerson"
+          @click="handleRefreshRealPerson()"
         >
+          刷新状态
+        </n-button>
       </template>
     </n-modal>
   </page-content>
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
+
 import { FileDownloadDoneOutlined } from "@vicons/material";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { GetVerification as GetStatus } from "@/api/src/api/verification.get";
+import { PostPayment as PostBuyAccreditation } from "@/api/src/api/verification/real-person/payment.post";
+import { PostGiven as PostGivenAccreditation } from "@/api/src/api/verification/real-person/given.post";
+import { PostRealPerson } from "@/api/src/api/verification/real-person.post";
+import { GetRealPerson } from "@/api/src/api/verification/real-person.get";
+import { DeleteRealPerson } from "@/api/src/api/verification/real-person.delete";
+import { PostRealName } from "@/api/src/api/verification/real-name.post";
 
 definePageMeta({
   title: "身份认证",
 });
 
-const loading = ref(true);
+const mainStore = useMainStore();
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+const dialog = useDialog();
+
+const loading = ref<{
+  page: boolean;
+  realName: boolean;
+  realPerson: boolean;
+  buyAccreditation: boolean;
+  giftAccreditation: boolean;
+}>({
+  page: true,
+  realName: false,
+  realPerson: false,
+  buyAccreditation: false,
+  giftAccreditation: false,
+});
 
 const data = ref<{
   realName: boolean;
@@ -274,35 +327,141 @@ const options = {
   ],
 };
 
-function handleBuyRealPersonAccreditation() {
-  // TODO
+async function handleBuyRealPersonAccreditation() {
+  loading.value.buyAccreditation = true;
+  const rs = await client.execute(
+    new PostBuyAccreditation({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    window.open(rs.data.url);
+  } else message.error(rs.message);
+  loading.value.buyAccreditation = false;
 }
 
-function handleRefreshBuyRealPersonAccreditation() {
-  // TODO
+async function handleRefreshBuyRealPersonAccreditation() {
+  loading.value.buyAccreditation = true;
+  await getStatus();
+  loading.value.buyAccreditation = false;
 }
 
-function handleGiftRealPersonAccreditation() {
-  // TODO
+async function handleGiftRealPersonAccreditation() {
+  if (verificationForm.value.giftAccreditationUserId === null)
+    return message.error("请提供赠与目标用户的 ID");
+  loading.value.giftAccreditation = true;
+  dialog.warning({
+    title: "确认",
+    content: `请确认您要赠送的目标用户 ID: ${verificationForm.value.giftAccreditationUserId}，一旦赠出无法撤销。`,
+    positiveText: "确定",
+    negativeText: "再考虑一下",
+    onPositiveClick: async () => {
+      const rs = await client.execute(
+        new PostGivenAccreditation({
+          user_id: mainStore.userId!,
+          give_user_id: verificationForm.value.giftAccreditationUserId!,
+        }),
+      );
+      if (rs.status === 200) {
+        data.value.accreditations--;
+        message.success("赠送成功");
+      } else message.error(rs.message);
+    },
+    onNegativeClick: () => {},
+  });
+  loading.value.giftAccreditation = false;
 }
 
-function handleRealPersonQrCode() {
-  // TODO
+async function handleRealPersonQrCode() {
+  loading.value.realPerson = true;
+  const rs = await client.execute(
+    new PostRealPerson({
+      user_id: mainStore.userId!,
+      name: verificationForm.value.name!,
+      id_card: verificationForm.value.idCard!,
+      id_type: verificationForm.value.idType,
+    }),
+  );
+  if (rs.status === 200) {
+    modal.value.realPerson.qrCodeUrl = rs.data.url;
+    modal.value.realPerson.show = true;
+
+    async function query(timer: NodeJS.Timeout) {
+      await handleRefreshRealPerson();
+      if (data.value.realPerson) clearTimeout(timer);
+    }
+
+    const timer = setTimeout(() => query(timer), 1000);
+  } else message.error(rs.message);
+  loading.value.realPerson = false;
 }
 
-function handleRefreshRealPerson() {
-  // TODO
-}
-function handleResetRealPerson() {
-  // TODO
+async function handleRefreshRealPerson() {
+  loading.value.realPerson = true;
+  const rs = await client.execute(
+    new GetRealPerson({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.realPerson = true;
+    data.value.accreditations--;
+    dialog.success({
+      title: "认证成功",
+      content: "一级认证成功。",
+    });
+  } else if (rs.status !== 403) message.error(rs.message);
+  loading.value.realPerson = false;
 }
 
-function handleRealName() {
-  // TODO
+async function handleResetRealPerson() {
+  loading.value.realPerson = true;
+  const rs = await client.execute(
+    new DeleteRealPerson({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) message.success("重置成功");
+  else message.error(rs.message);
+  loading.value.realPerson = false;
 }
 
-onMounted(() => {
-  loading.value = false;
+async function handleRealName() {
+  loading.value.realName = true;
+  const rs = await client.execute(
+    new PostRealName({
+      user_id: mainStore.userId!,
+      name: verificationForm.value.name!,
+      id_card: verificationForm.value.idCard!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.realName = true;
+    dialog.success({
+      title: "认证成功",
+      content: "二级认证成功。",
+    });
+  } else message.error(rs.message);
+  loading.value.realName = false;
+}
+
+async function getStatus() {
+  const resStatus = await client.execute(
+    new GetStatus({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (resStatus.status === 200) {
+    data.value.realName = resStatus.data.real_name;
+    data.value.realPerson = resStatus.data.real_person;
+    data.value.accreditations = resStatus.data.limit.real_person_accreditations;
+  } else message.error(resStatus.message);
+}
+
+onMounted(async () => {
+  await getStatus();
+
+  loading.value.page = false;
 });
 </script>
 

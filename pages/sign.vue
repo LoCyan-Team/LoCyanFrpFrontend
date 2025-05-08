@@ -22,10 +22,13 @@
           <n-card title="签到统计">
             <n-space vertical>
               <n-el>
-                <br /><n-text v-if="data.lastSign">上次签到在 {{ data.lastSign }}</n-text>
+                <br /><n-text v-if="data.lastSign">
+                  上次签到在 {{ data.lastSign }}
+                </n-text>
                 <n-text v-else>您还没有签过到</n-text>
                 <br /><n-text>
-                  累计签到 {{ data.totalSign }} 次，获取流量 {{ data.totalGetTraffic }} GiB
+                  累计签到 {{ data.totalSign }} 次，获取流量
+                  {{ data.totalGetTraffic }} GiB
                 </n-text>
               </n-el>
               <n-image
@@ -53,7 +56,7 @@ definePageMeta({
   title: "签到",
 });
 
-const dayjs = useDayjs()
+const dayjs = useDayjs();
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);
@@ -83,9 +86,9 @@ async function handleSign() {
     }),
   );
   if (rs.status === 200) {
-    data.value.signed = true
-    data.value.totalSign += rs.data.get_traffic
-    data.value.lastSign = dayjs().format("L LT")
+    data.value.signed = true;
+    data.value.totalSign += rs.data.get_traffic;
+    data.value.lastSign = dayjs().format("L LT");
     dialog.success({
       title: "签到成功",
       content: `本次签到获得 ${rs.data.get_traffic} GiB 流量${rs.data.first_sign ? "，这是您的首次签到。" : "。"}`,

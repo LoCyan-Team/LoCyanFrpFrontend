@@ -45,10 +45,10 @@ export default defineNuxtConfig({
     storage: "localStorage",
   },
   dayjs: {
-    locales: ['zh-cn'],
-    defaultLocale: 'zh-cn',
-    plugins: ['timezone', 'localizedFormat'],
-    defaultTimezone: 'Asia/Shanghai',
+    locales: ["zh-cn"],
+    defaultLocale: "zh-cn",
+    plugins: ["timezone", "localizedFormat"],
+    defaultTimezone: "Asia/Shanghai",
   },
   umami: {
     enabled: true,

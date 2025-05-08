@@ -99,7 +99,7 @@
                   <n-space vertical>
                     <n-alert title="认证失败重新发起方式" type="error">
                       若认证失败，请先点击
-                      <n-tag>重置验认状态</n-tag>
+                      <n-tag>重置认证状态</n-tag>
                       重置状态，再重新发起认证！
                     </n-alert>
                     <n-form

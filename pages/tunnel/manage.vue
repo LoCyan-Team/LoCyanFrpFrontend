@@ -161,7 +161,7 @@
                           <n-icon :component="Error" />
                         </template>
                         <template #description>已封禁</template>
-                        <n-space>
+                        <n-space :inline="true" :wrap="false">
                           <n-button type="info" secondary>详细信息</n-button>
                           <n-button type="success" secondary>修改</n-button>
                           <n-button type="error" secondary>删除</n-button>

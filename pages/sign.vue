@@ -22,12 +22,8 @@
           <n-card title="签到统计">
             <n-space vertical>
               <n-el>
-                <n-text>今日 {{ data.ranking.total }} 人已签到</n-text>
                 <br /><n-text v-if="data.lastSign">上次签到在 {{ data.lastSign }}</n-text>
                 <n-text v-else>您还没有签过到</n-text>
-                <br v-if="data.signed" /><n-text v-if="data.signed">
-                  您是今天第 {{ data.ranking.me }} 位签到的用户
-                </n-text>
                 <br /><n-text>
                   累计签到 {{ data.totalSign }} 次，获取流量 {{ data.totalGetTraffic }} GiB
                 </n-text>
@@ -73,19 +69,11 @@ const data = ref<{
   lastSign: string | null;
   totalSign: number;
   totalGetTraffic: number;
-  ranking: {
-    total: number;
-    me: number;
-  };
 }>({
   signed: false,
   lastSign: null,
   totalSign: 0,
   totalGetTraffic: 0,
-  ranking: {
-    total: 0,
-    me: 0,
-  },
 });
 
 async function handleSign() {

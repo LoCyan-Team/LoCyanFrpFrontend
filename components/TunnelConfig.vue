@@ -56,16 +56,23 @@
               </n-form-item>
               <!-- 远程端口 -->
               <n-form-item
+                v-if="hasOption.remotePort.includes(form.type)"
                 label="远程端口"
                 path="remotePort"
-                v-if="hasOption.remotePort.includes(form.type)"
               >
                 <n-space>
                   <n-input-number
                     v-model:value="form.remotePort"
+                    :loading="loading.randomPort"
                     placeholder="远程端口"
                   />
-                  <n-button @click="handleRandomRemotePort">随机端口</n-button>
+                  <n-button
+                    :loading="loading.randomPort"
+                    :disabled="loading.randomPort"
+                    @click="handleRandomRemotePort"
+                  >
+                    随机端口
+                  </n-button>
                 </n-space>
               </n-form-item>
             </n-space>
@@ -73,8 +80,8 @@
 
           <!-- 路径映射 -->
           <n-grid-item
-            span="0:2 700:1"
             v-if="hasOption.locations.includes(form.type)"
+            span="0:2 700:1"
           >
             <n-form-item label="路径映射" path="locations">
               <n-dynamic-input
@@ -88,8 +95,8 @@
 
           <!-- 自定义域名 -->
           <n-grid-item
-            span="0:2 700:1"
             v-if="hasOption.domain.includes(form.type)"
+            span="0:2 700:1"
           >
             <n-form-item label="自定义域名" path="domain">
               <n-input v-model:value="form.domain" placeholder="自定义域名" />
@@ -98,21 +105,48 @@
 
           <!-- 访问密钥 -->
           <n-grid-item
-            span="0:2 700:1"
             v-if="hasOption.secretKey.includes(form.type)"
+            span="0:2 700:1"
           >
             <n-form-item label="访问密钥" path="secretKey">
               <n-input v-model:value="form.secretKey" placeholder="访问密钥" />
             </n-form-item>
           </n-grid-item>
         </n-grid>
-        <n-button @click="handleSubmit" type="success">提交</n-button>
+        <n-divider>高级选项</n-divider>
+        <n-grid :y-gap="8" :x-gap="12" :cols="4" item-responsive>
+          <!-- 加密 -->
+          <n-grid-item span="0:4 700:1">
+            <n-form-item label="使用加密" path="useEncryption">
+              <n-switch v-model:value="form.useEncryption" />
+            </n-form-item>
+          </n-grid-item>
+          <!-- 压缩 -->
+          <n-grid-item span="0:4 700:1">
+            <n-form-item label="使用压缩" path="useCompression">
+              <n-switch v-model:value="form.useCompression" />
+            </n-form-item>
+          </n-grid-item>
+        </n-grid>
+        <n-button type="success" @click="handleSubmit">提交</n-button>
       </n-form>
     </n-card>
   </n-space>
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { GetPort } from "@/api/src/api/node/port.get";
+
+const mainStore = useMainStore();
+
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+
 const props = defineProps<{
   node: {
     id: number;
@@ -128,12 +162,14 @@ const props = defineProps<{
       needIcp: boolean;
     };
   };
-  default: {
+  default?: {
     name?: string;
     type?: string;
     localIp?: string;
     localPort?: number;
     remotePort?: number;
+    useEncryption?: boolean;
+    useCompression?: boolean;
     domain?: string;
     locations?: string[];
     secretKey?: string;
@@ -149,6 +185,8 @@ const emit = defineEmits<{
       localIp: string;
       localPort: number;
       remotePort: number | null;
+      useEncryption: boolean;
+      useCompression: boolean;
       domain: string | null;
       locations: string[] | null;
       secretKey: string | null;
@@ -156,12 +194,20 @@ const emit = defineEmits<{
   ): void;
 }>();
 
+const loading = ref<{
+  randomPort: boolean;
+}>({
+  randomPort: false,
+});
+
 const form = ref<{
   name: string | null;
   type: string;
   localIp: string;
   localPort: number | null;
   remotePort: number | null;
+  useEncryption: boolean;
+  useCompression: boolean;
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
@@ -171,6 +217,8 @@ const form = ref<{
   localIp: props.default?.localIp ?? "127.0.0.1",
   localPort: props.default?.localPort ?? null,
   remotePort: props.default?.remotePort ?? null,
+  useEncryption: props.default?.useEncryption ?? false,
+  useCompression: props.default?.useEncryption ?? false,
   domain: props.default?.domain ?? null,
   locations: props.default?.locations ?? null,
   secretKey: props.default?.secretKey ?? null,
@@ -183,17 +231,30 @@ const hasOption = {
   secretKey: ["xtcp", "stcp"],
 };
 
-function handleRandomRemotePort() {
-  // TODO
+async function handleRandomRemotePort() {
+  loading.value.randomPort = true;
+  const rs = await client.execute(
+    new GetPort({
+      user_id: mainStore.userId!,
+      node_id: props.node.id,
+    }),
+  );
+
+  if (rs.status === 200) form.value.remotePort = rs.data.port;
+  else message.error(rs.message);
+
+  loading.value.randomPort = false;
 }
 
 function handleSubmit() {
   emit("submit", {
-    name: form.value.name,
+    name: form.value.name!,
     type: form.value.type,
     localIp: form.value.localIp,
-    localPort: form.value.localPort,
+    localPort: form.value.localPort!,
     remotePort: form.value.remotePort,
+    useEncryption: form.value.useEncryption,
+    useCompression: form.value.useCompression,
     domain: form.value.domain,
     locations: form.value.locations,
     secretKey: form.value.secretKey,

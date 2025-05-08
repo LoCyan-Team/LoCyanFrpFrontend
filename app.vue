@@ -23,14 +23,18 @@
         <n-dialog-provider>
           <n-notification-provider>
             <notification-inject />
-            <n-layout v-if="!loaded" style="height: 100dvh">
+            <n-layout v-show="!loaded" style="height: 100dvh">
               <n-spin :show="true" class="load-container">
                 <template #description>
                   <n-text>加载中，稍安勿躁......</n-text>
                 </template>
               </n-spin>
             </n-layout>
-            <n-layout v-else style="height: 100dvh" :native-scrollbar="false">
+            <n-layout
+              v-show="loaded"
+              style="height: 100dvh"
+              :native-scrollbar="false"
+            >
               <n-layout-header bordered>
                 <site-header />
               </n-layout-header>

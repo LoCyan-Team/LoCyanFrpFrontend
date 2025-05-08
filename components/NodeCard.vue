@@ -27,7 +27,7 @@
           </template>
         </n-tag>
         <n-tag :type="renderNodeTagColor(node.additional.allowHttp)">
-          <span>建站</span>
+          <span>HTTP(s) 虚拟映射</span>
           <template #icon>
             <n-icon
               v-if="node.additional.allowHttp"
@@ -41,6 +41,14 @@
       <!-- 介绍 -->
       <n-p>
         <n-text>节点地址: {{ node.host }}</n-text>
+        <n-el>
+          <n-text>ICP 备案:</n-text>
+          <n-tag type="info">
+            <span
+              >{{ node.additional.needIcp ? "需要" : "无需" }} ICP 备案</span
+            >
+          </n-tag>
+        </n-el>
         <n-el>
           <n-text>可用端口范围: </n-text>
           <n-tag v-for="port in node.portRange" :key="port">

@@ -194,7 +194,7 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
-    page.value.count = Math.ceil(rs.data.list.length / page.value.size);
+    page.value.count = rs.data.pagination.count;
     rs.data.list.forEach((it) => {
       nodes.value.length = 0;
       nodes.value.push({

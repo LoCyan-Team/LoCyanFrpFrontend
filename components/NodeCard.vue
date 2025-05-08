@@ -42,7 +42,7 @@
       <n-p>
         <n-text>节点地址: {{ node.host }}</n-text>
         <n-el>
-          <n-text>ICP 备案:</n-text>
+          <n-text>ICP 备案: </n-text>
           <n-tag type="info">
             <span
               >{{ node.additional.needIcp ? "需要" : "无需" }} ICP 备案</span

@@ -42,7 +42,6 @@ import { MdNotifications } from "@vicons/ionicons4";
 import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
-import { usePageStore } from "@/store/page";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

@@ -77,20 +77,40 @@
                         </n-el>
                       </template>
                       <!-- TODO: Content -->
-                      <n-text
-                        >节点: {{ tunnel.node.name ?? "未知节点" }}</n-text
-                      >
-                      <br /><n-text>本地端口: {{ tunnel.localPort }}</n-text>
-                      <br /><n-text
-                        >远程端口: {{ tunnel.remotePort ?? "无" }}</n-text
-                      >
-                      <br /><n-text
-                        >自定义域名: {{ tunnel.domain ?? "无" }}</n-text
-                      >
+                      <n-text>
+                        节点: {{ tunnel.node.name ?? "未知节点" }}
+                      </n-text>
+                      <br /><n-text> 本地端口: {{ tunnel.localPort }} </n-text>
+                      <br /><n-text>
+                        远程端口: {{ tunnel.remotePort ?? "无" }}
+                      </n-text>
+                      <br /><n-text>
+                        自定义域名:
+                        <n-a
+                          v-if="tunnel.domain"
+                          :href="`${tunnel.type}://${tunnel.domain}`"
+                          target="_blank"
+                        >
+                          {{ tunnel.domain }}
+                        </n-a>
+                        <n-text v-else>无</n-text>
+                      </n-text>
                       <template v-if="tunnel.node.host" #footer>
                         <n-text>连接地址:</n-text>
                         <n-scrollbar x-scrollable>
-                          <n-code code="" />
+                          <n-tooltip trigger="hover">
+                            <template #trigger>
+                              <n-button
+                                text
+                                @click="
+                                  $copyToClipboard(computeConnectAddr(tunnel))
+                                "
+                              >
+                                <n-code :code="computeConnectAddr(tunnel)" />
+                              </n-button>
+                            </template>
+                            点击复制
+                          </n-tooltip>
                         </n-scrollbar>
                       </template>
                       <template #action>
@@ -145,9 +165,29 @@
                       <n-td>{{ tunnel.type.toUpperCase() }}</n-td>
                       <n-td>{{ tunnel.localPort }}</n-td>
                       <n-td>{{ tunnel.remotePort }}</n-td>
-                      <n-td>{{ tunnel.domain }}</n-td>
+                      <n-td>
+                        <n-a
+                          v-if="tunnel.domain"
+                          :href="`${tunnel.type}://${tunnel.domain}`"
+                          target="_blank"
+                        >
+                          {{ tunnel.domain }}
+                        </n-a>
+                      </n-td>
                       <n-td v-if="tunnel.node.host">
-                        <!-- TODO: Compute connect address -->
+                        <n-tooltip trigger="hover">
+                          <template #trigger>
+                            <n-button
+                              text
+                              @click="
+                                $copyToClipboard(computeConnectAddr(tunnel))
+                              "
+                            >
+                              <n-code :code="computeConnectAddr(tunnel)" />
+                            </n-button>
+                          </template>
+                          点击复制
+                        </n-tooltip>
                       </n-td>
                       <n-td v-else />
                       <n-td>
@@ -189,6 +229,18 @@
               v-model:page="page.current"
               v-model:page-size="page.size"
               :page-count="page.count"
+              :on-update:page="
+                (pageSel) => {
+                  page.current = pageSel;
+                  getTunnels();
+                }
+              "
+              :on-update:page-size="
+                (pageSizeSel) => {
+                  page.size = pageSizeSel;
+                  getTunnels();
+                }
+              "
               show-size-picker
               :page-sizes="[10, 25, 50, 100]"
             />
@@ -234,31 +286,23 @@ const nodes = ref<
   }[]
 >([]);
 
-const tunnels = ref<
-  {
+interface Tunnel {
+  id: number;
+  name: string;
+  type: string;
+  node: {
     id: number;
-    name: string;
-    type: string;
-    node: {
-      id: number;
-      name: string | null;
-      host: string | null;
-      ip: string | null;
-    };
-    localPort: number;
-    remotePort: number | null;
-    domain: string | null;
-    status: number;
-  }[]
->([
-  // {
-  //   id: 0,
-  //   name: "这是一条隧道",
-  //   nodeId: 0,
-  //   type: "tcp",
-  //   status: 0,
-  // },
-]);
+    name: string | null;
+    host: string | null;
+    ip: string | null;
+  };
+  localPort: number;
+  remotePort: number | null;
+  domain: string | null;
+  status: number;
+}
+
+const tunnels = ref<Tunnel[]>([]);
 
 const batchSelectState = ref<boolean>(false);
 const batchSelected = ref<number[]>([]);
@@ -306,18 +350,17 @@ async function getTunnels() {
   );
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
+    tunnels.value.length = 0;
     rs.data.list.forEach((it) => {
-      tunnels.value.length = 0;
       tunnels.value.push({
         id: it.id,
         name: it.name,
         type: it.type,
         node: {
-          id: it.node_id,
-          // TODO
-          name: null,
-          host: null,
-          ip: null,
+          id: it.node.id,
+          name: it.node.name,
+          host: it.node.host,
+          ip: it.node.ip,
         },
         localPort: it.local_port,
         remotePort: it.remote_port,
@@ -330,6 +373,19 @@ async function getTunnels() {
 }
 
 onMounted(async () => {
-  await await getTunnels();
+  await getTunnels();
 });
+
+function computeConnectAddr(tunnel: Tunnel): string {
+  switch (tunnel.type) {
+    case "http":
+    case "https":
+      return tunnel.domain!;
+    case "xtcp":
+    case "stcp":
+      return "";
+    default:
+      return `${tunnel.node.host}:${tunnel.remotePort}`;
+  }
+}
 </script>

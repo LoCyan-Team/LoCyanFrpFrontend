@@ -208,9 +208,9 @@
                             <n-button type="info" secondary>详细信息</n-button>
                             <n-button type="success" secondary>修改</n-button>
                             <n-button type="error" secondary>删除</n-button>
-                            <n-button type="warning" secondary
-                              >强制下线</n-button
-                            >
+                            <n-button type="warning" secondary>
+                              强制下线
+                            </n-button>
                           </n-space>
                         </n-spin>
                       </n-td>
@@ -383,7 +383,7 @@ function computeConnectAddr(tunnel: Tunnel): string {
       return tunnel.domain!;
     case "xtcp":
     case "stcp":
-      return "";
+      return "需配合 visitor";
     default:
       return `${tunnel.node.host}:${tunnel.remotePort}`;
   }

@@ -67,13 +67,23 @@
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { PostTraffic as PostResetTraffic } from "@/api/src/api/user/traffic.post";
 
 definePageMeta({
   title: "仪表盘",
 });
 
+const mainStore = useMainStore();
 const userStore = useUserStore();
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+const dialog = useDialog();
 
 const data = ref<{
   announcement: string | null;
@@ -125,7 +135,27 @@ const trafficChartOptions = ref({
   },
 });
 
-function handleResetTraffic() {
-  // TODO
+async function handleResetTraffic() {
+  dialog.warning({
+    title: "确认",
+    content: "此操作不可撤销，请您确认。",
+    positiveText: "确定",
+    negativeText: "再考虑一下",
+    onPositiveClick: async () => {
+      const rs = await client.execute(
+        new PostResetTraffic({
+          user_id: mainStore.userId!,
+        }),
+      );
+
+      if (rs.status === 200)
+        dialog.success({
+          title: "重置成功",
+          content: "已重置流量为当前用户组默认流量。",
+        });
+      else message.error(rs.message);
+    },
+    onNegativeClick: () => {},
+  });
 }
 </script>

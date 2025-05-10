@@ -48,7 +48,7 @@ export class Client {
       timeout: timeout,
     });
   }
-  public async execute(api: API): Promise<Response> {
+  public async execute<T extends object>(api: API): Promise<Response<T>> {
     let response: AxiosResponse | AxiosError;
     switch (api.method) {
       case Method.GET:
@@ -141,7 +141,7 @@ export class Client {
     );
   }
 
-  private buildResponse(result: AxiosResponse | AxiosError): Response {
+  private buildResponse<T extends object>(result: AxiosResponse | AxiosError): Response<T> {
     return new Response(
       // @ts-expect-error Vue eslint rules bug
       result?.status ?? result?.response?.status,

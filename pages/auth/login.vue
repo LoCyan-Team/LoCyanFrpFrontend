@@ -4,68 +4,38 @@
     <n-card title="账户登录">
       <n-form>
         <n-form-item label="用户名 / 邮箱" path="user">
-          <n-input
-            v-model:value="loginForm.user"
-            type="text"
-            placeholder="用户名"
-          />
+          <n-input v-model:value="loginForm.user" type="text" placeholder="用户名" />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input
-            v-model:value="loginForm.password"
-            type="password"
-            placeholder="密码"
-          />
+          <n-input v-model:value="loginForm.password" type="password" placeholder="密码" />
         </n-form-item>
         <n-el>
           <n-space style="margin-bottom: 1rem">
-            <n-button
-              ghost
-              text
-              type="success"
-              @click="() => navigateTo('/auth/register')"
-            >
+            <n-button ghost text type="success" @click="() => navigateTo('/auth/register')">
               没有账户？去注册
             </n-button>
           </n-space>
           <n-space>
-            <n-button
-              type="success"
-              :loading="loading.login"
-              :disabled="loading.login"
-              @click="loadCaptcha"
-            >
+            <n-button type="success" :loading="loading.login" :disabled="loading.login" @click="loadCaptcha">
               登录
             </n-button>
-            <captcha-dialog
-              :show="captcha.show"
-              :type="captcha.config.type"
-              :vaptcha-scene="2"
-              @error="
-                (code: unknown) => {
-                  message.error('发生错误: ' + code);
-                  captcha.show = false;
-                }
-              "
-              @unsupported="
-                message.error(
-                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-                )
-              "
-              @callback="handleLogin"
-            />
+            <captcha-dialog :show="captcha.show" :type="captcha.config.type" :vaptcha-scene="2" @error="
+              (code: unknown) => {
+                message.error('发生错误: ' + code);
+                captcha.show = false;
+              }
+            " @unsupported="
+              message.error(
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+              )
+              " @callback="handleLogin" />
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button
-        type="success"
-        secondary
-        style="width: 100%"
-        @click="handlePasskeyLogin"
-      >
+      <n-button type="success" secondary style="width: 100%" @click="handlePasskeyLogin">
         通行密钥登录
       </n-button>
     </n-spin>
@@ -73,11 +43,7 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button
-            type="info"
-            circle
-            @click="handleThirdPartyLogin(ThirdParty.QQ)"
-          >
+          <n-button type="info" circle @click="handleThirdPartyLogin(ThirdParty.QQ)">
             <n-icon>
               <Qq />
             </n-icon>
@@ -97,7 +63,11 @@ import { useUserStore } from "@/store/user";
 import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { PostLogin } from "@/api/src/api/auth/login.post";
+import { PostPasskeyLogin } from "~/api/src/api/auth/login-passkey.post";
 
+import type { GetCaptchaData } from "@/api/src/api/captcha.get";
+import type { PostLoginData } from "@/api/src/api/auth/login.post";
+import type { PostPasskeyLoginData } from "@/api/src/api/auth/login-passkey.post";
 definePageMeta({
   title: "登录",
   needLogin: false,
@@ -146,7 +116,7 @@ const captcha = ref<{
 
 async function loadCaptcha() {
   loading.value.login = true;
-  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  const rs = await client.execute<GetCaptchaData>(new GetCaptcha({ action: "login" }));
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;
@@ -158,7 +128,7 @@ async function loadCaptcha() {
 async function handleLogin(token: string, server?: string) {
   captcha.value.show = false;
   loading.value.login = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostLoginData>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
@@ -191,6 +161,28 @@ async function handleLogin(token: string, server?: string) {
 
 async function handlePasskeyLogin() {
   // TODO
+  loading.value.passkey = true
+  const rs = await client.execute<PostPasskeyLoginData>(new PostPasskeyLogin({ credential: '' }))
+  if (rs.status === 200) {
+    mainStore.token = rs.data.token;
+    mainStore.userId = rs.data.user_id;
+    userStore.frpToken = rs.data.frp_token;
+    userStore.username = rs.data.user_info.username;
+    userStore.email = rs.data.user_info.email;
+    userStore.group = rs.data.user_info.group;
+    userStore.limit = rs.data.user_info.limit;
+    userStore.traffic = rs.data.user_info.traffic;
+    userStore.avatar = rs.data.user_info.avatar;
+    userStore.registerTime = rs.data.user_info.register_time;
+
+    notification.success({
+      title: "登录成功",
+      content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
+      duration: 2500,
+    });
+    navigateTo("/dashboard");
+  } else message.error(rs.message);
+  loading.value.login = false;
 }
 
 async function handleThirdPartyLogin(type: ThirdParty) {
@@ -212,6 +204,7 @@ enum ThirdParty {
   align-items: center;
   padding-block: 0.5rem;
 }
+
 @media screen and (max-width: 500px) {
   .login-box {
     margin-inline: 0.5rem;

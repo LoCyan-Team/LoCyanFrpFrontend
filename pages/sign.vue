@@ -87,7 +87,8 @@ async function handleSign() {
   );
   if (rs.status === 200) {
     data.value.signed = true;
-    data.value.totalSign += rs.data.get_traffic;
+    data.value.totalGetTraffic += rs.data.get_traffic;
+    data.value.totalSign++
     data.value.lastSign = dayjs().format("L LT");
     dialog.success({
       title: "签到成功",

@@ -296,7 +296,7 @@ interface Tunnel {
   localPort: number;
   remotePort: number | null;
   domain: string | null;
-  status: number;
+  status: string;
 }
 
 const tunnels = ref<Tunnel[]>([]);

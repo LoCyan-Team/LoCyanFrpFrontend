@@ -7,7 +7,7 @@ export class GetRegister extends API {
     captcha_id: string;
     captcha_token: string;
     captcha_server?: string;
-}) {
+  }) {
     super("/email/register", Method.GET, params, {});
   }
 }

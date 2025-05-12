@@ -1,7 +1,12 @@
 import axios from "axios";
 import QS from "qs";
 import { Method } from "./type/method";
-import type { InternalAxiosRequestConfig, AxiosError, AxiosInstance, AxiosResponse } from "axios";
+import type {
+  InternalAxiosRequestConfig,
+  AxiosError,
+  AxiosInstance,
+  AxiosResponse,
+} from "axios";
 import type { API } from "./type/api";
 import { Response } from "./type/response";
 
@@ -111,12 +116,12 @@ export class Client {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         if (this.token) {
-          config.headers!.Authorization = `Bearer ${this.token}`
+          config.headers!.Authorization = `Bearer ${this.token}`;
         }
-        return config
+        return config;
       },
-      (error) => Promise.reject(error)
-    )
+      (error) => Promise.reject(error),
+    );
     this.instance.interceptors.response.use(
       (response: AxiosResponse) => response,
       (error: AxiosError) => {

@@ -7,7 +7,7 @@ export class GetPassword extends API {
     captcha_id: string;
     captcha_token: string;
     captcha_server?: string;
-}) {
+  }) {
     super("/email/password", Method.GET, params, {});
   }
 }

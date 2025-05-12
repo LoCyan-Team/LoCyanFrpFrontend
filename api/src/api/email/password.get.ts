@@ -11,3 +11,7 @@ export class GetPassword extends API {
     super("/email/password", Method.GET, params, {});
   }
 }
+
+export interface GetPasswordData {
+  user_id:number
+}

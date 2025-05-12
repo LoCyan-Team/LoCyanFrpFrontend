@@ -68,6 +68,7 @@ import { PostPasskeyLogin } from "~/api/src/api/auth/login-passkey.post";
 import type { GetCaptchaData } from "@/api/src/api/captcha.get";
 import type { PostLoginData } from "@/api/src/api/auth/login.post";
 import type { PostPasskeyLoginData } from "@/api/src/api/auth/login-passkey.post";
+import { GetQQLogin } from "~/api/src/api/auth/third-party/qq/login.get";
 definePageMeta({
   title: "登录",
   needLogin: false,
@@ -187,6 +188,19 @@ async function handlePasskeyLogin() {
 
 async function handleThirdPartyLogin(type: ThirdParty) {
   // TODO
+  loading.value.threeSide = true;
+  if (type === ThirdParty.QQ) {
+    const getQQLoginRes = await client.execute(new GetQQLogin())
+    if (getQQLoginRes.status === 200) {
+      const QQURL = getQQLoginRes.data.url;
+      window.location.href = QQURL;
+    } else {
+      // 处理获取QQ登录URL失败的情况，例如显示错误消息
+      console.error('获取QQ登录URL失败', getQQLoginRes.status);
+      loading.value.threeSide = false;
+    }
+
+  }
 }
 
 enum ThirdParty {

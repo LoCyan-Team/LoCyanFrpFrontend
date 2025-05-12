@@ -22,19 +22,17 @@
           <template #unchecked>全选</template>
         </n-switch>
       </n-space>
-      <transition name="fade">
-        <n-card v-if="batchSelected.length > 0" embedded>
-          <n-space>
-            <n-button type="info" secondary @click="handleChangeNode()">
-              修改节点
-            </n-button>
-            <n-button type="error" secondary @click="handleDelete()">
-              删除
-            </n-button>
-            <n-button type="warning" secondary> 强制下线 </n-button>
-          </n-space>
-        </n-card>
-      </transition>
+      <n-card v-if="batchSelected.length > 0" embedded>
+        <n-space>
+          <n-button type="info" secondary @click="handleChangeNode()">
+            修改节点
+          </n-button>
+          <n-button type="error" secondary @click="handleDelete()">
+            删除
+          </n-button>
+          <n-button type="warning" secondary> 强制下线 </n-button>
+        </n-space>
+      </n-card>
 
       <n-spin :show="loading.page">
         <n-space vertical>

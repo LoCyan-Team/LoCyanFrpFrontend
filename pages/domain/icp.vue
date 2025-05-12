@@ -1,7 +1,7 @@
 <template>
   <page-content title="ICP 备案白名单">
     <n-space vertical>
-      <n-card>
+      <n-card title="提交验证">
         <n-form :model="formData">
           <n-form-item label="域名" path="domain">
             <n-input
@@ -13,15 +13,13 @@
         </n-form>
       </n-card>
 
-      <transition name="fade">
-        <n-card v-if="batchSelected.length > 0" embedded>
-          <n-space>
-            <n-button type="error" secondary @click="handleDelete()">
-              删除
-            </n-button>
-          </n-space>
-        </n-card>
-      </transition>
+      <n-card v-if="batchSelected.length > 0" embedded>
+        <n-space>
+          <n-button type="error" secondary @click="handleDelete()">
+            删除
+          </n-button>
+        </n-space>
+      </n-card>
 
       <n-empty v-if="data.length === 0" />
       <n-scrollbar v-else x-scrollable>

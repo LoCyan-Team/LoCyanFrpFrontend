@@ -59,6 +59,19 @@ export default defineNuxtConfig({
   },
   app: {
     pageTransition: { name: "fade", mode: "out-in" },
+    head: {
+      htmlAttrs: {
+        lang: "zh-CN",
+      },
+      title: "LoCyanFrp Dashboard",
+      meta: [{ name: "color-scheme", content: "dark light" }],
+      script: [
+        {
+          src: "https://v-cn.vaptcha.com/v3.js",
+          async: true,
+        },
+      ],
+    },
   },
   devServer: {
     host: "0.0.0.0",

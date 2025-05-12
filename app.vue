@@ -87,19 +87,6 @@ const env = {
   devMode: runtimeConfig.public.devMode,
 };
 
-useHead({
-  htmlAttrs: {
-    lang: "zh-CN",
-  },
-  script: [
-    {
-      src: "https://v-cn.vaptcha.com/v3.js",
-      async: true,
-    },
-  ],
-  title: "LoCyanFrp Dashboard",
-});
-
 const api = new ApiClient();
 api.initClient();
 

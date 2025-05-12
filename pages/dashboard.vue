@@ -70,8 +70,13 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
+import { useOsTheme } from "naive-ui";
+
 import { Client as ApiClient } from "@/api/src/client";
 import { PostTraffic as PostResetTraffic } from "@/api/src/api/user/traffic.post";
+
+const naiveOsTheme = useOsTheme();
+if (naiveOsTheme.value === "dark") await import("highcharts/themes/dark-unica");
 
 definePageMeta({
   title: "仪表盘",
@@ -93,7 +98,7 @@ const data = ref<{
 
 const speedChartOptions = ref({
   title: {
-    text: null,
+    text: "带宽速率",
   },
   yAxis: {
     title: {
@@ -103,11 +108,11 @@ const speedChartOptions = ref({
   series: [
     {
       name: "上行",
-      data: [10, 15.6, 21.3],
+      data: [0],
     },
     {
       name: "下行",
-      data: [11, 16, 25],
+      data: [0],
     },
   ],
   credits: {
@@ -117,7 +122,7 @@ const speedChartOptions = ref({
 
 const trafficChartOptions = ref({
   title: {
-    text: null,
+    text: "流量",
   },
   yAxis: {
     title: {
@@ -127,7 +132,7 @@ const trafficChartOptions = ref({
   series: [
     {
       name: "流量",
-      data: [5, 3, 4],
+      data: [0],
     },
   ],
   credits: {

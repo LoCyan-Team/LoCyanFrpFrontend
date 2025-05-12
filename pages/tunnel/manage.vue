@@ -267,7 +267,6 @@ const client = new ApiClient(mainStore.token!);
 client.initClient();
 
 const message = useMessage();
-const dialog = useDialog();
 
 const viewMode = ref<string>("card");
 

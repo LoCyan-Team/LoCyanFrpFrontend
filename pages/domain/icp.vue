@@ -6,7 +6,7 @@
           <n-form-item label="域名" path="domain">
             <n-input
               v-model:value="formData.domain"
-              placeholder="请输入备案域名"
+              placeholder="请选择已验证域名"
             />
           </n-form-item>
           <n-button type="success" @click="handleSubmit">提交</n-button>

@@ -54,50 +54,75 @@
       </n-card>
 
       <n-spin :show="loading.list">
-        <n-empty v-if="data.length === 0" />
-        <n-scrollbar v-else x-scrollable>
-          <n-table
-            style="min-width: 800px"
-            :bordered="true"
-            :single-line="false"
-          >
-            <n-thead>
-              <n-tr>
-                <n-th>
-                  <n-switch
-                    v-model:value="batchSelectState"
-                    :round="false"
-                    @update:value="handleSelectAll"
-                  >
-                    <template #checked>全选</template>
-                    <template #unchecked>全选</template>
-                  </n-switch>
-                </n-th>
-                <n-th>域名 ID</n-th>
-                <n-th>域名</n-th>
-                <n-th>备案号</n-th>
-                <n-th>备案主体</n-th>
-                <n-th>操作</n-th>
-              </n-tr>
-            </n-thead>
-            <n-tbody>
-              <n-tr v-for="domain in data" :key="domain.id">
-                <n-td>
-                  <n-el @click="handleBatchSelect(domain.id)">
-                    <n-checkbox :checked="batchSelected.includes(domain.id)" />
-                  </n-el>
-                </n-td>
-                <n-td>{{ domain.id }}</n-td>
-                <n-td>{{ domain.domain }}</n-td>
-                <n-td>{{ domain.icp }}</n-td>
-                <n-td>{{ domain.unitName }} - {{ domain.natureName }}</n-td>
-                <n-td>
-                  <!-- TODO: 操作 -->
-                </n-td>
-              </n-tr>
-            </n-tbody>
-          </n-table>
-        </n-scrollbar>
+        <n-space vertical>
+          <n-empty v-if="data.length === 0" />
+          <n-scrollbar v-else x-scrollable>
+            <n-table
+              style="min-width: 800px"
+              :bordered="true"
+              :single-line="false"
+            >
+              <n-thead>
+                <n-tr>
+                  <n-th>
+                    <n-switch
+                      v-model:value="batchSelectState"
+                      :round="false"
+                      @update:value="handleSelectAll"
+                    >
+                      <template #checked>全选</template>
+                      <template #unchecked>全选</template>
+                    </n-switch>
+                  </n-th>
+                  <n-th>域名 ID</n-th>
+                  <n-th>域名</n-th>
+                  <n-th>备案号</n-th>
+                  <n-th>备案主体</n-th>
+                  <n-th>操作</n-th>
+                </n-tr>
+              </n-thead>
+              <n-tbody>
+                <n-tr v-for="domain in data" :key="domain.id">
+                  <n-td>
+                    <n-el @click="handleBatchSelect(domain.id)">
+                      <n-checkbox
+                        :checked="batchSelected.includes(domain.id)"
+                      />
+                    </n-el>
+                  </n-td>
+                  <n-td>{{ domain.id }}</n-td>
+                  <n-td>{{ domain.domain }}</n-td>
+                  <n-td>{{ domain.icp }}</n-td>
+                  <n-td>{{ domain.natureName }} - {{ domain.unitName }}</n-td>
+                  <n-td>
+                    <n-button type="error" secondary> 删除 </n-button>
+                  </n-td>
+                </n-tr>
+              </n-tbody>
+            </n-table>
+          </n-scrollbar>
+          <n-space v-if="data.length !== 0" justify="center">
+            <n-pagination
+              v-model:page="icpDomainPage.current"
+              v-model:page-size="icpDomainPage.size"
+              :page-count="icpDomainPage.count"
+              :on-update:page="
+                (pageSel) => {
+                  icpDomainPage.current = pageSel;
+                  getIcpDomains();
+                }
+              "
+              :on-update:page-size="
+                (pageSizeSel) => {
+                  icpDomainPage.size = pageSizeSel;
+                  getIcpDomains();
+                }
+              "
+              show-size-picker
+              :page-sizes="[10, 25, 50, 100]"
+            />
+          </n-space>
+        </n-space>
       </n-spin>
     </n-space>
     <n-modal v-model:show="modal.miitCaptchaMarker.show">

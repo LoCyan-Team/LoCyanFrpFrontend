@@ -18,25 +18,24 @@
       </n-card>
 
       <n-card>
-        <n-scrollbar x-scrollable>
-          <n-tabs type="line" animated>
-            <n-tab-pane name="verified" tab="已认证域名">
-              <n-spin :show="loading.list.domain">
-                <n-space vertical>
-                  <n-card v-if="domainBatchSelected.length > 0" embedded>
-                    <n-space>
-                      <n-button
-                        type="error"
-                        secondary
-                        @click="handleDeleteDomain()"
-                      >
-                        删除
-                      </n-button>
-                    </n-space>
-                  </n-card>
-                  <n-empty v-if="domainData.length === 0" />
+        <n-tabs type="line" animated>
+          <n-tab-pane name="verified" tab="已认证域名">
+            <n-spin :show="loading.list.domain">
+              <n-space vertical>
+                <n-card v-if="domainBatchSelected.length > 0" embedded>
+                  <n-space>
+                    <n-button
+                      type="error"
+                      secondary
+                      @click="handleDeleteDomain()"
+                    >
+                      删除
+                    </n-button>
+                  </n-space>
+                </n-card>
+                <n-empty v-if="domainData.length === 0" />
+                <n-scrollbar v-else x-scrollable>
                   <n-table
-                    v-else
                     style="min-width: 800px"
                     :bordered="true"
                     :single-line="false"
@@ -81,43 +80,41 @@
                       </n-tr>
                     </n-tbody>
                   </n-table>
-                  <n-space
-                    v-if="verificationData.length !== 0"
-                    justify="center"
-                  >
-                    <n-pagination
-                      v-model:page="domainPage.current"
-                      v-model:page-size="domainPage.size"
-                      :page-count="domainPage.count"
-                      :on-update:page="
-                        (pageSel) => {
-                          domainPage.current = pageSel;
-                          getDomains();
-                        }
-                      "
-                      :on-update:page-size="
-                        (pageSizeSel) => {
-                          domainPage.size = pageSizeSel;
-                          getDomains();
-                        }
-                      "
-                      show-size-picker
-                      :page-sizes="[10, 25, 50, 100]"
-                    />
-                  </n-space>
+                </n-scrollbar>
+                <n-space v-if="verificationData.length !== 0" justify="center">
+                  <n-pagination
+                    v-model:page="domainPage.current"
+                    v-model:page-size="domainPage.size"
+                    :page-count="domainPage.count"
+                    :on-update:page="
+                      (pageSel) => {
+                        domainPage.current = pageSel;
+                        getDomains();
+                      }
+                    "
+                    :on-update:page-size="
+                      (pageSizeSel) => {
+                        domainPage.size = pageSizeSel;
+                        getDomains();
+                      }
+                    "
+                    show-size-picker
+                    :page-sizes="[10, 25, 50, 100]"
+                  />
                 </n-space>
-              </n-spin>
-            </n-tab-pane>
+              </n-space>
+            </n-spin>
+          </n-tab-pane>
 
-            <n-tab-pane name="submited" tab="认证中域名">
-              <n-spin :show="loading.list.verification">
-                <n-space vertical>
-                  <n-alert type="warning">
-                    24 小时未验证的域名将自动过期删除。
-                  </n-alert>
-                  <n-empty v-if="verificationData.length === 0" />
+          <n-tab-pane name="submited" tab="认证中域名">
+            <n-spin :show="loading.list.verification">
+              <n-space vertical>
+                <n-alert type="warning">
+                  24 小时未验证的域名将自动过期删除。
+                </n-alert>
+                <n-empty v-if="verificationData.length === 0" />
+                <n-scrollbar v-else x-scrollable>
                   <n-table
-                    v-else
                     style="min-width: 800px"
                     :bordered="true"
                     :single-line="false"
@@ -166,35 +163,32 @@
                       </n-tr>
                     </n-tbody>
                   </n-table>
-                  <n-space
-                    v-if="verificationData.length !== 0"
-                    justify="center"
-                  >
-                    <n-pagination
-                      v-model:page="verificationPage.current"
-                      v-model:page-size="verificationPage.size"
-                      :page-count="verificationPage.count"
-                      :on-update:page="
-                        (pageSel) => {
-                          verificationPage.current = pageSel;
-                          getVerifications();
-                        }
-                      "
-                      :on-update:page-size="
-                        (pageSizeSel) => {
-                          verificationPage.size = pageSizeSel;
-                          getVerifications();
-                        }
-                      "
-                      show-size-picker
-                      :page-sizes="[10, 25, 50, 100]"
-                    />
-                  </n-space>
+                </n-scrollbar>
+                <n-space v-if="verificationData.length !== 0" justify="center">
+                  <n-pagination
+                    v-model:page="verificationPage.current"
+                    v-model:page-size="verificationPage.size"
+                    :page-count="verificationPage.count"
+                    :on-update:page="
+                      (pageSel) => {
+                        verificationPage.current = pageSel;
+                        getVerifications();
+                      }
+                    "
+                    :on-update:page-size="
+                      (pageSizeSel) => {
+                        verificationPage.size = pageSizeSel;
+                        getVerifications();
+                      }
+                    "
+                    show-size-picker
+                    :page-sizes="[10, 25, 50, 100]"
+                  />
                 </n-space>
-              </n-spin>
-            </n-tab-pane>
-          </n-tabs>
-        </n-scrollbar>
+              </n-space>
+            </n-spin>
+          </n-tab-pane>
+        </n-tabs>
       </n-card>
     </n-space>
     <n-modal v-model:show="modal.verification.show">
@@ -264,6 +258,7 @@ const client = new ApiClient(mainStore.token!);
 client.initClient();
 
 const message = useMessage();
+const notification = useNotification();
 
 definePageMeta({
   title: "所有权验证",
@@ -379,7 +374,12 @@ async function handleSubmitVerification(domain: string) {
     }),
   );
   if (rs.status === 200) {
-    // TODO
+    modal.value.verification.show = false;
+    notification.success({
+      title: "验证成功",
+      content: "域名已通过 DNS 验证。",
+      duration: 2500,
+    });
   } else message.error(rs.message);
 }
 

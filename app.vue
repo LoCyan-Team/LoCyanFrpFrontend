@@ -7,9 +7,10 @@
     :date-locale="dateZhCN"
   >
     <n-watermark
+      v-if="env.devMode"
       content="开发版本，不代表最终品质"
       cross
-      selectable
+      fullscreen
       :font-size="16"
       :line-height="48"
       :width="512"
@@ -17,47 +18,45 @@
       :x-offset="128"
       :y-offset="128"
       :rotate="-15"
-      :show="env.devMode"
-    >
-      <n-message-provider>
-        <n-dialog-provider>
-          <n-notification-provider>
-            <notification-inject />
-            <n-layout v-show="!loaded" style="height: 100dvh">
-              <n-spin :show="true" class="load-container">
-                <template #description>
-                  <n-text>加载中，稍安勿躁......</n-text>
-                </template>
-              </n-spin>
+    />
+    <n-message-provider>
+      <n-dialog-provider>
+        <n-notification-provider>
+          <notification-inject />
+          <n-layout v-show="!loaded" style="height: 100dvh">
+            <n-spin :show="true" class="load-container">
+              <template #description>
+                <n-text>加载中，稍安勿躁......</n-text>
+              </template>
+            </n-spin>
+          </n-layout>
+          <n-layout
+            v-show="loaded"
+            style="height: 100dvh"
+            :native-scrollbar="false"
+          >
+            <n-layout-header bordered>
+              <site-header />
+            </n-layout-header>
+            <n-layout has-sider style="height: calc(100dvh - 61px)">
+              <n-el v-if="pageSidebar" class="sidebar-container">
+                <sidebar />
+              </n-el>
+              <n-layout-content
+                :native-scrollbar="false"
+                class="content"
+                style="width: 100%"
+              >
+                <nuxt-page style="min-height: calc(100dvh - 61px)" />
+                <n-layout-footer bordered>
+                  <site-footer />
+                </n-layout-footer>
+              </n-layout-content>
             </n-layout>
-            <n-layout
-              v-show="loaded"
-              style="height: 100dvh"
-              :native-scrollbar="false"
-            >
-              <n-layout-header bordered>
-                <site-header />
-              </n-layout-header>
-              <n-layout has-sider style="height: calc(100dvh - 61px)">
-                <n-el v-if="pageSidebar" class="sidebar-container">
-                  <sidebar />
-                </n-el>
-                <n-layout-content
-                  :native-scrollbar="false"
-                  class="content"
-                  style="width: 100%"
-                >
-                  <nuxt-page style="min-height: calc(100dvh - 61px)" />
-                  <n-layout-footer bordered>
-                    <site-footer />
-                  </n-layout-footer>
-                </n-layout-content>
-              </n-layout>
-            </n-layout>
-          </n-notification-provider>
-        </n-dialog-provider>
-      </n-message-provider>
-    </n-watermark>
+          </n-layout>
+        </n-notification-provider>
+      </n-dialog-provider>
+    </n-message-provider>
   </n-config-provider>
 </template>
 

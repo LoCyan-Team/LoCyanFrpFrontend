@@ -1,14 +1,14 @@
 <template>
   <n-el class="image-marker">
     <img :src="'data:image/jpeg;base64,' + smallImageSrc" />
-    <n-el :ref="container" class="image-container">
+    <div ref="container" class="image-container">
       <img
-        :ref="image"
+        ref="image"
         :src="'data:image/jpeg;base64,' + bigImageSrc"
         alt="点击图片标记位置"
         @click="handleImageClick"
       />
-      <n-el
+      <div
         v-for="(marker, index) in markers"
         :key="index"
         class="marker"
@@ -19,8 +19,8 @@
         }"
       >
         {{ index + 1 }}
-      </n-el>
-    </n-el>
+      </div>
+    </div>
   </n-el>
 </template>
 

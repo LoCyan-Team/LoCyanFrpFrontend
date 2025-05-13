@@ -269,10 +269,10 @@ async function handleSubmit() {
         uuid: rs.data.token.uuid,
         token: rs.data.token.token,
       },
-      secretKey: rs.secret_key,
+      secretKey: rs.data.secret_key,
       image: {
-        bigBase64: rs.image.big_base64,
-        smallBase64: rs.image.small_base64,
+        bigBase64: rs.data.image.big_base64,
+        smallBase64: rs.data.image.small_base64,
       },
       sign: null,
     };

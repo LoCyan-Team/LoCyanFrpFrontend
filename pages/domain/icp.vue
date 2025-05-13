@@ -6,7 +6,7 @@
           <n-form :model="formData">
             <n-form-item label="域名" path="domain">
               <n-select
-                v-model:value="formData.domain"
+                v-model:value="formData.domainId"
                 :options="domainOptions"
               />
             </n-form-item>
@@ -32,7 +32,14 @@
                   :page-sizes="[10, 25, 50, 100]"
                 />
               </n-space>
-              <n-button type="success" @click="handleSubmit">提交</n-button>
+              <n-button
+                type="success"
+                :loading="loading.submit"
+                :disabled="loading.submit"
+                @click="handleSubmit"
+              >
+                提交
+              </n-button>
             </n-space>
           </n-form>
         </n-card>
@@ -93,6 +100,35 @@
         </n-scrollbar>
       </n-spin>
     </n-space>
+    <n-modal v-model:show="modal.miitCaptchaMarker.show">
+      <n-card
+        style="width: 600px"
+        title="请点选验证码"
+        :bordered="false"
+        size="huge"
+        role="dialog"
+        aria-modal="true"
+      >
+        <n-spin :show="loading.miitCaptcha">
+          <n-space vertical>
+            <miit-captcha-marker
+              :small-image-src="miit.image.smallBase64"
+              :big-image-src="miit.image.bigBase64"
+              :max-markers="4"
+              @update:markers="handleMiitImageMarkerUpdate"
+            />
+            <n-button
+              type="success"
+              :loading="loading.submit"
+              :disabled="loading.submit"
+              @click="handleSubmit"
+            >
+              刷新验证码
+            </n-button>
+          </n-space>
+        </n-spin>
+      </n-card>
+    </n-modal>
   </page-content>
 </template>
 
@@ -104,12 +140,16 @@ import type { SelectOption } from "naive-ui";
 import { Client as ApiClient } from "@/api/src/client";
 import { GetDomains } from "@/api/src/api/domains.get";
 import { GetIcp as GetIcpDomains } from "@/api/src/api/domain/icp.get";
+import { GetImage as GetMiitCaptchaImage } from "@/api/src/api/domain/icp/miit/image.get";
+import { PostSign as PostMiitCaptchaSign } from "@/api/src/api/domain/icp/miit/sign.post";
+import { PutIcp } from "@/api/src/api/domain/icp.put";
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);
 client.initClient();
 
 const message = useMessage();
+const dialog = useDialog();
 
 definePageMeta({
   title: "ICP 备案白名单",
@@ -117,16 +157,30 @@ definePageMeta({
 
 const loading = ref<{
   submitSection: boolean;
+  submit: boolean;
   list: boolean;
+  miitCaptcha: boolean;
 }>({
   submitSection: true,
+  submit: false,
   list: true,
+  miitCaptcha: false,
 });
 
 const formData = ref<{
-  domain: string | null;
+  domainId: number | null;
 }>({
-  domain: null,
+  domainId: null,
+});
+
+const modal = ref<{
+  miitCaptchaMarker: {
+    show: boolean;
+  };
+}>({
+  miitCaptchaMarker: {
+    show: false,
+  },
 });
 
 const data = ref<
@@ -138,6 +192,42 @@ const data = ref<
     natureName: string;
   }[]
 >([]);
+
+interface MIIT {
+  clientUid: string | null;
+  token: {
+    uuid: string | null;
+    token: string | null;
+  };
+  secretKey: string | null;
+  image: {
+    bigBase64: string | null;
+    smallBase64: string | null;
+  };
+  sign: string | null;
+}
+
+const miit = ref<MIIT>({
+  clientUid: null,
+  token: {
+    uuid: null,
+    token: null,
+  },
+  secretKey: null,
+  image: {
+    bigBase64: null,
+    smallBase64: null,
+  },
+  sign: null,
+});
+
+let markerData: {
+  origin: object | null;
+  string: string | null;
+} = {
+  origin: null,
+  string: null,
+};
 
 const domainOptions = ref<Array<SelectOption>>([]);
 
@@ -163,8 +253,77 @@ const domainPage = ref<{
 const batchSelectState = ref<boolean>(false);
 const batchSelected = ref<number[]>([]);
 
-function handleSubmit() {
-  // TODO
+async function handleSubmit() {
+  loading.value.submit = true;
+  loading.value.miitCaptcha = true;
+  const rs = await client.execute(
+    new GetMiitCaptchaImage({
+      user_id: mainStore.userId!,
+      domain_id: formData.value.domainId!,
+    }),
+  );
+  if (rs.status === 200) {
+    miit.value = {
+      clientUid: rs.data.client_uid,
+      token: {
+        uuid: rs.data.token.uuid,
+        token: rs.data.token.token,
+      },
+      secretKey: rs.secret_key,
+      image: {
+        bigBase64: rs.image.big_base64,
+        smallBase64: rs.image.small_base64,
+      },
+      sign: null,
+    };
+    modal.value.miitCaptchaMarker.show = true;
+  } else message.error(rs.message);
+  loading.value.submit = false;
+  loading.value.miitCaptcha = false;
+}
+
+async function handleMiitImageMarkerUpdate(point: object) {
+  markerData.origin = point;
+  markerData.string = JSON.stringify(point);
+  await getMiitCaptchaSign();
+}
+
+async function getMiitCaptchaSign() {
+  loading.value.miitCaptcha = true;
+  const rs = await client.execute(
+    new PostMiitCaptchaSign({
+      user_id: mainStore.userId!,
+      client_uid: miit.value.clientUid!,
+      secret_key: miit.value.secretKey!,
+      token: miit.value.token.token!,
+      token_uuid: miit.value.token.uuid!,
+      point_json: markerData.string!,
+    }),
+  );
+  if (rs.status === 200) {
+    miit.value.sign = rs.data.sign;
+    await handleAdd();
+  } else message.error(rs.message);
+  loading.value.miitCaptcha = false;
+}
+
+async function handleAdd() {
+  const rs = await client.execute(
+    new PutIcp({
+      user_id: mainStore.userId!,
+      domain_id: formData.value.domainId!,
+      miit_sign: miit.value.sign!,
+      miit_token: miit.value.token.token!,
+      miit_token_uuid: miit.value.token.uuid!,
+    }),
+  );
+  if (rs.status === 200) {
+    modal.value.miitCaptchaMarker.show = false;
+    dialog.success({
+      title: "添加成功",
+      content: "已成功校验 ICP 备案。",
+    });
+  } else message.error(rs.message);
 }
 
 function handleDelete(domainId?: number) {
@@ -199,7 +358,7 @@ async function getDomains() {
     rs.data.list.forEach((it) => {
       domainOptions.value.push({
         label: it.domain,
-        value: it.domain,
+        value: it.id,
       });
     });
   } else message.error(rs.message);

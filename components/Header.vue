@@ -43,6 +43,9 @@ import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
+import { Client as ApiClient } from "@/api/src/client";
+import { DeleteToken } from "@/api/src/api/user/token.delete";
+
 const mainStore = useMainStore();
 const userStore = useUserStore();
 
@@ -61,11 +64,24 @@ const avatarOptions = [
   },
 ];
 
-function handleAvatarOptionSelect(key) {
+async function handleAvatarOptionSelect(key) {
   switch (key) {
     case "profile":
       break;
-    case "logout":
+    case "logout": {
+      const client = new ApiClient(mainStore.token);
+      client.initClient();
+      const rs = await client.execute(
+        new DeleteToken({
+          user_id: mainStore.userId,
+        }),
+      );
+      if (rs.status !== 200)
+        notification.warning({
+          title: "吊销会话时发生了异常",
+          content: `在吊销本会话时发生了异常，会话将会在过期后吊销。若您希望立即吊销此会话，请重新登录后手动吊销全部会话。响应信息：${rs.message}`,
+          duration: 2500,
+        });
       mainStore.$reset();
       userStore.$reset();
       notification.success({
@@ -74,6 +90,7 @@ function handleAvatarOptionSelect(key) {
         duration: 2500,
       });
       navigateTo("/auth/login");
+    }
   }
 }
 </script>

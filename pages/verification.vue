@@ -74,14 +74,23 @@
                           placeholder="目标用户 ID"
                         />
                       </n-form-item>
-                      <n-button
-                        type="success"
-                        :loading="loading.giftAccreditation"
-                        :disabled="loading.giftAccreditation"
-                        @click="handleGiftRealPersonAccreditation()"
+                      <n-popconfirm
+                        @positive-click="handleGiftRealPersonAccreditation"
                       >
-                        赠送
-                      </n-button>
+                        <template #trigger>
+                          <n-button
+                            type="success"
+                            :loading="loading.giftAccreditation"
+                            :disabled="loading.giftAccreditation"
+                          >
+                            赠送
+                          </n-button>
+                        </template>
+                        请确认您要赠送的目标用户 ID:
+                        {{
+                          verificationForm.giftAccreditationUserId
+                        }}，一旦赠出无法撤销。
+                      </n-popconfirm>
                     </n-form>
                   </n-tab-pane>
                 </n-tabs>
@@ -347,28 +356,17 @@ async function handleRefreshBuyRealPersonAccreditation() {
 }
 
 async function handleGiftRealPersonAccreditation() {
-  if (verificationForm.value.giftAccreditationUserId === null)
-    return message.error("请提供赠与目标用户的 ID");
   loading.value.giftAccreditation = true;
-  dialog.warning({
-    title: "确认",
-    content: `请确认您要赠送的目标用户 ID: ${verificationForm.value.giftAccreditationUserId}，一旦赠出无法撤销。`,
-    positiveText: "确定",
-    negativeText: "再考虑一下",
-    onPositiveClick: async () => {
-      const rs = await client.execute(
-        new PostGivenAccreditation({
-          user_id: mainStore.userId!,
-          give_user_id: verificationForm.value.giftAccreditationUserId!,
-        }),
-      );
-      if (rs.status === 200) {
-        data.value.accreditations--;
-        message.success("赠送成功");
-      } else message.error(rs.message);
-    },
-    onNegativeClick: () => {},
-  });
+  const rs = await client.execute(
+    new PostGivenAccreditation({
+      user_id: mainStore.userId!,
+      give_user_id: verificationForm.value.giftAccreditationUserId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.accreditations--;
+    message.success("赠送成功");
+  } else message.error(rs.message);
   loading.value.giftAccreditation = false;
 }
 

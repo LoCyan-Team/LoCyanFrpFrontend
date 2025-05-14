@@ -33,10 +33,15 @@
           </n-card>
           <n-card title="流量重置">
             <n-space vertical>
-              <n-text
-                >如果流量真的太多，想要恢复到默认，那么您可以点击这个按钮重置。</n-text
-              >
-              <n-button @click="handleResetTraffic">重置流量</n-button>
+              <n-text>
+                如果流量真的太多，想要恢复到默认，那么您可以点击这个按钮重置。
+              </n-text>
+              <n-popconfirm @positive-click="handleResetTraffic">
+                <template #trigger>
+                  <n-button>重置流量</n-button>
+                </template>
+                此操作不可撤销，请确认。
+              </n-popconfirm>
             </n-space>
           </n-card>
           <n-card title="快捷导航">
@@ -141,26 +146,17 @@ const trafficChartOptions = ref({
 });
 
 async function handleResetTraffic() {
-  dialog.warning({
-    title: "确认",
-    content: "此操作不可撤销，请您确认。",
-    positiveText: "确定",
-    negativeText: "再考虑一下",
-    onPositiveClick: async () => {
-      const rs = await client.execute(
-        new PostResetTraffic({
-          user_id: mainStore.userId!,
-        }),
-      );
+  const rs = await client.execute(
+    new PostResetTraffic({
+      user_id: mainStore.userId!,
+    }),
+  );
 
-      if (rs.status === 200)
-        dialog.success({
-          title: "重置成功",
-          content: "已重置流量为当前用户组默认流量。",
-        });
-      else message.error(rs.message);
-    },
-    onNegativeClick: () => {},
-  });
+  if (rs.status === 200)
+    dialog.success({
+      title: "重置成功",
+      content: "已重置流量为当前用户组默认流量。",
+    });
+  else message.error(rs.message);
 }
 </script>

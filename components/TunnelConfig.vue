@@ -153,7 +153,7 @@ const props = defineProps<{
     name: string;
     description: string | null;
     host: string;
-    ip: string;
+    ip: string | null;
     portRange: string[];
     additional: {
       allowUdp: boolean;
@@ -167,12 +167,12 @@ const props = defineProps<{
     type?: string;
     localIp?: string;
     localPort?: number;
-    remotePort?: number;
+    remotePort?: number | null;
     useEncryption?: boolean;
     useCompression?: boolean;
-    domain?: string;
-    locations?: string[];
-    secretKey?: string;
+    domain?: string | null;
+    locations?: string[] | null;
+    secretKey?: string | null;
   };
 }>();
 

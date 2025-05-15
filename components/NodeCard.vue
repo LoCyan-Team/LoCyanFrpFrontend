@@ -57,7 +57,7 @@
         </n-el>
       </n-p>
     </n-space>
-    <n-p>{{ node.description ?? "无" }}</n-p>
+    <n-p>{{ node.description ?? "无介绍" }}</n-p>
     <template #footer>
       <slot name="footer" />
     </template>

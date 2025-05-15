@@ -93,7 +93,7 @@ interface Node {
   name: string;
   description: string | null;
   host: string;
-  ip: string;
+  ip: string | null;
   portRange: string[];
   additional: {
     allowUdp: boolean;

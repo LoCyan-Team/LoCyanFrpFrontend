@@ -403,6 +403,10 @@
                 </td>
               </tr>
               <tr>
+                <td>本地 IP</td>
+                <td>{{ selectedTunnel.localIp }}</td>
+              </tr>
+              <tr>
                 <td>本地端口</td>
                 <td>{{ selectedTunnel.localPort }}</td>
               </tr>
@@ -481,7 +485,29 @@
       :bordered="false"
       style="max-width: 600px"
     >
-      <!-- <tunnel-config></tunnel-config> -->
+      <n-form>
+        <n-form-item label="选择节点">
+          <n-select
+            v-model:value="selectedNode"
+            :options="editNodeSelectOptions"
+          />
+        </n-form-item>
+        <tunnel-config
+          :node="selectedNode"
+          :default="{
+            name: selectedTunnel.name,
+            type: selectedTunnel.type,
+            localIp: selectedTunnel.localIp,
+            localPort: selectedTunnel.localPort,
+            remotePort: selectedTunnel.remotePort,
+            useEncryption: selectedTunnel.useEncryption,
+            useCompression: selectedTunnel.useCompression,
+            domain: selectedTunnel.domain,
+            locations: selectedTunnel.locations,
+          }"
+          @submit="handleSubmitModifyTunnel"
+        />
+      </n-form>
     </n-modal>
   </page-content>
 </template>
@@ -490,11 +516,14 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
+import type { SelectOption } from "naive-ui";
+
 import { Error } from "@vicons/carbon";
 import { Search } from "@vicons/ionicons5";
 
 import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels } from "@/api/src/api/tunnels.get";
+import { GetNodes } from "@/api/src/api/nodes.get";
 definePageMeta({
   title: "隧道管理",
 });
@@ -514,12 +543,22 @@ const loading = ref<{
   page: true,
 });
 
-const nodes = ref<
-  {
-    id: number;
-    name: string;
-  }[]
->([]);
+interface Node {
+  id: number;
+  name: string;
+  description: string | null;
+  host: string;
+  ip: string | null;
+  portRange: string[];
+  additional: {
+    allowUdp: boolean;
+    allowHttp: boolean;
+    allowBigTraffic: boolean;
+    needIcp: boolean;
+  };
+}
+
+const nodes = ref<Node[]>([]);
 
 interface Tunnel {
   id: number;
@@ -531,8 +570,11 @@ interface Tunnel {
     host: string | null;
     ip: string | null;
   };
+  localIp: string;
   localPort: number;
   remotePort: number | null;
+  useEncryption: boolean;
+  useCompression: boolean;
   domain: string | null;
   locations: string[] | null;
   status: string;
@@ -541,21 +583,39 @@ interface Tunnel {
 const tunnels = ref<Tunnel[]>([]);
 
 const selectedTunnel = ref<Tunnel>({
-  id: 0,
-  name: "",
-  type: "",
-  node: {
     id: 0,
-    name: null,
-    host: null,
+    name: "",
+    type: "",
+    node: {
+      id: 0,
+      name: null,
+      host: null,
+      ip: null,
+    },
+    localIp: "",
+    localPort: 0,
+    remotePort: null,
+    useEncryption: false,
+    useCompression: false,
+    domain: null,
+    locations: null,
+    status: "",
+  }),
+  selectedNode = ref<Node>({
+    id: 0,
+    name: "",
+    description: null,
+    host: "",
     ip: null,
-  },
-  localPort: 0,
-  remotePort: null,
-  domain: null,
-  locations: null,
-  status: "",
-});
+    portRange: [],
+    additional: {
+      allowUdp: false,
+      allowHttp: false,
+      allowBigTraffic: false,
+      needIcp: false,
+    },
+  });
+const editNodeSelectOptions = ref<Array<SelectOption>>([]);
 
 const batchSelectState = ref<boolean>(false);
 const batchSelected = ref<number[]>([]);
@@ -610,6 +670,23 @@ async function handleInfoModal(tunnel: Tunnel) {
 }
 
 async function handleModifyTunnel(tunnel: Tunnel) {
+  selectedTunnel.value = tunnel;
+  selectedNode.value = findNode(tunnel.node.id);
+  modal.value.edit.show = true;
+}
+
+async function handleSubmitModifyTunnel(tunnel: {
+  name: string;
+  type: string;
+  localIp: string;
+  localPort: number;
+  remotePort: number | null;
+  useEncryption: boolean;
+  useCompression: boolean;
+  domain: string | null;
+  locations: string[] | null;
+  secretKey: string | null;
+}) {
   // TODO
 }
 
@@ -670,8 +747,11 @@ async function getTunnels() {
           host: it.node.host,
           ip: it.node.ip,
         },
+        localIp: it.local_ip,
         localPort: it.local_port,
         remotePort: it.remote_port,
+        useEncryption: it.use_encryption,
+        useCompression: it.use_compression,
         domain: it.domain,
         locations: it.locations,
         status: it.status,
@@ -681,8 +761,49 @@ async function getTunnels() {
   loading.value.page = false;
 }
 
+async function getNodes() {
+  const rs = await client.execute(
+    new GetNodes({
+      user_id: mainStore.userId!,
+      page: page.value.current,
+      size: page.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    page.value.count = rs.data.pagination.count;
+    rs.data.list.forEach((it) => {
+      nodes.value.length = 0;
+      nodes.value.push({
+        id: it.id,
+        name: it.name,
+        description: it.description,
+        host: it.host,
+        ip: it.ip,
+        portRange: it.port_range,
+        additional: {
+          allowUdp: it.additional.allow_udp,
+          allowHttp: it.additional.allow_http,
+          allowBigTraffic: it.additional.allow_big_traffic,
+          needIcp: it.additional.need_icp,
+        },
+      });
+    });
+    await buildEditNodeSelectOptions();
+  } else message.error(rs.message);
+}
+
+async function buildEditNodeSelectOptions() {
+  nodes.value.forEach((it) => {
+    editNodeSelectOptions.value.push({
+      label: it.name,
+      value: it,
+    });
+  });
+}
+
 onMounted(async () => {
   await getTunnels();
+  getNodes();
 });
 
 function computeConnectAddr(tunnel: Tunnel): string {
@@ -699,5 +820,8 @@ function computeConnectAddr(tunnel: Tunnel): string {
 }
 function computeStartCommand(tunnel: Tunnel): string {
   return `./frpc -u ${userStore.frpToken} -p ${tunnel.id}`;
+}
+function findNode(nodeId: number): Node {
+  return nodes.value.find((node) => node.id === nodeId) as Node;
 }
 </script>

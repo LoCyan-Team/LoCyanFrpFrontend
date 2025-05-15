@@ -18,7 +18,7 @@
       </n-card>
 
       <n-card>
-        <n-tabs type="line" animated>
+        <n-tabs type="line" default-value="verified" animated>
           <n-tab-pane name="verified" tab="已认证域名">
             <n-spin :show="loading.list.domain">
               <n-space vertical>

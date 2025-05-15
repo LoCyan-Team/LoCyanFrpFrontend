@@ -14,11 +14,7 @@
       <n-button
         circle
         style="margin-top: 15px; margin-right: 10px"
-        @click="
-          () => {
-            // TODO
-          }
-        "
+        @click="() => (showNotification = true)"
       >
         <template #icon>
           <n-icon><MdNotifications /></n-icon>
@@ -35,6 +31,16 @@
       </n-dropdown>
     </n-space>
   </n-space>
+  <n-modal
+    v-model:show="showNotification"
+    preset="card"
+    title="通知"
+    size="huge"
+    :bordered="false"
+    style="max-width: 600px"
+  >
+    <notification-modal />
+  </n-modal>
 </template>
 
 <script setup>
@@ -63,6 +69,8 @@ const avatarOptions = [
     icon: renderIcon(LogOutOutline),
   },
 ];
+
+const showNotification = ref(false);
 
 async function handleAvatarOptionSelect(key) {
   switch (key) {

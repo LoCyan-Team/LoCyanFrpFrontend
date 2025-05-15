@@ -7,7 +7,7 @@
       <n-spin :show="loading">
         <n-card title="请选择">
           <n-form>
-            <n-tabs type="line" animated>
+            <n-tabs type="line" default-value="tunnel" animated>
               <n-tab-pane name="tunnel" tab="按隧道">
                 <n-form-item label="选择隧道" path="tunnelConfig">
                   <n-select

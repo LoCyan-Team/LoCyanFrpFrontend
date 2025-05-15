@@ -211,11 +211,11 @@
     </n-space>
     <n-modal
       v-model:show="modal.realPerson.show"
-      :mask-closable="false"
       preset="card"
-      style="max-width: 600px"
       title="请使用支付宝扫描二维码进行认证"
       :bordered="false"
+      :mask-closable="false"
+      style="max-width: 600px"
       content-style="text-align: center;"
       footer-style="text-align: center;"
     >

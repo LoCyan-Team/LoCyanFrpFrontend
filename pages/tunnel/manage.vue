@@ -371,11 +371,36 @@
               </tr>
               <tr>
                 <td>节点主机名</td>
-                <td>{{ selectedTunnel.node.host }}</td>
+                <td>
+                  <n-tooltip trigger="hover">
+                    <template #trigger>
+                      <n-button
+                        text
+                        @click="$copyToClipboard(selectedTunnel.node.host!)"
+                      >
+                        <n-code :code="selectedTunnel.node.host" />
+                      </n-button>
+                    </template>
+                    点击复制
+                  </n-tooltip>
+                </td>
               </tr>
               <tr>
                 <td>节点 IP</td>
-                <td>{{ selectedTunnel.node.ip }}</td>
+                <td>
+                  <n-tooltip v-if="selectedTunnel.node.ip" trigger="hover">
+                    <template #trigger>
+                      <n-button
+                        text
+                        @click="$copyToClipboard(selectedTunnel.node.ip!)"
+                      >
+                        <n-code :code="selectedTunnel.node.ip" />
+                      </n-button>
+                    </template>
+                    点击复制
+                  </n-tooltip>
+                  <n-text v-else />
+                </td>
               </tr>
               <tr>
                 <td>本地端口</td>
@@ -386,8 +411,19 @@
                 <td>{{ selectedTunnel.remotePort }}</td>
               </tr>
               <tr>
-                <td>域名</td>
+                <td>自定义域名</td>
                 <td>{{ selectedTunnel.domain }}</td>
+              </tr>
+              <tr>
+                <td>自定义路径</td>
+                <td>
+                  <n-tag
+                    v-for="location in selectedTunnel.locations"
+                    :key="location"
+                  >
+                    {{ location }}
+                  </n-tag>
+                </td>
               </tr>
             </tbody>
           </n-table>
@@ -408,7 +444,7 @@
         </n-el>
         <n-el>
           <n-space align="center">
-            <n-text>简易启动命令: </n-text>
+            <n-text>简易启动命令:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
                 <n-button type="success" secondary> 点击显示 </n-button>
@@ -498,6 +534,7 @@ interface Tunnel {
   localPort: number;
   remotePort: number | null;
   domain: string | null;
+  locations: string[] | null;
   status: string;
 }
 
@@ -516,6 +553,7 @@ const selectedTunnel = ref<Tunnel>({
   localPort: 0,
   remotePort: null,
   domain: null,
+  locations: null,
   status: "",
 });
 
@@ -635,6 +673,7 @@ async function getTunnels() {
         localPort: it.local_port,
         remotePort: it.remote_port,
         domain: it.domain,
+        locations: it.locations,
         status: it.status,
       });
     });

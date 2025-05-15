@@ -24,13 +24,21 @@
       </n-space>
       <n-card v-if="batchSelected.length > 0" embedded>
         <n-space>
-          <n-button type="info" secondary @click="handleChangeNode()">
-            修改节点
+          <n-button type="info" secondary @click="handleBatchEdit">
+            修改
           </n-button>
-          <n-button type="error" secondary @click="handleDelete()">
-            删除
-          </n-button>
-          <n-button type="warning" secondary> 强制下线 </n-button>
+          <n-popconfirm @positive-click="handleBatchDeleteTunnel">
+            <template #trigger>
+              <n-button type="error" secondary> 删除 </n-button>
+            </template>
+            确定要删除这些隧道吗？此操作无法撤销。
+          </n-popconfirm>
+          <n-popconfirm @positive-click="handleBatchForceDownTunnel">
+            <template #trigger>
+              <n-button type="warning" secondary> 强制下线 </n-button>
+            </template>
+            确认要强制下线这些隧道吗？此操作将使隧道下线。
+          </n-popconfirm>
         </n-space>
       </n-card>
 
@@ -47,7 +55,7 @@
                   span="0:4 1000:1"
                 >
                   <n-spin
-                    :show="tunnel.status === -1"
+                    :show="tunnel.status === 'BANNED'"
                     style="
                       --disable-color: #d90303;
                       --n-color: var(--disable-color);
@@ -113,10 +121,38 @@
                       </template>
                       <template #action>
                         <n-space>
-                          <n-button type="info" secondary>详细信息</n-button>
-                          <n-button type="success" secondary>修改</n-button>
-                          <n-button type="error" secondary>删除</n-button>
-                          <n-button type="warning" secondary>强制下线</n-button>
+                          <n-button
+                            type="info"
+                            secondary
+                            @click="handleInfoModal(tunnel)"
+                          >
+                            详细信息
+                          </n-button>
+                          <n-button
+                            type="success"
+                            secondary
+                            @click="handleModifyTunnel(tunnel)"
+                          >
+                            修改
+                          </n-button>
+                          <n-popconfirm
+                            @positive-click="handleDeleteTunnel(tunnel.id)"
+                          >
+                            <template #trigger>
+                              <n-button type="error" secondary> 删除 </n-button>
+                            </template>
+                            确定要删除此隧道吗？此操作无法撤销。
+                          </n-popconfirm>
+                          <n-popconfirm
+                            @positive-click="handleForceDownTunnel(tunnel.id)"
+                          >
+                            <template #trigger>
+                              <n-button type="warning" secondary>
+                                强制下线
+                              </n-button>
+                            </template>
+                            确认要强制下线此隧道吗？此操作将使隧道下线。
+                          </n-popconfirm>
                         </n-space>
                       </template>
                     </n-card>
@@ -190,7 +226,7 @@
                       <n-td v-else />
                       <n-td>
                         <n-spin
-                          :show="tunnel.status === -1"
+                          :show="tunnel.status === 'BANNED'"
                           style="
                             --disable-color: #d90303;
                             --n-color: var(--disable-color);
@@ -203,12 +239,40 @@
                           </template>
                           <template #description>已封禁</template>
                           <n-space :inline="true" :wrap="false">
-                            <n-button type="info" secondary>详细信息</n-button>
-                            <n-button type="success" secondary>修改</n-button>
-                            <n-button type="error" secondary>删除</n-button>
-                            <n-button type="warning" secondary>
-                              强制下线
+                            <n-button
+                              type="info"
+                              secondary
+                              @click="handleInfoModal(tunnel)"
+                            >
+                              详细信息
                             </n-button>
+                            <n-button
+                              type="success"
+                              secondary
+                              @click="handleModifyTunnel(tunnel)"
+                            >
+                              修改
+                            </n-button>
+                            <n-popconfirm
+                              @positive-click="handleDeleteTunnel(tunnel.id)"
+                            >
+                              <template #trigger>
+                                <n-button type="error" secondary>
+                                  删除
+                                </n-button>
+                              </template>
+                              确定要删除此隧道吗？此操作无法撤销。
+                            </n-popconfirm>
+                            <n-popconfirm
+                              @positive-click="handleForceDownTunnel(tunnel.id)"
+                            >
+                              <template #trigger>
+                                <n-button type="warning" secondary>
+                                  强制下线
+                                </n-button>
+                              </template>
+                              确认要强制下线此隧道吗？此操作将使隧道下线。
+                            </n-popconfirm>
                           </n-space>
                         </n-spin>
                       </n-td>
@@ -246,23 +310,161 @@
         </n-space>
       </n-spin>
     </n-space>
+    <n-modal
+      v-model:show="modal.batchEdit.show"
+      preset="card"
+      title="批量编辑"
+      size="huge"
+      :bordered="false"
+      style="max-width: 600px"
+    >
+      <n-form :model="batchEditForm">
+        <n-form-item label="节点" path="node">
+          <n-select />
+        </n-form-item>
+        <n-form-item label="类型" path="type">
+          <n-radio-group>
+            <n-radio-button value="keep">不修改</n-radio-button>
+            <n-radio-button value="tcp">TCP</n-radio-button>
+            <n-radio-button value="udp">UDP</n-radio-button>
+            <n-radio-button value="http">HTTP</n-radio-button>
+            <n-radio-button value="https">HTTPS</n-radio-button>
+            <n-radio-button value="xtcp">XTCP</n-radio-button>
+            <n-radio-button value="stcp">STCP</n-radio-button>
+          </n-radio-group>
+        </n-form-item>
+      </n-form>
+    </n-modal>
+    <n-modal
+      v-model:show="modal.info.show"
+      preset="card"
+      title="隧道信息"
+      size="huge"
+      :bordered="false"
+      style="max-width: 600px"
+    >
+      <n-space vertical>
+        <n-scrollbar x-scrollable>
+          <n-table style="white-space: nowrap">
+            <thead>
+              <tr>
+                <th>数据</th>
+                <th>值</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td>隧道 ID</td>
+                <td>{{ selectedTunnel.id }}</td>
+              </tr>
+              <tr>
+                <td>隧道名称</td>
+                <td>{{ selectedTunnel.name }}</td>
+              </tr>
+              <tr>
+                <td>隧道类型</td>
+                <td>{{ selectedTunnel.type }}</td>
+              </tr>
+              <tr>
+                <td>节点名称</td>
+                <td>{{ selectedTunnel.node.name }}</td>
+              </tr>
+              <tr>
+                <td>节点主机名</td>
+                <td>{{ selectedTunnel.node.host }}</td>
+              </tr>
+              <tr>
+                <td>节点 IP</td>
+                <td>{{ selectedTunnel.node.ip }}</td>
+              </tr>
+              <tr>
+                <td>本地端口</td>
+                <td>{{ selectedTunnel.localPort }}</td>
+              </tr>
+              <tr>
+                <td>远程端口</td>
+                <td>{{ selectedTunnel.remotePort }}</td>
+              </tr>
+              <tr>
+                <td>域名</td>
+                <td>{{ selectedTunnel.domain }}</td>
+              </tr>
+            </tbody>
+          </n-table>
+        </n-scrollbar>
+        <n-el>
+          <n-text>连接地址: </n-text>
+          <n-tooltip trigger="hover">
+            <template #trigger>
+              <n-button
+                text
+                @click="$copyToClipboard(computeConnectAddr(selectedTunnel))"
+              >
+                <n-code :code="computeConnectAddr(selectedTunnel)" />
+              </n-button>
+            </template>
+            点击复制
+          </n-tooltip>
+        </n-el>
+        <n-el>
+          <n-space align="center">
+            <n-text>简易启动命令: </n-text>
+            <n-tooltip trigger="click">
+              <template #trigger>
+                <n-button type="success" secondary> 点击显示 </n-button>
+              </template>
+              <n-scrollbar x-scrollable>
+                <n-code :code="computeStartCommand(selectedTunnel)" />
+              </n-scrollbar>
+            </n-tooltip>
+            <n-button
+              type="info"
+              secondary
+              @click="$copyToClipboard(computeStartCommand(selectedTunnel))"
+            >
+              点击复制
+            </n-button>
+          </n-space>
+        </n-el>
+        <n-divider />
+        <n-button
+          type="success"
+          secondary
+          style="width: 100%"
+          @click="handleClickToRun(selectedTunnel.id)"
+        >
+          一键启动（需安装启动器）
+        </n-button>
+      </n-space>
+    </n-modal>
+    <n-modal
+      v-model:show="modal.edit.show"
+      preset="card"
+      title="编辑隧道"
+      size="huge"
+      :bordered="false"
+      style="max-width: 600px"
+    >
+      <!-- <tunnel-config></tunnel-config> -->
+    </n-modal>
   </page-content>
 </template>
 
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
+import { useUserStore } from "@/store/user";
 
 import { Error } from "@vicons/carbon";
 import { Search } from "@vicons/ionicons5";
 
 import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels } from "@/api/src/api/tunnels.get";
-
 definePageMeta({
   title: "隧道管理",
 });
 
 const mainStore = useMainStore();
+const userStore = useUserStore();
 const client = new ApiClient(mainStore.token!);
 client.initClient();
 
@@ -301,8 +503,54 @@ interface Tunnel {
 
 const tunnels = ref<Tunnel[]>([]);
 
+const selectedTunnel = ref<Tunnel>({
+  id: 0,
+  name: "",
+  type: "",
+  node: {
+    id: 0,
+    name: null,
+    host: null,
+    ip: null,
+  },
+  localPort: 0,
+  remotePort: null,
+  domain: null,
+  status: "",
+});
+
 const batchSelectState = ref<boolean>(false);
 const batchSelected = ref<number[]>([]);
+
+const batchEditForm = ref<{
+  node: number | null;
+  type: string;
+}>({
+  node: null,
+  type: "keep",
+});
+
+const modal = ref<{
+  info: {
+    show: boolean;
+  };
+  edit: {
+    show: boolean;
+  };
+  batchEdit: {
+    show: boolean;
+  };
+}>({
+  info: {
+    show: false,
+  },
+  edit: {
+    show: false,
+  },
+  batchEdit: {
+    show: false,
+  },
+});
 
 const page = ref<{
   current: number;
@@ -314,12 +562,37 @@ const page = ref<{
   count: 1,
 });
 
-function handleChangeNode() {
+async function handleBatchEdit() {
   // TODO
 }
 
-function handleDelete(tunnelId?: number) {
+async function handleInfoModal(tunnel: Tunnel) {
+  selectedTunnel.value = tunnel;
+  modal.value.info.show = true;
+}
+
+async function handleModifyTunnel(tunnel: Tunnel) {
   // TODO
+}
+
+async function handleDeleteTunnel(tunnelId: number) {
+  // TODO
+}
+
+async function handleBatchDeleteTunnel() {
+  // TODO
+}
+
+async function handleForceDownTunnel(tunnelId: number) {
+  // TODO
+}
+
+async function handleBatchForceDownTunnel() {
+  // TODO
+}
+
+function handleClickToRun(tunnelId: number) {
+  window.open(`locyanfrp://${userStore.frpToken}/${tunnelId}`);
 }
 
 function handleBatchSelect(tunnelId: number) {
@@ -384,5 +657,8 @@ function computeConnectAddr(tunnel: Tunnel): string {
     default:
       return `${tunnel.node.host}:${tunnel.remotePort}`;
   }
+}
+function computeStartCommand(tunnel: Tunnel): string {
+  return `./frpc -u ${userStore.frpToken} -p ${tunnel.id}`;
 }
 </script>

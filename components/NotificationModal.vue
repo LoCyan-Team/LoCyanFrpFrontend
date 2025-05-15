@@ -9,12 +9,22 @@
               v-for="notification in systemNotificationData"
               :key="notification.id"
             >
-              <n-thing
-                :title="notification.title"
-                :title-extra="dayjs(notification.time).format('L LT')"
+              <n-badge
+                style="width: 100%"
+                :value="renderRead(notification.readTime)"
+                dot
               >
-                {{ notification.content }}
-              </n-thing>
+                <n-thing
+                  style="width: 100%"
+                  :title="notification.title"
+                  :title-extra="dayjs(notification.time).format('L LT')"
+                >
+                  {{ notification.content }}
+                  <template #action>
+                    <n-button size="small"> 已读 </n-button>
+                  </template>
+                </n-thing>
+              </n-badge>
             </n-list-item>
           </n-list>
         </n-scrollbar>
@@ -36,12 +46,22 @@
               v-for="notification in userNotificationData"
               :key="notification.id"
             >
-              <n-thing
-                :title="notification.title"
-                :title-extra="dayjs(notification.time).format('L LT')"
+              <n-badge
+                style="width: 100%"
+                :value="renderRead(notification.readTime)"
+                dot
               >
-                {{ notification.content }}
-              </n-thing>
+                <n-thing
+                  style="width: 100%"
+                  :title="notification.title"
+                  :title-extra="dayjs(notification.time).format('L LT')"
+                >
+                  {{ notification.content }}
+                  <template #action>
+                    <n-button size="small"> 已读 </n-button>
+                  </template>
+                </n-thing>
+              </n-badge>
             </n-list-item>
           </n-list>
         </n-scrollbar>
@@ -94,4 +114,8 @@ const systemNotificationData = ref<
       readTime: string | null;
     }[]
   >([]);
+
+function renderRead(time: string | null): number {
+  return time === null ? 0 : 1;
+}
 </script>

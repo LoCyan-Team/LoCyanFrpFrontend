@@ -113,22 +113,7 @@ const loading = ref<{
 
 const selectedNode = ref<Node | null>(null);
 
-const nodes = ref<Node[]>([
-  // {
-  //   id: 0,
-  //   name: "一个好听的名字",
-  //   description: "这里是介绍信息",
-  //   host: "localhost",
-  //   ip: "0.0.0.0",
-  //   portRange: ["0:65535"],
-  //   additional: {
-  //     allowUdp: true,
-  //     allowHttp: true,
-  //     allowBigTraffic: true,
-  //     needIcp: true,
-  //   },
-  // },
-]);
+const nodes = ref<Node[]>([]);
 
 const page = ref<{
   current: number;

@@ -55,7 +55,9 @@
 
       <n-spin :show="loading.list">
         <n-space vertical>
-          <n-empty v-if="data.length === 0" />
+          <n-card v-if="data.length === 0">
+            <n-empty />
+          </n-card>
           <n-scrollbar v-else x-scrollable>
             <n-table
               style="min-width: 800px"

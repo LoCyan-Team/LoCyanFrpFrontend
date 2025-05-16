@@ -115,10 +115,12 @@ async function fetchSiteData() {
 
 onMounted(async () => {
   await fetchSiteData();
-
   loaded.value = true;
 
+  const router = useRouter();
+
   const message = useMessage();
+  const notification = useNotification();
   setInterval(async () => {
     if (!mainStore.token) return;
     const client = new ApiClient(mainStore.token!);
@@ -141,6 +143,17 @@ onMounted(async () => {
       case 401:
         mainStore.$reset();
         userStore.$reset();
+        navigateTo({
+          path: "/auth/login",
+          query: {
+            redirect: router.currentRoute.value.fullPath,
+          },
+        });
+        notification.warning({
+          title: "登录状态失效",
+          content: "请重新登录控制台。",
+          duration: 2500,
+        });
         break;
       default:
         message.error(rs.message);

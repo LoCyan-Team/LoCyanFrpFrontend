@@ -30,11 +30,20 @@
               </n-radio>
             </n-radio-group>
           </n-form-item>
-          <n-button type="success" @click="handlePayment">捐赠</n-button>
+          <n-button
+            type="success"
+            :loading="loading.submit"
+            :disabled="loading.submit"
+            @click="handlePayment"
+          >
+            捐赠
+          </n-button>
         </n-form>
       </n-card>
 
-      <n-empty v-if="donations.length === 0" />
+      <n-card v-if="donations.length === 0">
+        <n-empty />
+      </n-card>
       <n-scrollbar v-else x-scrollable>
         <n-table style="min-width: 800px" :bordered="true" :single-line="false">
           <n-thead>
@@ -49,7 +58,7 @@
           <n-tbody>
             <n-tr v-for="donation in donations" :key="donation.id">
               <n-td>{{ donation.id }}</n-td>
-              <n-td>{{ donation.tradeId }}</n-td>
+              <n-td>{{ donation.tradeNo }}</n-td>
               <n-td>{{ donation.amount }}</n-td>
               <n-td>{{ donation.paymentMethod }}</n-td>
               <n-td>{{ donation.comment }}</n-td>
@@ -57,13 +66,56 @@
           </n-tbody>
         </n-table>
       </n-scrollbar>
+      <n-space
+        v-if="donations.length !== 0"
+        justify="center"
+        style="width: 100%"
+      >
+        <n-pagination
+          v-model:page="page.current"
+          v-model:page-size="page.size"
+          :page-count="page.count"
+          :on-update:page="
+            (pageSel) => {
+              page.current = pageSel;
+              getDonations();
+            }
+          "
+          :on-update:page-size="
+            (pageSizeSel) => {
+              page.size = pageSizeSel;
+              getDonations();
+            }
+          "
+          show-size-picker
+          :page-sizes="[10, 25, 50, 100]"
+        />
+      </n-space>
     </n-space>
   </page-content>
 </template>
 
 <script setup lang="ts">
+import { useMainStore } from "@/store/main";
+
+import { Client as ApiClient } from "@/api/src/client";
+import { GetDonations } from "@/api/src/api/donations.get";
+import { PostDonation } from "@/api/src/api/donation.post";
+
 definePageMeta({
   title: "捐赠",
+});
+
+const mainStore = useMainStore();
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+
+const loading = ref<{
+  submit: boolean;
+}>({
+  submit: false,
 });
 
 const formData = ref<{
@@ -77,10 +129,10 @@ const formData = ref<{
 const donations = ref<
   {
     id: number;
-    tradeId: string;
+    tradeNo: string;
     amount: number;
     paymentMethod: string;
-    comment?: string;
+    comment: string | null;
   }[]
 >([]);
 
@@ -91,7 +143,52 @@ const paymentMethods = {
   },
 };
 
-function handlePayment() {
-  // TODO
+const page = ref<{
+  current: number;
+  size: number;
+  count: number;
+}>({
+  current: 1,
+  size: 10,
+  count: 1,
+});
+
+async function handlePayment() {
+  loading.value.submit = true;
+  const rs = await client.execute(
+    new PostDonation({
+      user_id: mainStore.userId!,
+      amount: formData.value.amount,
+    }),
+  );
+  if (rs.status === 200) {
+    window.open(rs.data.url);
+  } else message.error(rs.message);
+  loading.value.submit = false;
 }
+
+async function getDonations() {
+  const rs = await client.execute(
+    new GetDonations({
+      user_id: mainStore.userId!,
+      page: page.value.current,
+      size: page.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    rs.data.list.forEach((it) => {
+      donations.value.push({
+        id: it.id,
+        tradeNo: it.trade_no,
+        amount: it.amount,
+        paymentMethod: it.pay_type,
+        comment: it.comment,
+      });
+    });
+  } else message.error(rs.message);
+}
+
+onMounted(async () => {
+  await getDonations();
+});
 </script>

@@ -545,7 +545,11 @@
           }"
           @submit="
             (tunnelData) =>
-              handleSubmitModifyTunnel(selectedTunnel.id, tunnelData)
+              handleSubmitModifyTunnel(
+                selectedTunnel.id,
+                selectedTunnel.status,
+                tunnelData,
+              )
           "
         />
       </n-form>
@@ -567,6 +571,7 @@ import { GetTunnels } from "@/api/src/api/tunnels.get";
 import { GetNodes } from "@/api/src/api/nodes.get";
 import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
 import { PatchTunnel } from "@/api/src/api/tunnel.patch";
+
 definePageMeta({
   title: "隧道管理",
 });
@@ -738,6 +743,7 @@ async function handleModifyTunnel(tunnel: Tunnel) {
 
 async function handleSubmitModifyTunnel(
   tunnelId: number,
+  tunnelStatus: string,
   tunnel: {
     name: string;
     type: string;
@@ -789,7 +795,7 @@ async function handleSubmitModifyTunnel(
       useCompression: tunnel.useCompression,
       domain: tunnel.domain,
       locations: tunnel.locations,
-      status: "ACTIVE",
+      status: tunnelStatus,
     });
     tunnels.value = sortTunnelsById(arr);
   } else message.error(rs.message);

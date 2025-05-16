@@ -32,6 +32,7 @@
                   <n-radio-button value="https">HTTPS</n-radio-button>
                   <n-radio-button value="xtcp">XTCP</n-radio-button>
                   <n-radio-button value="stcp">STCP</n-radio-button>
+                  <n-radio-button value="sudp">SUDP</n-radio-button>
                 </n-radio-group>
               </n-scrollbar>
             </n-form-item>
@@ -228,7 +229,7 @@ const hasOption = {
   remotePort: ["tcp", "udp"],
   domain: ["http", "https"],
   locations: ["http", "https"],
-  secretKey: ["xtcp", "stcp"],
+  secretKey: ["xtcp", "stcp", "sudp"],
 };
 
 async function handleRandomRemotePort() {

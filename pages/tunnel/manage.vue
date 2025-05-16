@@ -369,6 +369,7 @@
             <n-radio-button value="https">HTTPS</n-radio-button>
             <n-radio-button value="xtcp">XTCP</n-radio-button>
             <n-radio-button value="stcp">STCP</n-radio-button>
+            <n-radio-button value="sudp">SUDP</n-radio-button>
           </n-radio-group>
         </n-form-item>
       </n-form>
@@ -960,6 +961,7 @@ function computeConnectAddr(tunnel: Tunnel): string {
       return tunnel.domain!;
     case "xtcp":
     case "stcp":
+    case "sudp":
       return "需配合 visitor";
     default:
       return `${tunnel.node.host}:${tunnel.remotePort}`;

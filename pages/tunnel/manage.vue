@@ -29,13 +29,27 @@
           </n-button>
           <n-popconfirm @positive-click="handleBatchDeleteTunnel">
             <template #trigger>
-              <n-button type="error" secondary> 删除 </n-button>
+              <n-button
+                type="error"
+                :loading="loading.batch.delete"
+                :disabled="loading.batch.delete"
+                secondary
+              >
+                删除
+              </n-button>
             </template>
             确定要删除这些隧道吗？此操作无法撤销。
           </n-popconfirm>
           <n-popconfirm @positive-click="handleBatchForceDownTunnel">
             <template #trigger>
-              <n-button type="warning" secondary> 强制下线 </n-button>
+              <n-button
+                type="warning"
+                :loading="loading.batch.down"
+                :disabled="loading.batch.delete"
+                secondary
+              >
+                强制下线
+              </n-button>
             </template>
             确认要强制下线这些隧道吗？此操作将使隧道下线。
           </n-popconfirm>
@@ -139,7 +153,14 @@
                             @positive-click="handleDeleteTunnel(tunnel.id)"
                           >
                             <template #trigger>
-                              <n-button type="error" secondary> 删除 </n-button>
+                              <n-button
+                                type="error"
+                                :loading="loading.tunnel.delete === tunnel.id"
+                                :disabled="loading.tunnel.delete === tunnel.id"
+                                secondary
+                              >
+                                删除
+                              </n-button>
                             </template>
                             确定要删除此隧道吗？此操作无法撤销。
                           </n-popconfirm>
@@ -147,7 +168,12 @@
                             @positive-click="handleForceDownTunnel(tunnel.id)"
                           >
                             <template #trigger>
-                              <n-button type="warning" secondary>
+                              <n-button
+                                type="warning"
+                                :loading="loading.tunnel.down === tunnel.id"
+                                :disabled="loading.tunnel.down === tunnel.id"
+                                secondary
+                              >
                                 强制下线
                               </n-button>
                             </template>
@@ -257,7 +283,14 @@
                               @positive-click="handleDeleteTunnel(tunnel.id)"
                             >
                               <template #trigger>
-                                <n-button type="error" secondary>
+                                <n-button
+                                  type="error"
+                                  :loading="loading.tunnel.delete === tunnel.id"
+                                  :disabled="
+                                    loading.tunnel.delete === tunnel.id
+                                  "
+                                  secondary
+                                >
                                   删除
                                 </n-button>
                               </template>
@@ -267,7 +300,12 @@
                               @positive-click="handleForceDownTunnel(tunnel.id)"
                             >
                               <template #trigger>
-                                <n-button type="warning" secondary>
+                                <n-button
+                                  type="warning"
+                                  :loading="loading.tunnel.down === tunnel.id"
+                                  :disabled="loading.tunnel.down === tunnel.id"
+                                  secondary
+                                >
                                   强制下线
                                 </n-button>
                               </template>
@@ -505,7 +543,10 @@
             domain: selectedTunnel.domain,
             locations: selectedTunnel.locations,
           }"
-          @submit="handleSubmitModifyTunnel"
+          @submit="
+            (tunnelData) =>
+              handleSubmitModifyTunnel(selectedTunnel.id, tunnelData)
+          "
         />
       </n-form>
     </n-modal>
@@ -524,6 +565,8 @@ import { Search } from "@vicons/ionicons5";
 import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels } from "@/api/src/api/tunnels.get";
 import { GetNodes } from "@/api/src/api/nodes.get";
+import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
+import { PatchTunnel } from "@/api/src/api/tunnel.patch";
 definePageMeta({
   title: "隧道管理",
 });
@@ -539,8 +582,26 @@ const viewMode = ref<string>("card");
 
 const loading = ref<{
   page: boolean;
+  batch: {
+    delete: boolean;
+    down: boolean;
+  };
+  tunnel: {
+    editSubmit: boolean;
+    delete: number;
+    down: number;
+  };
 }>({
   page: true,
+  batch: {
+    delete: false,
+    down: false,
+  },
+  tunnel: {
+    editSubmit: false,
+    delete: 0,
+    down: 0,
+  },
 });
 
 interface Node {
@@ -675,35 +736,96 @@ async function handleModifyTunnel(tunnel: Tunnel) {
   modal.value.edit.show = true;
 }
 
-async function handleSubmitModifyTunnel(tunnel: {
-  name: string;
-  type: string;
-  localIp: string;
-  localPort: number;
-  remotePort: number | null;
-  useEncryption: boolean;
-  useCompression: boolean;
-  domain: string | null;
-  locations: string[] | null;
-  secretKey: string | null;
-}) {
-  // TODO
+async function handleSubmitModifyTunnel(
+  tunnelId: number,
+  tunnel: {
+    name: string;
+    type: string;
+    localIp: string;
+    localPort: number;
+    remotePort: number | null;
+    useEncryption: boolean;
+    useCompression: boolean;
+    domain: string | null;
+    locations: string[] | null;
+    secretKey: string | null;
+  },
+) {
+  loading.value.tunnel.editSubmit = true;
+  const rs = await client.execute(
+    new PatchTunnel({
+      user_id: mainStore.userId!,
+      tunnel_id: tunnelId,
+      name: tunnel.name,
+      type: tunnel.type,
+      local_ip: tunnel.localIp,
+      local_port: tunnel.localPort,
+      remote_port: tunnel.remotePort,
+      use_encryption: tunnel.useEncryption,
+      use_compression: tunnel.useCompression,
+      node_id: selectedNode.value.id,
+      domain: tunnel.domain,
+      locations: tunnel.locations,
+      secret_key: tunnel.secretKey ?? undefined,
+    }),
+  );
+  if (rs.status === 200) {
+    modal.value.edit.show = false;
+    const arr = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
+    arr.push({
+      id: tunnelId,
+      name: tunnel.name,
+      type: tunnel.type,
+      node: {
+        id: selectedNode.value.id,
+        name: selectedNode.value.name,
+        host: selectedNode.value.host,
+        ip: selectedNode.value.ip,
+      },
+      localIp: tunnel.localIp,
+      localPort: tunnel.localPort,
+      remotePort: tunnel.remotePort,
+      useEncryption: tunnel.useEncryption,
+      useCompression: tunnel.useCompression,
+      domain: tunnel.domain,
+      locations: tunnel.locations,
+      status: "ACTIVE",
+    });
+    tunnels.value = sortTunnelsById(arr);
+  } else message.error(rs.message);
+  loading.value.tunnel.editSubmit = false;
 }
 
 async function handleDeleteTunnel(tunnelId: number) {
-  // TODO
+  loading.value.tunnel.delete = tunnelId;
+  const rs = await client.execute(
+    new DeleteTunnel({
+      user_id: mainStore.userId!,
+      tunnel_id: tunnelId,
+    }),
+  );
+  if (rs.status === 200) {
+    tunnels.value = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
+  } else message.error(rs.message);
+  loading.value.tunnel.delete = 0;
 }
 
 async function handleBatchDeleteTunnel() {
+  loading.value.batch.delete = true;
   // TODO
+  loading.value.batch.delete = false;
 }
 
 async function handleForceDownTunnel(tunnelId: number) {
+  loading.value.tunnel.down = tunnelId;
   // TODO
+  loading.value.tunnel.down = 0;
 }
 
 async function handleBatchForceDownTunnel() {
+  loading.value.batch.down = true;
   // TODO
+  loading.value.batch.down = false;
 }
 
 function handleClickToRun(tunnelId: number) {
@@ -757,6 +879,7 @@ async function getTunnels() {
         status: it.status,
       });
     });
+    tunnels.value = sortTunnelsById(tunnels.value);
   } else message.error(rs.message);
   loading.value.page = false;
 }
@@ -788,6 +911,7 @@ async function getNodes() {
         },
       });
     });
+    nodes.value = sortNodesByName(nodes.value);
     await buildEditNodeSelectOptions();
   } else message.error(rs.message);
 }
@@ -805,6 +929,23 @@ onMounted(async () => {
   await getTunnels();
   getNodes();
 });
+
+function sortTunnelsById(data: Tunnel[]): Tunnel[] {
+  return data.sort((a, b) => {
+    if (a.id < b.id) {
+      return -1;
+    }
+    if (a.id > b.id) {
+      return 1;
+    }
+    return 0;
+  });
+}
+function sortNodesByName(data: Node[]): Node[] {
+  return data.sort((a, b) => {
+    return a.name.localeCompare(b.name);
+  });
+}
 
 function computeConnectAddr(tunnel: Tunnel): string {
   switch (tunnel.type) {

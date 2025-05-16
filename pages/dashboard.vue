@@ -38,7 +38,11 @@
               </n-text>
               <n-popconfirm @positive-click="handleResetTraffic">
                 <template #trigger>
-                  <n-button>重置流量</n-button>
+                  <n-button
+                    :loading="loading.resetTraffic"
+                    :disabled="loading.resetTraffic"
+                    >重置流量</n-button
+                  >
                 </template>
                 此操作不可撤销，请确认。
               </n-popconfirm>
@@ -46,21 +50,23 @@
           </n-card>
           <n-card title="快捷导航">
             <n-space vertical>
-              <n-text
-                >我们在这里放了一些导航，避免有的用户真的会找不到入口。</n-text
-              >
+              <n-text>
+                我们在这里放了一些导航，避免有的用户真的会找不到入口。
+              </n-text>
             </n-space>
           </n-card>
         </n-space>
       </n-gi>
       <n-gi span="0:3 700:2">
         <n-space vertical>
-          <n-card title="公告板">
-            <n-p v-if="data.annnouncement">
-              <!-- Content -->
-            </n-p>
-            <n-empty v-else />
-          </n-card>
+          <n-spin :show="loading.announcement">
+            <n-card title="公告板">
+              <n-p v-if="data.announcement">
+                <MDC :value="data.announcement" />
+              </n-p>
+              <n-empty v-else />
+            </n-card>
+          </n-spin>
           <n-card title="流量统计图">
             <highcharts :options="speedChartOptions" />
             <highcharts :options="trafficChartOptions" />
@@ -78,6 +84,7 @@ import { useUserStore } from "@/store/user";
 import { useOsTheme } from "naive-ui";
 
 import { Client as ApiClient } from "@/api/src/client";
+import { GetNotice } from "@/api/src/api/site/notice.get";
 import { PostTraffic as PostResetTraffic } from "@/api/src/api/user/traffic.post";
 
 const naiveOsTheme = useOsTheme();
@@ -94,6 +101,14 @@ client.initClient();
 
 const message = useMessage();
 const dialog = useDialog();
+
+const loading = ref<{
+  announcement: boolean;
+  resetTraffic: boolean;
+}>({
+  announcement: true,
+  resetTraffic: false,
+});
 
 const data = ref<{
   announcement: string | null;
@@ -146,6 +161,7 @@ const trafficChartOptions = ref({
 });
 
 async function handleResetTraffic() {
+  loading.value.resetTraffic = true;
   const rs = await client.execute(
     new PostResetTraffic({
       user_id: mainStore.userId!,
@@ -158,5 +174,12 @@ async function handleResetTraffic() {
       content: "已重置流量为当前用户组默认流量。",
     });
   else message.error(rs.message);
+  loading.value.resetTraffic = false;
 }
+
+onMounted(async () => {
+  const rs = await client.execute(new GetNotice());
+  data.value.announcement = rs.data.announcement;
+  loading.value.announcement = false;
+});
 </script>

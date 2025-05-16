@@ -176,6 +176,8 @@ async function getDonations() {
     }),
   );
   if (rs.status === 200) {
+    page.value.count = rs.data.pagination.count;
+    donations.value.length = 0;
     rs.data.list.forEach((it) => {
       donations.value.push({
         id: it.id,

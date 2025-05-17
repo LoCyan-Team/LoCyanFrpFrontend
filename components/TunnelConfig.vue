@@ -26,13 +26,13 @@
             <n-form-item label="穿透协议" path="type">
               <n-scrollbar x-scrollable>
                 <n-radio-group v-model:value="form.type">
-                  <n-radio-button value="tcp">TCP</n-radio-button>
-                  <n-radio-button value="udp">UDP</n-radio-button>
-                  <n-radio-button value="http">HTTP</n-radio-button>
-                  <n-radio-button value="https">HTTPS</n-radio-button>
-                  <n-radio-button value="xtcp">XTCP</n-radio-button>
-                  <n-radio-button value="stcp">STCP</n-radio-button>
-                  <n-radio-button value="sudp">SUDP</n-radio-button>
+                  <n-radio-button value="TCP">TCP</n-radio-button>
+                  <n-radio-button value="UDP">UDP</n-radio-button>
+                  <n-radio-button value="HTTP">HTTP</n-radio-button>
+                  <n-radio-button value="HTTPS">HTTPS</n-radio-button>
+                  <n-radio-button value="XTCP">XTCP</n-radio-button>
+                  <n-radio-button value="STCP">STCP</n-radio-button>
+                  <n-radio-button value="SUDP">SUDP</n-radio-button>
                 </n-radio-group>
               </n-scrollbar>
             </n-form-item>
@@ -226,10 +226,10 @@ const form = ref<{
 });
 
 const hasOption = {
-  remotePort: ["tcp", "udp"],
-  domain: ["http", "https"],
-  locations: ["http", "https"],
-  secretKey: ["xtcp", "stcp", "sudp"],
+  remotePort: ["TCP", "UDP"],
+  domain: ["HTTP", "HTTPS"],
+  locations: ["HTTP", "HTTPS"],
+  secretKey: ["XTCP", "STCP", "SUDP"],
 };
 
 async function handleRandomRemotePort() {

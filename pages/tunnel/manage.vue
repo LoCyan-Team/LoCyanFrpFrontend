@@ -85,7 +85,7 @@
                       <template #header-extra>
                         <n-space style="margin-right: 10px">
                           <n-tag type="success">
-                            {{ tunnel.type.toUpperCase() }}
+                            {{ tunnel.type }}
                           </n-tag>
                           <n-tag type="info"> ID: {{ tunnel.id }} </n-tag>
                         </n-space>
@@ -222,7 +222,7 @@
                       <n-td>
                         {{ tunnel.node.name ?? "未知节点" }}
                       </n-td>
-                      <n-td>{{ tunnel.type.toUpperCase() }}</n-td>
+                      <n-td>{{ tunnel.type }}</n-td>
                       <n-td>{{ tunnel.localPort }}</n-td>
                       <n-td>{{ tunnel.remotePort }}</n-td>
                       <n-td>
@@ -767,12 +767,12 @@ async function handleSubmitModifyTunnel(
       type: tunnel.type,
       local_ip: tunnel.localIp,
       local_port: tunnel.localPort,
-      remote_port: tunnel.remotePort,
+      remote_port: tunnel.remotePort ?? undefined,
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
       node_id: selectedNode.value.id,
-      domain: tunnel.domain,
-      locations: tunnel.locations,
+      domain: tunnel.domain ?? undefined,
+      locations: tunnel.locations ?? undefined,
       secret_key: tunnel.secretKey ?? undefined,
     }),
   );
@@ -956,12 +956,12 @@ function sortNodesByName(data: Node[]): Node[] {
 
 function computeConnectAddr(tunnel: Tunnel): string {
   switch (tunnel.type) {
-    case "http":
-    case "https":
+    case "HTTP":
+    case "HTTPS":
       return tunnel.domain!;
-    case "xtcp":
-    case "stcp":
-    case "sudp":
+    case "XTCP":
+    case "STCP":
+    case "SUDP":
       return "需配合 visitor";
     default:
       return `${tunnel.node.host}:${tunnel.remotePort}`;

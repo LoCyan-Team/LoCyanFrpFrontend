@@ -151,12 +151,12 @@ async function handleCreate(tunnel: {
       type: tunnel.type,
       local_ip: tunnel.localIp,
       local_port: tunnel.localPort,
-      remote_port: tunnel.remotePort,
+      remote_port: tunnel.remotePort ?? undefined,
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
-      domain: tunnel.domain,
-      locations: tunnel.locations,
-      secret_key: tunnel.secretKey,
+      domain: tunnel.domain ?? undefined,
+      locations: tunnel.locations ?? undefined,
+      secret_key: tunnel.secretKey ?? undefined,
     }),
   );
   if (rs.status === 200)

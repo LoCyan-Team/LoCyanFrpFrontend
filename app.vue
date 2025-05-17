@@ -71,8 +71,9 @@ import SiteFooter from "@/components/Footer.vue";
 import NotificationInject from "~/components/inject/Notification.vue";
 
 import hljs from "highlight.js/lib/core";
+import json from "highlight.js/lib/languages/json";
 import ini from "highlight.js/lib/languages/ini";
-import nginx from "highlight.js/lib/languages/nginx";
+import yaml from "highlight.js/lib/languages/yaml";
 
 import { useMainStore } from "@/store/main";
 import { usePageStore } from "@/store/page";
@@ -93,8 +94,10 @@ api.initClient();
 
 const loaded = ref<boolean>(false);
 
+hljs.registerLanguage("json", json);
 hljs.registerLanguage("ini", ini);
-hljs.registerLanguage("nginx", nginx);
+hljs.registerLanguage("toml", ini);
+hljs.registerLanguage("yaml", yaml);
 
 const pageStore = usePageStore();
 const pageSidebar = computed(() => pageStore.sidebar);

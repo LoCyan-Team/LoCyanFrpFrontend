@@ -6,6 +6,7 @@ export class GetConfig extends API {
     user_id: number;
     tunnel_id?: number;
     node_id?: number;
+    format: string;
   }) {
     super("/tunnel/config", Method.GET, params, {});
   }

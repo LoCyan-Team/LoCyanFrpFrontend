@@ -104,7 +104,7 @@ const loginedMenuOptions: MenuOption[] = [
   },
   {
     label: "隧道",
-    key: "tunnel-actions",
+    key: "tunnel",
     icon: renderIcon(PaperPlane),
     children: [
       {
@@ -167,13 +167,13 @@ const loginedMenuOptions: MenuOption[] = [
   },
   {
     label: "游戏联机",
-    key: "games",
+    key: "game",
     icon: renderIcon(GameController),
     children: [
       {
-        path: "/games/minecraft",
+        path: "/game/minecraft",
         label: "Minecraft",
-        key: "games-minecraft",
+        key: "game-minecraft",
         icon: renderIcon(AccountTreeOutlined),
       },
     ],
@@ -184,15 +184,15 @@ const loginedMenuOptions: MenuOption[] = [
     icon: renderIcon(Box24Filled),
     children: [
       {
-        path: "/apps/manage",
+        path: "/app/manage",
         label: "应用管理",
-        key: "apps-manage",
+        key: "app-manage",
         icon: renderIcon(GuiManagement),
       },
       {
-        path: "/apps/access",
+        path: "/app/access",
         label: "授权管理",
-        key: "apps-access",
+        key: "app-access",
         icon: renderIcon(Api),
       },
     ],
@@ -231,7 +231,7 @@ const loginedMenuOptions: MenuOption[] = [
             },
             "帮助文档",
           ),
-        key: "help-document",
+        key: "other-help-document",
         icon: renderIcon(BookOutline),
       },
     ],

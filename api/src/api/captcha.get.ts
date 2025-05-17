@@ -7,7 +7,7 @@ export class GetCaptcha extends API {
   }
 }
 
-export interface GetCaptchaData {
+export interface GetCaptchaResponse {
     id:   string;
     type: string;
 }

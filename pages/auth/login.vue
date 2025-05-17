@@ -4,38 +4,68 @@
     <n-card title="账户登录">
       <n-form>
         <n-form-item label="用户名 / 邮箱" path="user">
-          <n-input v-model:value="loginForm.user" type="text" placeholder="用户名" />
+          <n-input
+            v-model:value="loginForm.user"
+            type="text"
+            placeholder="用户名"
+          />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input v-model:value="loginForm.password" type="password" placeholder="密码" />
+          <n-input
+            v-model:value="loginForm.password"
+            type="password"
+            placeholder="密码"
+          />
         </n-form-item>
         <n-el>
           <n-space style="margin-bottom: 1rem">
-            <n-button ghost text type="success" @click="() => navigateTo('/auth/register')">
+            <n-button
+              ghost
+              text
+              type="success"
+              @click="() => navigateTo('/auth/register')"
+            >
               没有账户？去注册
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" :loading="loading.login" :disabled="loading.login" @click="loadCaptcha">
+            <n-button
+              type="success"
+              :loading="loading.login"
+              :disabled="loading.login"
+              @click="loadCaptcha"
+            >
               登录
             </n-button>
-            <captcha-dialog :show="captcha.show" :type="captcha.config.type" :vaptcha-scene="2" @error="
-              (code: unknown) => {
-                message.error('发生错误: ' + code);
-                captcha.show = false;
-              }
-            " @unsupported="
-              message.error(
-                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-              )
-              " @callback="handleLogin" />
+            <captcha-dialog
+              :show="captcha.show"
+              :type="captcha.config.type"
+              :vaptcha-scene="2"
+              @error="
+                (code: unknown) => {
+                  message.error('发生错误: ' + code);
+                  captcha.show = false;
+                }
+              "
+              @unsupported="
+                message.error(
+                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+                )
+              "
+              @callback="handleLogin"
+            />
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button type="success" secondary style="width: 100%" @click="handlePasskeyLogin">
+      <n-button
+        type="success"
+        secondary
+        style="width: 100%"
+        @click="handlePasskeyLogin"
+      >
         通行密钥登录
       </n-button>
     </n-spin>
@@ -43,7 +73,11 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button type="info" circle @click="handleThirdPartyLogin(ThirdParty.QQ)">
+          <n-button
+            type="info"
+            circle
+            @click="handleThirdPartyLogin(ThirdParty.QQ)"
+          >
             <n-icon>
               <Qq />
             </n-icon>
@@ -117,7 +151,9 @@ const captcha = ref<{
 
 async function loadCaptcha() {
   loading.value.login = true;
-  const rs = await client.execute<GetCaptchaData>(new GetCaptcha({ action: "login" }));
+  const rs = await client.execute<GetCaptchaData>(
+    new GetCaptcha({ action: "login" }),
+  );
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;
@@ -162,8 +198,10 @@ async function handleLogin(token: string, server?: string) {
 
 async function handlePasskeyLogin() {
   // TODO
-  loading.value.passkey = true
-  const rs = await client.execute<PostPasskeyLoginData>(new PostPasskeyLogin({ credential: '' }))
+  loading.value.passkey = true;
+  const rs = await client.execute<PostPasskeyLoginData>(
+    new PostPasskeyLogin({ credential: "" }),
+  );
   if (rs.status === 200) {
     mainStore.token = rs.data.token;
     mainStore.userId = rs.data.user_id;
@@ -190,16 +228,15 @@ async function handleThirdPartyLogin(type: ThirdParty) {
   // TODO
   loading.value.threeSide = true;
   if (type === ThirdParty.QQ) {
-    const getQQLoginRes = await client.execute(new GetQQLogin())
+    const getQQLoginRes = await client.execute(new GetQQLogin());
     if (getQQLoginRes.status === 200) {
       const QQURL = getQQLoginRes.data.url;
       window.location.href = QQURL;
     } else {
       // 处理获取QQ登录URL失败的情况，例如显示错误消息
-      console.error('获取QQ登录URL失败', getQQLoginRes.status);
+      console.error("获取QQ登录URL失败", getQQLoginRes.status);
       loading.value.threeSide = false;
     }
-
   }
 }
 

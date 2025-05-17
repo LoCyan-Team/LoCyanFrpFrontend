@@ -12,6 +12,6 @@ export class PostRegister extends API {
   }
 }
 
-export interface PostRegisterData {
+export interface PostRegisterResponse {
   user_id:number
 }

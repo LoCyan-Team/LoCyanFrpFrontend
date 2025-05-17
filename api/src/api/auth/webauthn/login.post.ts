@@ -9,33 +9,28 @@ export class PostLogin extends API {
 
 
 
-export interface PostLoginData {
+export interface PostLoginResponse {
     frp_token: string;
     token: string;
     /**
      * 用户 ID
      */
     user_id: number;
-    user_info: UserInfo;
-}
-
-export interface UserInfo {
+    user_info:  {
     avatar: string;
     email: string;
-    group: Group;
-    limit: Limit;
-    register_time: string;
-    traffic: number;
-    username: string;
-}
-
-export interface Group {
+    group: {
     id: number;
     name: string;
-}
-
-export interface Limit {
+};
+    limit: {
     inbound: number;
     outbound: number;
     tunnel: number;
+};
+    register_time: string;
+    traffic: number;
+    username: string;
+};
 }
+

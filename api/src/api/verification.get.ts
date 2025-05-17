@@ -7,12 +7,10 @@ export class GetVerification extends API {
   }
 }
 
-export interface GetVerificationData {
-    limit: Limit;
+export interface GetVerificationResponse {
+    limit: {
+    real_person_accreditations: number;
+};
     real_name: boolean;
     real_person: boolean;
-}
-
-export interface Limit {
-    real_person_accreditations: number;
 }

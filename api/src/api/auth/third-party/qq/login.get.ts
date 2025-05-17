@@ -6,3 +6,8 @@ export class GetQQLogin extends API {
     super("/auth/third-party/qq/login", Method.GET, {}, {});
   }
 }
+
+
+export interface GetQQLoginResponse {
+  url:string
+}

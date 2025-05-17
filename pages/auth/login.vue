@@ -4,68 +4,38 @@
     <n-card title="账户登录">
       <n-form>
         <n-form-item label="用户名 / 邮箱" path="user">
-          <n-input
-            v-model:value="loginForm.user"
-            type="text"
-            placeholder="用户名"
-          />
+          <n-input v-model:value="loginForm.user" type="text" placeholder="用户名" />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input
-            v-model:value="loginForm.password"
-            type="password"
-            placeholder="密码"
-          />
+          <n-input v-model:value="loginForm.password" type="password" placeholder="密码" />
         </n-form-item>
         <n-el>
           <n-space style="margin-bottom: 1rem">
-            <n-button
-              ghost
-              text
-              type="success"
-              @click="() => navigateTo('/auth/register')"
-            >
+            <n-button ghost text type="success" @click="() => navigateTo('/auth/register')">
               没有账户？去注册
             </n-button>
           </n-space>
           <n-space>
-            <n-button
-              type="success"
-              :loading="loading.login"
-              :disabled="loading.login"
-              @click="loadCaptcha"
-            >
+            <n-button type="success" :loading="loading.login" :disabled="loading.login" @click="loadCaptcha">
               登录
             </n-button>
-            <captcha-dialog
-              :show="captcha.show"
-              :type="captcha.config.type"
-              :vaptcha-scene="2"
-              @error="
-                (code: unknown) => {
-                  message.error('发生错误: ' + code);
-                  captcha.show = false;
-                }
-              "
-              @unsupported="
-                message.error(
-                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-                )
-              "
-              @callback="handleLogin"
-            />
+            <captcha-dialog :show="captcha.show" :type="captcha.config.type" :vaptcha-scene="2" @error="
+              (code: unknown) => {
+                message.error('发生错误: ' + code);
+                captcha.show = false;
+              }
+            " @unsupported="
+              message.error(
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+              )
+              " @callback="handleLogin" />
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button
-        type="success"
-        secondary
-        style="width: 100%"
-        @click="handlePasskeyLogin"
-      >
+      <n-button type="success" secondary style="width: 100%" @click="handlePasskeyLogin">
         通行密钥登录
       </n-button>
     </n-spin>
@@ -73,11 +43,7 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button
-            type="info"
-            circle
-            @click="handleThirdPartyLogin(ThirdParty.QQ)"
-          >
+          <n-button type="info" circle @click="handleThirdPartyLogin(ThirdParty.QQ)">
             <n-icon>
               <Qq />
             </n-icon>
@@ -97,12 +63,12 @@ import { useUserStore } from "@/store/user";
 import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { PostLogin } from "@/api/src/api/auth/login.post";
-import { PostPasskeyLogin } from "~/api/src/api/auth/login-passkey.post";
+import { PostLogin as WebauthnPostLogin } from "~/api/src/api/auth/webauthn/login.post";
 
-import type { GetCaptchaData } from "@/api/src/api/captcha.get";
-import type { PostLoginData } from "@/api/src/api/auth/login.post";
-import type { PostPasskeyLoginData } from "@/api/src/api/auth/login-passkey.post";
-import { GetQQLogin } from "~/api/src/api/auth/third-party/qq/login.get";
+import type { GetCaptchaResponse } from "@/api/src/api/captcha.get";
+import type { PostLoginResponse } from "@/api/src/api/auth/login.post";
+import type { PostLoginResponse as WebauthnPostLoginResponse } from "~/api/src/api/auth/webauthn/login.post";
+import { GetQQLogin, type GetQQLoginResponse } from "~/api/src/api/auth/third-party/qq/login.get";
 definePageMeta({
   title: "登录",
   needLogin: false,
@@ -151,7 +117,7 @@ const captcha = ref<{
 
 async function loadCaptcha() {
   loading.value.login = true;
-  const rs = await client.execute<GetCaptchaData>(
+  const rs = await client.execute<GetCaptchaResponse>(
     new GetCaptcha({ action: "login" }),
   );
   if (rs.status === 200) {
@@ -165,7 +131,7 @@ async function loadCaptcha() {
 async function handleLogin(token: string, server?: string) {
   captcha.value.show = false;
   loading.value.login = true;
-  const rs = await client.execute<PostLoginData>(
+  const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
@@ -199,8 +165,8 @@ async function handleLogin(token: string, server?: string) {
 async function handlePasskeyLogin() {
   // TODO
   loading.value.passkey = true;
-  const rs = await client.execute<PostPasskeyLoginData>(
-    new PostPasskeyLogin({ credential: "" }),
+  const rs = await client.execute<WebauthnPostLoginResponse>(
+    new WebauthnPostLogin({ credential: "" }),
   );
   if (rs.status === 200) {
     mainStore.token = rs.data.token;
@@ -228,7 +194,7 @@ async function handleThirdPartyLogin(type: ThirdParty) {
   // TODO
   loading.value.threeSide = true;
   if (type === ThirdParty.QQ) {
-    const getQQLoginRes = await client.execute(new GetQQLogin());
+    const getQQLoginRes = await client.execute<GetQQLoginResponse>(new GetQQLogin());
     if (getQQLoginRes.status === 200) {
       const QQURL = getQQLoginRes.data.url;
       window.location.href = QQURL;

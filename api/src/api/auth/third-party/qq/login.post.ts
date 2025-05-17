@@ -1,8 +1,8 @@
 import { API } from "../../../../type/api";
-import { Method } from "../../../../type/method"; 
+import { Method } from "../../../../type/method";
 
 export class PostQQLogin extends API {
-  constructor(params:{code:string}) {
+  constructor(params: { code: string }) {
     super("/auth/third-party/qq/login", Method.POST, params, {});
   }
 }
@@ -18,13 +18,14 @@ export interface PostQQLoginResponse {
       id: number;
       name: string;
     }
+    limit: {
+      tunnel: number;
+      inbound: number;
+      outbound: number;
+    };
+    avatar: string;
+    traffic: number;
+    register_time: string;
   };
-  limit: {
-    tunnel: number;
-    inbound: number;
-    outbound: number;
-  };
-  avatar: string;
-  traffic: number;
-  register_time: string;
+
 };

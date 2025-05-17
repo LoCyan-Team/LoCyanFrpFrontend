@@ -24,14 +24,15 @@ export interface PostLoginResponse {
       id: number;
       name: string;
     }
+    limit: {
+      tunnel: number;
+      inbound: number;
+      outbound: number;
+    };
+    avatar: string;
+    traffic: number;
+    register_time: string;
   };
-  limit: {
-    tunnel: number;
-    inbound: number;
-    outbound: number;
-  };
-  avatar: string;
-  traffic: number;
-  register_time: string;
+
 };
 

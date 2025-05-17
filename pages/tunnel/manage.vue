@@ -100,11 +100,14 @@
                       <n-text>
                         节点: {{ tunnel.node.name ?? "未知节点" }}
                       </n-text>
-                      <br /><n-text> 本地端口: {{ tunnel.localPort }} </n-text>
-                      <br /><n-text>
+                      <br />
+                      <n-text> 本地端口: {{ tunnel.localPort }} </n-text>
+                      <br />
+                      <n-text>
                         远程端口: {{ tunnel.remotePort ?? "无" }}
                       </n-text>
-                      <br /><n-text>
+                      <br />
+                      <n-text>
                         自定义域名:
                         <n-a
                           v-if="tunnel.domain"

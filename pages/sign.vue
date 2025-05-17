@@ -22,11 +22,12 @@
           <n-card title="签到统计">
             <n-space vertical>
               <n-el>
-                <br /><n-text v-if="data.lastSign">
+                <n-text v-if="data.lastSign">
                   上次签到在 {{ data.lastSign }}
                 </n-text>
                 <n-text v-else>您还没有签过到</n-text>
-                <br /><n-text>
+                <br />
+                <n-text>
                   累计签到 {{ data.totalSign }} 次，获取流量
                   {{ data.totalGetTraffic }} GiB
                 </n-text>

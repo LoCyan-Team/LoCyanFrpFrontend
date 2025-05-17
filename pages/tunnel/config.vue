@@ -32,6 +32,7 @@
               :on-update:value="
                 (value) => {
                   selectedMode = value;
+                  page.current = 1;
                   switch (value) {
                     case 'tunnel':
                       getTunnelConfig(Mode.TUNNEL);

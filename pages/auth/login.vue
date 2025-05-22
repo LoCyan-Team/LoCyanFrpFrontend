@@ -112,6 +112,8 @@ const userStore = useUserStore();
 const client = new ApiClient();
 client.initClient();
 
+const route = useRoute();
+
 const loading = ref<{
   login: boolean;
   threeSide: boolean;
@@ -184,7 +186,7 @@ async function handleLogin(token: string, server?: string) {
       content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
       duration: 2500,
     });
-    navigateTo("/dashboard");
+    navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
   } else message.error(rs.message);
   loading.value.login = false;
 }

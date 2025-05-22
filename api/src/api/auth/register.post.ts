@@ -13,5 +13,5 @@ export class PostRegister extends API {
 }
 
 export interface PostRegisterResponse {
-  user_id:number
+  user_id: number;
 }

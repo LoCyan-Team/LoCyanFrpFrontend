@@ -8,9 +8,9 @@ export class GetVerification extends API {
 }
 
 export interface GetVerificationResponse {
-    limit: {
+  limit: {
     real_person_accreditations: number;
-};
-    real_name: boolean;
-    real_person: boolean;
+  };
+  real_name: boolean;
+  real_person: boolean;
 }

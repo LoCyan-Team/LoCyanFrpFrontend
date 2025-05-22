@@ -12,6 +12,6 @@ export class GetPassword extends API {
   }
 }
 
-export interface GetPasswordData {
-  user_id:number
+export interface GetPasswordResponse {
+  user_id: number;
 }

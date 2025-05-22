@@ -1,13 +1,13 @@
 import { API } from "../../../../type/api";
 import { Method } from "../../../../type/method";
 
-export class PostQQLogin extends API {
+export class PostLogin extends API {
   constructor(params: { code: string }) {
     super("/auth/third-party/qq/login", Method.POST, params, {});
   }
 }
 
-export interface PostQQLoginResponse {
+export interface PostLoginResponse {
   user_id: number;
   token: string;
   frp_token: string;
@@ -17,7 +17,7 @@ export interface PostQQLoginResponse {
     group: {
       id: number;
       name: string;
-    }
+    };
     limit: {
       tunnel: number;
       inbound: number;
@@ -27,5 +27,4 @@ export interface PostQQLoginResponse {
     traffic: number;
     register_time: string;
   };
-
-};
+}

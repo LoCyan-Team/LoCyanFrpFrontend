@@ -7,12 +7,8 @@ export class GetTunnels extends API {
   }
 }
 
-export interface GetTunnelsData {
-    list: List[];
-    pagination: Pagination;
-}
-
-export interface List {
+export interface GetTunnelsResponse {
+  list: {
     domain: null | string;
     /**
      * 隧道 ID
@@ -22,28 +18,23 @@ export interface List {
     local_port: number;
     locations: null | string;
     name: string;
-    node: Node;
+    node: {
+      host: null | string;
+      /**
+       * ID
+       */
+      id: number;
+      ip: null | string;
+      name: null | string;
+    };
     remote_port: number | null;
     secret_key: string;
     status: number;
     type: string;
     use_compression: boolean;
     use_encryption: boolean;
-}
-
-export interface Node {
-    host: null | string;
-    /**
-     * ID
-     */
-    id: number;
-    ip: null | string;
-    name: null | string;
-}
-
-export interface Pagination {
-    /**
-     * 总页数
-     */
+  };
+  pagination: {
     count: number;
+  };
 }

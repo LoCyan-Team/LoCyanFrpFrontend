@@ -146,7 +146,9 @@ export class Client {
     );
   }
 
-  private buildResponse<T extends object>(result: AxiosResponse | AxiosError): Response<T> {
+  private buildResponse<T extends object>(
+    result: AxiosResponse | AxiosError,
+  ): Response<T> {
     return new Response(
       // @ts-expect-error Vue eslint rules bug
       result?.status ?? result?.response?.status,

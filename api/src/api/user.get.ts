@@ -7,42 +7,22 @@ export class GetUser extends API {
   }
 }
 
-
 /**
  * 返回数据
  */
-export interface GetUserData {
-    /**
-     * 邮箱
-     */
-    email: string;
-    /**
-     * 用户 ID
-     */
-    id: number;
-    /**
-     * 限制信息
-     */
-    limit: Limit;
-    /**
-     * 注册时间
-     */
-    register_time: string;
-    /**
-     * 剩余流量
-     */
-    traffic: string;
-    /**
-     * 用户名
-     */
-    username: string;
-    
-}
-
-/**
- * 限制信息
- */
-export interface Limit {
+export interface GetUserResponse {
+  /**
+   * 邮箱
+   */
+  email: string;
+  /**
+   * 用户 ID
+   */
+  id: number;
+  /**
+   * 限制信息
+   */
+  limit: {
     /**
      * 上行限速
      */
@@ -52,5 +32,17 @@ export interface Limit {
      */
     outbound: number;
     tunnel: number;
-    
+  };
+  /**
+   * 注册时间
+   */
+  register_time: string;
+  /**
+   * 剩余流量
+   */
+  traffic: string;
+  /**
+   * 用户名
+   */
+  username: string;
 }

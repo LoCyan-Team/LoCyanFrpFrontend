@@ -224,7 +224,7 @@ async function handlePasskeyLogin() {
       content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
       duration: 2500,
     });
-    navigateTo("/dashboard");
+    navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
   } else message.error(rs.message);
   loading.value.login = false;
 }
@@ -234,24 +234,17 @@ async function handleThirdPartyLogin(type: ThirdParty) {
   loading.value.threeSide = true;
   switch (type) {
     case ThirdParty.QQ: {
-      const getQQLoginRes = await client.execute<GetQQLoginResponse>(
-        new GetQQLogin(),
-      );
-      if (getQQLoginRes.status === 200) {
-        const QQURL = getQQLoginRes.data.url;
-        notification.success({
-          title: "跳转QQ登录",
-          content: "",
-          duration: 2500,
-        });
-        navigateTo(QQURL);
+      const rs = await client.execute<GetQQLoginResponse>(new GetQQLogin());
+      if (rs.status === 200) {
+        window.open(rs.data.url);
       } else {
-        message.error(getQQLoginRes.message);
+        message.error(rs.message);
       }
       break;
     }
-    default:
-      break;
+    // Reserved
+    // default:
+    //   break;
   }
   loading.value.threeSide = false;
 }

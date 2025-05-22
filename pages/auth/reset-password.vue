@@ -79,8 +79,6 @@
 </template>
 
 <script setup lang="ts">
-import { useMainStore } from "@/store/main";
-
 import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";

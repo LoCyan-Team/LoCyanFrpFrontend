@@ -8,6 +8,6 @@ export class GetCaptcha extends API {
 }
 
 export interface GetCaptchaResponse {
-    id:   string;
-    type: string;
+  id: string;
+  type: string;
 }

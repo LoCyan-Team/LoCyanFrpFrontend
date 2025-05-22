@@ -23,7 +23,7 @@ export interface PostLoginResponse {
     group: {
       id: number;
       name: string;
-    }
+    };
     limit: {
       tunnel: number;
       inbound: number;
@@ -33,6 +33,4 @@ export interface PostLoginResponse {
     traffic: number;
     register_time: string;
   };
-
-};
-
+}

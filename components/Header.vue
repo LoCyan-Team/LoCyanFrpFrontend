@@ -32,6 +32,16 @@
     </n-space>
   </n-space>
   <n-modal
+    v-model:show="showUserInfo"
+    preset="card"
+    title="用户资料"
+    size="huge"
+    :bordered="false"
+    style="max-width: 600px"
+  >
+    <user-info />
+  </n-modal>
+  <n-modal
     v-model:show="showNotification"
     preset="card"
     title="通知"
@@ -70,11 +80,13 @@ const avatarOptions = [
   },
 ];
 
-const showNotification = ref(false);
+const showUserInfo = ref(false),
+  showNotification = ref(false);
 
 async function handleAvatarOptionSelect(key) {
   switch (key) {
     case "profile":
+      showUserInfo.value = true;
       break;
     case "logout": {
       const client = new ApiClient(mainStore.token);

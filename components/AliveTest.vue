@@ -52,6 +52,6 @@ async function aliveTest() {
   }
 }
 
-aliveTest()
+aliveTest();
 setInterval(() => aliveTest(), 15000);
 </script>

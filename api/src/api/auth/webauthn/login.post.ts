@@ -6,3 +6,28 @@ export class PostLogin extends API {
     super("/auth/webauthn/login", Method.POST, params, {});
   }
 }
+
+export interface PostLoginResponse {
+  frp_token: string;
+  token: string;
+  /**
+   * 用户 ID
+   */
+  user_id: number;
+  user_info: {
+    avatar: string;
+    email: string;
+    group: {
+      id: number;
+      name: string;
+    };
+    limit: {
+      inbound: number;
+      outbound: number;
+      tunnel: number;
+    };
+    register_time: string;
+    traffic: number;
+    username: string;
+  };
+}

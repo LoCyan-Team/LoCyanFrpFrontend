@@ -11,3 +11,7 @@ export class PostRegister extends API {
     super("/auth/register", Method.POST, params, {});
   }
 }
+
+export interface PostRegisterResponse {
+  user_id: number;
+}

@@ -6,3 +6,8 @@ export class GetCaptcha extends API {
     super("/captcha", Method.GET, params, {});
   }
 }
+
+export interface GetCaptchaResponse {
+  id: string;
+  type: string;
+}

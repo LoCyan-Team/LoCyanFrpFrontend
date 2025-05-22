@@ -95,8 +95,19 @@ import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetCaptcha } from "@/api/src/api/captcha.get";
-import { PostLogin } from "@/api/src/api/auth/login.post";
+import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
+import {
+  PostLogin,
+  type PostLoginResponse,
+} from "@/api/src/api/auth/login.post";
+import {
+  PostLogin as PostWebauthnLogin,
+  type PostLoginResponse as PostWebauthnLoginResponse,
+} from "@/api/src/api/auth/webauthn/login.post";
+import {
+  GetLogin as GetQqLogin,
+  type GetLoginResponse as GetQqLoginResponse,
+} from "@/api/src/api/auth/third-party/qq/login.get";
 
 definePageMeta({
   title: "登录",
@@ -148,7 +159,9 @@ const captcha = ref<{
 
 async function loadCaptcha() {
   loading.value.login = true;
-  const rs = await client.execute(new GetCaptcha({ action: "login" }));
+  const rs = await client.execute<GetCaptchaResponse>(
+    new GetCaptcha({ action: "login" }),
+  );
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;
@@ -160,7 +173,7 @@ async function loadCaptcha() {
 async function handleLogin(token: string, server?: string) {
   captcha.value.show = false;
   loading.value.login = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
@@ -192,11 +205,51 @@ async function handleLogin(token: string, server?: string) {
 }
 
 async function handlePasskeyLogin() {
-  // TODO
+  // TODO: Get credential from navigator
+  loading.value.passkey = true;
+  const rs = await client.execute<PostWebauthnLoginResponse>(
+    new PostWebauthnLogin({ credential: "" }),
+  );
+  if (rs.status === 200) {
+    mainStore.token = rs.data.token;
+    mainStore.userId = rs.data.user_id;
+    userStore.frpToken = rs.data.frp_token;
+    userStore.username = rs.data.user_info.username;
+    userStore.email = rs.data.user_info.email;
+    userStore.group = rs.data.user_info.group;
+    userStore.limit = rs.data.user_info.limit;
+    userStore.traffic = rs.data.user_info.traffic;
+    userStore.avatar = rs.data.user_info.avatar;
+    userStore.registerTime = rs.data.user_info.register_time;
+
+    notification.success({
+      title: "登录成功",
+      content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
+      duration: 2500,
+    });
+    navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
+  } else message.error(rs.message);
+  loading.value.login = false;
 }
 
 async function handleThirdPartyLogin(type: ThirdParty) {
   // TODO
+  loading.value.threeSide = true;
+  switch (type) {
+    case ThirdParty.QQ: {
+      const rs = await client.execute<GetQqLoginResponse>(new GetQqLogin());
+      if (rs.status === 200) {
+        window.open(rs.data.url);
+      } else {
+        message.error(rs.message);
+      }
+      break;
+    }
+    // Reserved
+    // default:
+    //   break;
+  }
+  loading.value.threeSide = false;
 }
 
 enum ThirdParty {
@@ -214,6 +267,7 @@ enum ThirdParty {
   align-items: center;
   padding-block: 0.5rem;
 }
+
 @media screen and (max-width: 500px) {
   .login-box {
     margin-inline: 0.5rem;

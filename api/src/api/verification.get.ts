@@ -6,3 +6,11 @@ export class GetVerification extends API {
     super("/verification", Method.GET, params, {});
   }
 }
+
+export interface GetVerificationResponse {
+  limit: {
+    real_person_accreditations: number;
+  };
+  real_name: boolean;
+  real_person: boolean;
+}

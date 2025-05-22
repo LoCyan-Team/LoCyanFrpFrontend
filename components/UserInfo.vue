@@ -45,12 +45,12 @@
           </n-space>
         </n-text>
         <n-h3>第三方账户绑定</n-h3>
-        <n-el class="three-side-buttons" style="width: min-content">
+        <n-el class="three-side-buttons">
           <n-tooltip>
             <template #trigger>
-              <n-spin :show="loading.thirdParty.qq">
+              <n-spin :show="loading.thirdParty">
                 <n-button
-                  :type="data.thirdParty.qq.bond ? 'info' : 'tertiary'"
+                  :type="data.thirdParty.bind.qq ? 'info' : 'tertiary'"
                   circle
                   @click="handleThirdPartyButton(ThirdParty.QQ)"
                 >
@@ -212,6 +212,7 @@ import { useUserStore } from "@/store/user";
 import { Qq } from "@vicons/fa";
 
 import { Client as ApiClient } from "@/api/src/client";
+import { GetThirdParty as GetThirdPartyBind } from "@/api/src/api/user/third-party.get";
 import { GetBind as GetQqBind } from "@/api/src/api/user/third-party/qq/bind.get";
 import { DeleteBind as DeleteQqBind } from "@/api/src/api/user/third-party/qq/bind.delete";
 import { PostToken as PostResetFrpToken } from "@/api/src/api/user/frp/token.post";
@@ -235,9 +236,7 @@ const dialog = useDialog();
 const notification = useNotification();
 
 const loading = ref<{
-  thirdParty: {
-    qq: boolean;
-  };
+  thirdParty: boolean;
   resetFrpToken: boolean;
   exitAllDevices: boolean;
   updateUsername: boolean;
@@ -247,9 +246,7 @@ const loading = ref<{
     submit: boolean;
   };
 }>({
-  thirdParty: {
-    qq: true,
-  },
+  thirdParty: true,
   resetFrpToken: false,
   exitAllDevices: false,
   updateUsername: false,
@@ -262,14 +259,14 @@ const loading = ref<{
 
 const data = ref<{
   thirdParty: {
-    qq: {
-      bond: boolean;
+    bind: {
+      qq: boolean;
     };
   };
 }>({
   thirdParty: {
-    qq: {
-      bond: false,
+    bind: {
+      qq: false,
     },
   },
 });
@@ -430,4 +427,22 @@ async function handleUpdateEmail() {
   } else message.error(rs.message);
   loading.value.updateEmail.submit = false;
 }
+
+async function fetchThirdPartyData() {
+  const rs = await client.execute(
+    new GetThirdPartyBind({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value.thirdParty.bind = {
+      qq: rs.data.qq,
+    };
+    loading.value.thirdParty = false;
+  } else message.error(rs.message);
+}
+
+onMounted(async () => {
+  await fetchThirdPartyData();
+});
 </script>

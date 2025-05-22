@@ -64,12 +64,32 @@
         </n-el>
         <n-divider />
         <n-space>
-          <n-button type="error" secondary @click="handleResetFrpToken"
-            >重置访问密钥</n-button
-          >
-          <n-button type="error" secondary @click="handleExitAllDevices"
-            >吊销全部登录设备</n-button
-          >
+          <n-popconfirm @positive-click="handleResetFrpToken">
+            <template #trigger>
+              <n-button
+                type="error"
+                secondary
+                :loading="loading.resetFrpToken"
+                :disabled="loading.resetFrpToken"
+              >
+                重置访问密钥
+              </n-button>
+            </template>
+            此操作不可撤销，请确认。
+          </n-popconfirm>
+          <n-popconfirm @positive-click="handleExitAllDevices">
+            <template #trigger>
+              <n-button
+                type="error"
+                secondary
+                :loading="loading.exitAllDevices"
+                :disabled="loading.exitAllDevices"
+              >
+                吊销全部登录设备
+              </n-button>
+            </template>
+            确定要吊销全部登录设备吗？这将从所有设备登出。
+          </n-popconfirm>
         </n-space>
       </n-el>
     </n-card>
@@ -164,7 +184,7 @@
                   :disabled="loading.updateEmail.emailCode"
                   type="success"
                   secondary
-                  @click="handleGetUpdateEmailCode"
+                  @click="handleGetUpdateEmailCodeSend"
                 >
                   发送验证码
                 </n-button>
@@ -191,13 +211,35 @@ import { useUserStore } from "@/store/user";
 
 import { Qq } from "@vicons/fa";
 
+import { Client as ApiClient } from "@/api/src/client";
+import { GetBind as GetQqBind } from "@/api/src/api/user/third-party/qq/bind.get";
+import { DeleteBind as DeleteQqBind } from "@/api/src/api/user/third-party/qq/bind.delete";
+import { PostToken as PostResetFrpToken } from "@/api/src/api/user/frp/token.post";
+import { DeleteAll as DeleteAllToken } from "@/api/src/api/user/token/all.delete";
+import { PutUsername } from "@/api/src/api/user/username.put";
+import { PutPassword } from "@/api/src/api/user/password.put";
+import { GetEmail as GetUpdateEmailCode } from "@/api/src/api/email/email.get";
+import { PutEmail } from "@/api/src/api/user/email.put";
+
+const emit = defineEmits<{
+  (e: "logout"): void;
+}>();
+
 const mainStore = useMainStore();
 const userStore = useUserStore();
+const client = new ApiClient(mainStore.token!);
+client.initClient();
+
+const message = useMessage();
+const dialog = useDialog();
+const notification = useNotification();
 
 const loading = ref<{
   thirdParty: {
     qq: boolean;
   };
+  resetFrpToken: boolean;
+  exitAllDevices: boolean;
   updateUsername: boolean;
   updatePassword: boolean;
   updateEmail: {
@@ -208,6 +250,8 @@ const loading = ref<{
   thirdParty: {
     qq: true,
   },
+  resetFrpToken: false,
+  exitAllDevices: false,
   updateUsername: false,
   updatePassword: false,
   updateEmail: {
@@ -256,31 +300,134 @@ enum ThirdParty {
   QQ,
 }
 
-function handleThirdPartyButton(type: ThirdParty) {
-  // TODO
+async function handleThirdPartyButton(type: ThirdParty) {
+  switch (type) {
+    case ThirdParty.QQ:
+      {
+        if (data.value.thirdParty.qq.bond) {
+          const rs = await client.execute(
+            new GetQqBind({
+              user_id: mainStore.userId!,
+            }),
+          );
+          if (rs.status === 200) {
+            window.open(rs.data.url);
+          } else message.error(rs.message);
+        } else {
+          const rs = await client.execute(
+            new DeleteQqBind({
+              user_id: mainStore.userId!,
+            }),
+          );
+          if (rs.status === 200)
+            dialog.success({
+              title: "解除绑定成功",
+              content: "已解除与此第三方服务的绑定。",
+            });
+          else message.error(rs.message);
+        }
+      }
+      break;
+  }
 }
 
-function handleResetFrpToken() {
-  // TODO
+async function handleResetFrpToken() {
+  loading.value.resetFrpToken = true;
+  const rs = await client.execute(
+    new PostResetFrpToken({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    userStore.frpToken = rs.data.frp_token;
+    dialog.success({
+      title: "重置成功",
+      content: "已重置访问密钥，如您有自定义配置文件，需手动更新。",
+    });
+  } else message.error(rs.message);
+  loading.value.resetFrpToken = false;
 }
 
-function handleExitAllDevices() {
-  // TODO
+async function handleExitAllDevices() {
+  loading.value.exitAllDevices = true;
+  const rs = await client.execute(
+    new DeleteAllToken({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    emit("logout");
+  } else message.error(rs.message);
+  loading.value.exitAllDevices = false;
 }
 
-function handleUpdateUsername() {
-  // TODO
+async function handleUpdateUsername() {
+  loading.value.updateUsername = true;
+  const rs = await client.execute(
+    new PutUsername({
+      user_id: mainStore.userId!,
+      new_username: updateUsernameForm.value.username!,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "更新成功",
+      content: "已更新用户名。",
+    });
+  } else message.error(rs.message);
+  loading.value.updateUsername = false;
 }
 
-function handleUpdatePassword() {
-  // TODO
+async function handleUpdatePassword() {
+  loading.value.updatePassword = true;
+  const rs = await client.execute(
+    new PutPassword({
+      user_id: mainStore.userId!,
+      old_password: updatePasswordForm.value.oldPassword!,
+      new_password: updatePasswordForm.value.newPassword!,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "更新成功",
+      content: "已更新账户密码。",
+    });
+  } else message.error(rs.message);
+  loading.value.updatePassword = false;
 }
 
-function handleGetUpdateEmailCode() {
-  // TODO
+async function handleGetUpdateEmailCodeSend() {
+  loading.value.updateEmail.emailCode = true;
+  const rs = await client.execute(
+    new GetUpdateEmailCode({
+      user_id: mainStore.userId!,
+      email: updateEmailForm.value.email!,
+    }),
+  );
+  if (rs.status === 200) {
+    notification.success({
+      title: "已发送",
+      content: "若未收到请检查垃圾箱。",
+      duration: 2500,
+    });
+  } else message.error(rs.message);
+  loading.value.updateEmail.emailCode = false;
 }
 
-function handleUpdateEmail() {
-  // TODO
+async function handleUpdateEmail() {
+  loading.value.updateEmail.submit = true;
+  const rs = await client.execute(
+    new PutEmail({
+      user_id: mainStore.userId!,
+      verify_code: updateEmailForm.value.verifyCode!,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "更新成功",
+      content: "已更新账户邮箱。",
+    });
+  } else message.error(rs.message);
+  loading.value.updateEmail.submit = false;
 }
 </script>

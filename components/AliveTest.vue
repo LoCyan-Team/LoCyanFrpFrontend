@@ -1,3 +1,7 @@
+<template>
+  <n-el />
+</template>
+
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";

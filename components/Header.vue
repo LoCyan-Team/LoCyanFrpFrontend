@@ -39,7 +39,7 @@
     :bordered="false"
     style="max-width: 600px"
   >
-    <user-info />
+    <user-info @logout="handleUserInfoModalLogout" />
   </n-modal>
   <n-modal
     v-model:show="showNotification"
@@ -83,6 +83,22 @@ const avatarOptions = [
 const showUserInfo = ref(false),
   showNotification = ref(false);
 
+function handleUserInfoModalLogout() {
+  showUserInfo.value = false;
+  handleLogout();
+}
+
+function handleLogout() {
+  mainStore.$reset();
+  userStore.$reset();
+  notification.success({
+    title: "已登出",
+    content: "已登出，感谢您的使用。",
+    duration: 2500,
+  });
+  navigateTo("/auth/login");
+}
+
 async function handleAvatarOptionSelect(key) {
   switch (key) {
     case "profile":
@@ -96,20 +112,14 @@ async function handleAvatarOptionSelect(key) {
           user_id: mainStore.userId,
         }),
       );
-      if (rs.status !== 200)
+      if (rs.status !== 200) {
         notification.warning({
           title: "吊销会话时发生了异常",
           content: `在吊销本会话时发生了异常，会话将会在过期后吊销。若您希望立即吊销此会话，请重新登录后手动吊销全部会话。响应信息：${rs.message}`,
           duration: 2500,
         });
-      mainStore.$reset();
-      userStore.$reset();
-      notification.success({
-        title: "已登出",
-        content: "已登出，感谢您的使用。",
-        duration: 2500,
-      });
-      navigateTo("/auth/login");
+      }
+      handleLogout();
     }
   }
 }

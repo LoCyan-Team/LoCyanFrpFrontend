@@ -11,8 +11,6 @@ import { GetUser } from "@/api/src/api/user.get";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient(mainStore.token!);
-client.initClient();
 
 const router = useRouter();
 
@@ -21,6 +19,10 @@ const notification = useNotification();
 
 async function aliveTest() {
   if (!mainStore.token) return;
+
+  const client = new ApiClient(mainStore.token!);
+  client.initClient();
+
   const rs = await client.execute(
     new GetUser({
       user_id: mainStore.userId!,

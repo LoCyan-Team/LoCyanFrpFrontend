@@ -80,7 +80,7 @@
 
 <script setup lang="ts">
 import { Client as ApiClient } from "@/api/src/client";
-import { GetCaptcha } from "@/api/src/api/captcha.get";
+import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
 import { PutPassword } from "@/api/src/api/user/password.put";
 
@@ -136,7 +136,9 @@ const captcha = ref<{
 
 async function loadCaptcha() {
   loading.value.emailCode = true;
-  const rs = await client.execute(new GetCaptcha({ action: "reset-password" }));
+  const rs = await client.execute<GetCaptchaResponse>(
+    new GetCaptcha({ action: "reset-password" }),
+  );
   if (rs.status === 200) {
     captcha.value.config.id = rs.data.id;
     captcha.value.config.type = rs.data.type;

@@ -11,7 +11,10 @@ import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { PostLogin } from "@/api/src/api/auth/third-party/qq/login.post";
+import {
+  PostLogin,
+  type PostLoginResponse,
+} from "@/api/src/api/auth/third-party/qq/login.post";
 
 definePageMeta({
   title: "QQ 登录回调界面",
@@ -30,7 +33,7 @@ client.initClient();
 const route = useRoute();
 
 onMounted(async () => {
-  const rs = await client.execute(
+  const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       code: route.query.code as string,
     }),

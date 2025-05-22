@@ -54,6 +54,7 @@
               </n-layout-content>
             </n-layout>
           </n-layout>
+          <alive-test />
         </n-notification-provider>
       </n-dialog-provider>
     </n-message-provider>
@@ -77,11 +78,9 @@ import yaml from "highlight.js/lib/languages/yaml";
 
 import { useMainStore } from "@/store/main";
 import { usePageStore } from "@/store/page";
-import { useUserStore } from "@/store/user";
 
 import { Client as ApiClient } from "@/api/src/client";
 import { GetNotice } from "@/api/src/api/site/notice.get";
-import { GetUser } from "@/api/src/api/user.get";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -106,7 +105,6 @@ const naiveOsTheme = useOsTheme(),
   osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
 
 const mainStore = useMainStore();
-const userStore = useUserStore();
 
 async function fetchSiteData() {
   const notice = await api.execute(new GetNotice());
@@ -119,49 +117,6 @@ async function fetchSiteData() {
 onMounted(async () => {
   await fetchSiteData();
   loaded.value = true;
-
-  const router = useRouter();
-
-  const message = useMessage();
-  const notification = useNotification();
-  setInterval(async () => {
-    if (!mainStore.token) return;
-    const client = new ApiClient(mainStore.token!);
-    client.initClient();
-    const rs = await client.execute(
-      new GetUser({
-        user_id: mainStore.userId!,
-      }),
-    );
-    switch (rs.status) {
-      case 200:
-        userStore.traffic = rs.data.traffic;
-        userStore.limit = {
-          tunnel: rs.data.limit.tunnel,
-          inbound: rs.data.limit.inbound,
-          outbound: rs.data.limit.outbound,
-        };
-        userStore.email = rs.data.email;
-        break;
-      case 401:
-        mainStore.$reset();
-        userStore.$reset();
-        navigateTo({
-          path: "/auth/login",
-          query: {
-            redirect: router.currentRoute.value.fullPath,
-          },
-        });
-        notification.warning({
-          title: "登录状态失效",
-          content: "请重新登录控制台。",
-          duration: 2500,
-        });
-        break;
-      default:
-        message.error(rs.message);
-    }
-  }, 15000);
 });
 </script>
 

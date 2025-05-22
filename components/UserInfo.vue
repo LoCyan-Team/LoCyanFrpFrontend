@@ -22,10 +22,27 @@
         <n-text>邮箱: {{ userStore.email }}</n-text>
         <br />
         <n-text>
-          访问密钥:
-          <n-button @click="$copyToClipboard(userStore.frpToken!)">
-            点击复制
-          </n-button>
+          <n-space align="center">
+            <n-text>访问密钥:</n-text>
+            <n-tooltip trigger="click">
+              <template #trigger>
+                <n-button type="success" size="small" secondary>
+                  点击显示
+                </n-button>
+              </template>
+              <n-scrollbar x-scrollable>
+                <n-code :code="userStore.frpToken!" />
+              </n-scrollbar>
+            </n-tooltip>
+            <n-button
+              type="info"
+              size="small"
+              secondary
+              @click="$copyToClipboard(userStore.frpToken!)"
+            >
+              点击复制
+            </n-button>
+          </n-space>
         </n-text>
         <n-h3>第三方账户绑定</n-h3>
         <n-el class="three-side-buttons" style="width: min-content">

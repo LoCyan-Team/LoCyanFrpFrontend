@@ -493,7 +493,9 @@
             <n-text>简易启动命令:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
-                <n-button type="success" secondary> 点击显示 </n-button>
+                <n-button type="success" size="small" secondary>
+                  点击显示
+                </n-button>
               </template>
               <n-scrollbar x-scrollable>
                 <n-code :code="computeStartCommand(selectedTunnel)" />
@@ -501,6 +503,7 @@
             </n-tooltip>
             <n-button
               type="info"
+              size="small"
               secondary
               @click="$copyToClipboard(computeStartCommand(selectedTunnel))"
             >

@@ -95,17 +95,20 @@ import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetCaptcha } from "@/api/src/api/captcha.get";
-import { PostLogin } from "@/api/src/api/auth/login.post";
-import { PostLogin as WebauthnPostLogin } from "~/api/src/api/auth/webauthn/login.post";
-
-import type { GetCaptchaResponse } from "@/api/src/api/captcha.get";
-import type { PostLoginResponse } from "@/api/src/api/auth/login.post";
-import type { PostLoginResponse as WebauthnPostLoginResponse } from "~/api/src/api/auth/webauthn/login.post";
+import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import {
-  GetQQLogin,
-  type GetQQLoginResponse,
-} from "~/api/src/api/auth/third-party/qq/login.get";
+  PostLogin,
+  type PostLoginResponse,
+} from "@/api/src/api/auth/login.post";
+import {
+  PostLogin as PostWebauthnLogin,
+  type PostLoginResponse as PostWebauthnLoginResponse,
+} from "@/api/src/api/auth/webauthn/login.post";
+import {
+  GetLogin as GetQqLogin,
+  type GetLoginResponse as GetQqLoginResponse,
+} from "@/api/src/api/auth/third-party/qq/login.get";
+
 definePageMeta({
   title: "登录",
   needLogin: false,
@@ -202,10 +205,10 @@ async function handleLogin(token: string, server?: string) {
 }
 
 async function handlePasskeyLogin() {
-  // TODO
+  // TODO: Get credential from navigator
   loading.value.passkey = true;
-  const rs = await client.execute<WebauthnPostLoginResponse>(
-    new WebauthnPostLogin({ credential: "" }),
+  const rs = await client.execute<PostWebauthnLoginResponse>(
+    new PostWebauthnLogin({ credential: "" }),
   );
   if (rs.status === 200) {
     mainStore.token = rs.data.token;
@@ -234,7 +237,7 @@ async function handleThirdPartyLogin(type: ThirdParty) {
   loading.value.threeSide = true;
   switch (type) {
     case ThirdParty.QQ: {
-      const rs = await client.execute<GetQQLoginResponse>(new GetQQLogin());
+      const rs = await client.execute<GetQqLoginResponse>(new GetQqLogin());
       if (rs.status === 200) {
         window.open(rs.data.url);
       } else {

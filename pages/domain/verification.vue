@@ -17,179 +17,173 @@
         </n-form>
       </n-card>
 
-      <n-card>
-        <n-tabs type="line" default-value="verified" animated>
-          <n-tab-pane name="verified" tab="已认证域名">
-            <n-spin :show="loading.list.domain">
-              <n-space vertical>
-                <n-card v-if="domainBatchSelected.length > 0" embedded>
-                  <n-space>
-                    <n-button
-                      type="error"
-                      secondary
-                      @click="handleDeleteDomain()"
-                    >
-                      删除
-                    </n-button>
-                  </n-space>
-                </n-card>
-                <n-empty v-if="domainData.length === 0" />
-                <n-scrollbar v-else x-scrollable>
-                  <n-table
-                    style="min-width: 800px"
-                    :bordered="true"
-                    :single-line="false"
+      <n-tabs type="line" default-value="verified" animated>
+        <n-tab-pane name="verified" tab="已认证域名">
+          <n-spin :show="loading.list.domain">
+            <n-space vertical>
+              <n-card v-if="domainBatchSelected.length > 0" embedded>
+                <n-space>
+                  <n-button
+                    type="error"
+                    secondary
+                    @click="handleDeleteDomain()"
                   >
-                    <n-thead>
-                      <n-tr>
-                        <n-th>
-                          <n-switch
-                            v-model:value="domainBatchSelectState"
-                            :round="false"
-                            @update:value="handleDomainSelectAll"
-                          >
-                            <template #checked>全选</template>
-                            <template #unchecked>全选</template>
-                          </n-switch>
-                        </n-th>
-                        <n-th>域名 ID</n-th>
-                        <n-th>域名</n-th>
-                        <n-th>操作</n-th>
-                      </n-tr>
-                    </n-thead>
-                    <n-tbody>
-                      <n-tr v-for="domain in domainData" :key="domain.id">
-                        <n-td>
-                          <n-el @click="handleDomainBatchSelect(domain.id)">
-                            <n-checkbox
-                              :checked="domainBatchSelected.includes(domain.id)"
-                            />
-                          </n-el>
-                        </n-td>
-                        <n-td>{{ domain.id }}</n-td>
-                        <n-td>{{ domain.domain }}</n-td>
-                        <n-td>
-                          <n-button
-                            type="error"
-                            secondary
-                            @click="handleDeleteDomain(domain.id)"
-                          >
-                            删除
-                          </n-button>
-                        </n-td>
-                      </n-tr>
-                    </n-tbody>
-                  </n-table>
-                </n-scrollbar>
-                <n-space v-if="verificationData.length !== 0" justify="center">
-                  <n-pagination
-                    v-model:page="domainPage.current"
-                    v-model:page-size="domainPage.size"
-                    :page-count="domainPage.count"
-                    :on-update:page="
-                      (pageSel) => {
-                        domainPage.current = pageSel;
-                        getDomains();
-                      }
-                    "
-                    :on-update:page-size="
-                      (pageSizeSel) => {
-                        domainPage.size = pageSizeSel;
-                        getDomains();
-                      }
-                    "
-                    show-size-picker
-                    :page-sizes="[10, 25, 50, 100]"
-                  />
+                    删除
+                  </n-button>
                 </n-space>
+              </n-card>
+              <n-empty v-if="domainData.length === 0" />
+              <n-scrollbar v-else x-scrollable>
+                <n-table
+                  style="min-width: 800px"
+                  :bordered="true"
+                  :single-line="false"
+                >
+                  <n-thead>
+                    <n-tr>
+                      <n-th>
+                        <n-switch
+                          v-model:value="domainBatchSelectState"
+                          :round="false"
+                          @update:value="handleDomainSelectAll"
+                        >
+                          <template #checked>全选</template>
+                          <template #unchecked>全选</template>
+                        </n-switch>
+                      </n-th>
+                      <n-th>域名 ID</n-th>
+                      <n-th>域名</n-th>
+                      <n-th>操作</n-th>
+                    </n-tr>
+                  </n-thead>
+                  <n-tbody>
+                    <n-tr v-for="domain in domainData" :key="domain.id">
+                      <n-td>
+                        <n-el @click="handleDomainBatchSelect(domain.id)">
+                          <n-checkbox
+                            :checked="domainBatchSelected.includes(domain.id)"
+                          />
+                        </n-el>
+                      </n-td>
+                      <n-td>{{ domain.id }}</n-td>
+                      <n-td>{{ domain.domain }}</n-td>
+                      <n-td>
+                        <n-button
+                          type="error"
+                          secondary
+                          @click="handleDeleteDomain(domain.id)"
+                        >
+                          删除
+                        </n-button>
+                      </n-td>
+                    </n-tr>
+                  </n-tbody>
+                </n-table>
+              </n-scrollbar>
+              <n-space v-if="domainData.length !== 0" justify="center">
+                <n-pagination
+                  v-model:page="domainPage.current"
+                  v-model:page-size="domainPage.size"
+                  :page-count="domainPage.count"
+                  :on-update:page="
+                    (pageSel) => {
+                      domainPage.current = pageSel;
+                      getDomains();
+                    }
+                  "
+                  :on-update:page-size="
+                    (pageSizeSel) => {
+                      domainPage.size = pageSizeSel;
+                      getDomains();
+                    }
+                  "
+                  show-size-picker
+                  :page-sizes="[10, 25, 50, 100]"
+                />
               </n-space>
-            </n-spin>
-          </n-tab-pane>
+            </n-space>
+          </n-spin>
+        </n-tab-pane>
 
-          <n-tab-pane name="submited" tab="认证中域名">
-            <n-spin :show="loading.list.verification">
-              <n-space vertical>
-                <n-alert type="warning">
-                  24 小时未验证的域名将自动过期删除。
-                </n-alert>
-                <n-empty v-if="verificationData.length === 0" />
-                <n-scrollbar v-else x-scrollable>
-                  <n-table
-                    style="min-width: 800px"
-                    :bordered="true"
-                    :single-line="false"
-                  >
-                    <n-thead>
-                      <n-tr>
-                        <n-th>域名</n-th>
-                        <n-th>DNS 记录类型</n-th>
-                        <n-th>DNS 记录内容</n-th>
-                        <n-th>操作</n-th>
-                      </n-tr>
-                    </n-thead>
-                    <n-tbody>
-                      <n-tr
-                        v-for="verification in verificationData"
-                        :key="verification.domain"
-                      >
-                        <n-td>{{ verification.domain }}</n-td>
-                        <n-td>{{ verification.recordType }}</n-td>
-                        <n-td>
-                          <n-tooltip trigger="hover">
-                            <template #trigger>
-                              <n-button
-                                text
-                                @click="
-                                  $copyToClipboard(verification.recordData)
-                                "
-                              >
-                                <n-code :code="verification.recordData" />
-                              </n-button>
-                            </template>
-                            点击复制
-                          </n-tooltip>
-                        </n-td>
-                        <n-td>
-                          <n-button
-                            type="info"
-                            secondary
-                            @click="
-                              handleSubmitVerification(verification.domain)
-                            "
-                          >
-                            验证
-                          </n-button>
-                        </n-td>
-                      </n-tr>
-                    </n-tbody>
-                  </n-table>
-                </n-scrollbar>
-                <n-space v-if="verificationData.length !== 0" justify="center">
-                  <n-pagination
-                    v-model:page="verificationPage.current"
-                    v-model:page-size="verificationPage.size"
-                    :page-count="verificationPage.count"
-                    :on-update:page="
-                      (pageSel) => {
-                        verificationPage.current = pageSel;
-                        getVerifications();
-                      }
-                    "
-                    :on-update:page-size="
-                      (pageSizeSel) => {
-                        verificationPage.size = pageSizeSel;
-                        getVerifications();
-                      }
-                    "
-                    show-size-picker
-                    :page-sizes="[10, 25, 50, 100]"
-                  />
-                </n-space>
+        <n-tab-pane name="submited" tab="认证中域名">
+          <n-spin :show="loading.list.verification">
+            <n-space vertical>
+              <n-alert type="warning">
+                24 小时未验证的域名将自动过期删除。
+              </n-alert>
+              <n-empty v-if="verificationData.length === 0" />
+              <n-scrollbar v-else x-scrollable>
+                <n-table
+                  style="min-width: 800px"
+                  :bordered="true"
+                  :single-line="false"
+                >
+                  <n-thead>
+                    <n-tr>
+                      <n-th>域名</n-th>
+                      <n-th>DNS 记录类型</n-th>
+                      <n-th>DNS 记录内容</n-th>
+                      <n-th>操作</n-th>
+                    </n-tr>
+                  </n-thead>
+                  <n-tbody>
+                    <n-tr
+                      v-for="verification in verificationData"
+                      :key="verification.domain"
+                    >
+                      <n-td>{{ verification.domain }}</n-td>
+                      <n-td>{{ verification.recordType }}</n-td>
+                      <n-td>
+                        <n-tooltip trigger="hover">
+                          <template #trigger>
+                            <n-button
+                              text
+                              @click="$copyToClipboard(verification.recordData)"
+                            >
+                              <n-code :code="verification.recordData" />
+                            </n-button>
+                          </template>
+                          点击复制
+                        </n-tooltip>
+                      </n-td>
+                      <n-td>
+                        <n-button
+                          type="info"
+                          secondary
+                          @click="handleSubmitVerification(verification.domain)"
+                        >
+                          验证
+                        </n-button>
+                      </n-td>
+                    </n-tr>
+                  </n-tbody>
+                </n-table>
+              </n-scrollbar>
+              <n-space v-if="verificationData.length !== 0" justify="center">
+                <n-pagination
+                  v-model:page="verificationPage.current"
+                  v-model:page-size="verificationPage.size"
+                  :page-count="verificationPage.count"
+                  :on-update:page="
+                    (pageSel) => {
+                      verificationPage.current = pageSel;
+                      getVerifications();
+                    }
+                  "
+                  :on-update:page-size="
+                    (pageSizeSel) => {
+                      verificationPage.size = pageSizeSel;
+                      getVerifications();
+                    }
+                  "
+                  show-size-picker
+                  :page-sizes="[10, 25, 50, 100]"
+                />
               </n-space>
-            </n-spin>
-          </n-tab-pane>
-        </n-tabs>
-      </n-card>
+            </n-space>
+          </n-spin>
+        </n-tab-pane>
+      </n-tabs>
     </n-space>
     <n-modal v-model:show="modal.verification.show">
       <n-card

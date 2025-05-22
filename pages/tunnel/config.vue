@@ -244,7 +244,9 @@ async function getTunnels() {
         value: it.id,
       });
     });
-    tunnelOptions.value = sortOptionsByName(tunnelOptions.value);
+    tunnelOptions.value.sort((a, b) => {
+      return (a.value as number) - (b.value as number);
+    });
     tunnelSelected.value = tunnelOptions.value[0].value as number;
   } else message.error(rs.message);
 }
@@ -266,7 +268,9 @@ async function getNodes() {
         value: it.id,
       });
     });
-    nodeOptions.value = sortOptionsByName(nodeOptions.value);
+    nodeOptions.value.sort((a, b) => {
+      return (a.label as string).localeCompare(b.label as string);
+    });
     nodeSelected.value = nodeOptions.value[0].value as number;
   } else message.error(rs.message);
 }
@@ -276,10 +280,4 @@ onMounted(async () => {
   await getNodes();
   await getTunnelConfig(Mode.TUNNEL);
 });
-
-function sortOptionsByName(data: Array<SelectOption>): Array<SelectOption> {
-  return data.sort((a, b) => {
-    return (a.label as string).localeCompare(b.label as string);
-  });
-}
 </script>

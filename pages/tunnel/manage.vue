@@ -574,6 +574,7 @@ import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels } from "@/api/src/api/tunnels.get";
 import { GetNodes } from "@/api/src/api/nodes.get";
 import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
+import { DeleteBatch as DeleteTunnelBatch } from "@/api/src/api/tunnel/batch.delete";
 import { PatchTunnel } from "@/api/src/api/tunnel.patch";
 
 definePageMeta({
@@ -822,7 +823,17 @@ async function handleDeleteTunnel(tunnelId: number) {
 
 async function handleBatchDeleteTunnel() {
   loading.value.batch.delete = true;
-  // TODO
+  const rs = await client.execute(
+    new DeleteTunnelBatch({
+      user_id: mainStore.userId!,
+      tunnel_ids: batchSelected.value,
+    }),
+  );
+  if (rs.status === 200) {
+    tunnels.value = tunnels.value.filter(
+      (tunnel) => !batchSelected.value.includes(tunnel.id),
+    );
+  } else message.error(rs.message);
   loading.value.batch.delete = false;
 }
 

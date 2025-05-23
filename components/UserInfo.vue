@@ -46,9 +46,9 @@
         </n-text>
         <n-h3>第三方账户绑定</n-h3>
         <n-el class="three-side-buttons">
-          <n-tooltip>
-            <template #trigger>
-              <n-spin :show="loading.thirdParty">
+          <n-spin :show="loading.thirdParty">
+            <n-tooltip>
+              <template #trigger>
                 <n-button
                   :type="data.thirdParty.bind.qq ? 'info' : 'tertiary'"
                   circle
@@ -56,11 +56,11 @@
                 >
                   <n-icon><Qq /></n-icon>
                 </n-button>
-              </n-spin>
-            </template>
-            <n-el v-if="data.thirdParty.bind.qq">已绑定</n-el>
-            <n-el v-else>未绑定</n-el>
-          </n-tooltip>
+              </template>
+              <n-el v-if="data.thirdParty.bind.qq">已绑定</n-el>
+              <n-el v-else>未绑定</n-el>
+            </n-tooltip>
+          </n-spin>
         </n-el>
         <n-divider />
         <n-space>

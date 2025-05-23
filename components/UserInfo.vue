@@ -58,7 +58,7 @@
                 </n-button>
               </n-spin>
             </template>
-            <n-el v-if="data.thirdParty.qq.bond">已绑定</n-el>
+            <n-el v-if="data.thirdParty.bind.qq">已绑定</n-el>
             <n-el v-else>未绑定</n-el>
           </n-tooltip>
         </n-el>
@@ -301,7 +301,7 @@ async function handleThirdPartyButton(type: ThirdParty) {
   switch (type) {
     case ThirdParty.QQ:
       {
-        if (data.value.thirdParty.qq.bond) {
+        if (data.value.thirdParty.bind.qq) {
           const rs = await client.execute(
             new GetQqBind({
               user_id: mainStore.userId!,

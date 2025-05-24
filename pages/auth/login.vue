@@ -121,7 +121,7 @@ const notification = useNotification();
 const mainStore = useMainStore();
 const userStore = useUserStore();
 const client = new ApiClient();
-client.initClient();
+client.init();
 
 const route = useRoute();
 

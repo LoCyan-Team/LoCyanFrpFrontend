@@ -258,7 +258,7 @@ definePageMeta({
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);
-client.initClient();
+client.init();
 
 const message = useMessage();
 const dialog = useDialog();

@@ -68,7 +68,7 @@ const message = useMessage();
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);
-client.initClient();
+client.init();
 
 const data = ref<
   {

@@ -1,5 +1,7 @@
 <template>
   <page-content title="应用管理">
-    <n-alert>此界面正在开发，晚点再来看看吧~</n-alert>
+    <n-card :bordered="false" title="我的应用">
+      <n-card></n-card>
+    </n-card>
   </page-content>
 </template>

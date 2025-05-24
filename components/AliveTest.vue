@@ -21,7 +21,7 @@ async function aliveTest() {
   if (!mainStore.token) return;
 
   const client = new ApiClient(mainStore.token!);
-  client.initClient();
+  client.init();
 
   const rs = await client.execute(
     new GetUser({

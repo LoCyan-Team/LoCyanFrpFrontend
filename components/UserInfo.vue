@@ -229,7 +229,7 @@ const emit = defineEmits<{
 const mainStore = useMainStore();
 const userStore = useUserStore();
 const client = new ApiClient(mainStore.token!);
-client.initClient();
+client.init();
 
 const message = useMessage();
 const dialog = useDialog();

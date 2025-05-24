@@ -89,7 +89,7 @@ const env = {
 };
 
 const api = new ApiClient();
-api.initClient();
+api.init();
 
 const loaded = ref<boolean>(false);
 

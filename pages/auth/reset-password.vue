@@ -94,7 +94,7 @@ const message = useMessage();
 const notification = useNotification();
 
 const client = new ApiClient();
-client.initClient();
+client.init();
 
 const loading = ref<{
   reset: boolean;

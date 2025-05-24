@@ -249,7 +249,7 @@ import { PostDns as PostDnsVerification } from "@/api/src/api/domain/verificatio
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);
-client.initClient();
+client.init();
 
 const message = useMessage();
 const notification = useNotification();

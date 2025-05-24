@@ -112,7 +112,7 @@ export class Client {
     return this.buildResponse(response!);
   }
 
-  public initClient() {
+  public init() {
     this.instance.interceptors.request.use(
       (config: InternalAxiosRequestConfig) => {
         if (this.token) {

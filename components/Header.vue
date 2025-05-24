@@ -106,7 +106,7 @@ async function handleAvatarOptionSelect(key) {
       break;
     case "logout": {
       const client = new ApiClient(mainStore.token);
-      client.initClient();
+      client.init();
       const rs = await client.execute(
         new DeleteToken({
           user_id: mainStore.userId,

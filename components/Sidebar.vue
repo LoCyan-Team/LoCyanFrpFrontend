@@ -36,7 +36,6 @@ import {
   PaperPlane,
   PencilSharp,
   Person,
-  Key,
   CompassSharp,
   GameController,
   LogInOutline,
@@ -116,7 +115,7 @@ const loginedMenuOptions: MenuOption[] = [
       {
         path: "/tunnel/create",
         label: "创建隧道",
-        key: "tunnel-add",
+        key: "tunnel-create",
         icon: renderIcon(Add),
       },
       {
@@ -188,6 +187,12 @@ const loginedMenuOptions: MenuOption[] = [
         label: "应用管理",
         key: "app-manage",
         icon: renderIcon(GuiManagement),
+      },
+      {
+        path: "/app/create",
+        label: "创建应用",
+        key: "app-create",
+        icon: renderIcon(Add),
       },
       {
         path: "/app/access",

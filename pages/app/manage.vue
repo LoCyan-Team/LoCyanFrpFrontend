@@ -179,6 +179,7 @@ async function getApps() {
     }),
   );
   if (rs.status === 200) {
+    page.value.count = rs.data.pagination.count;
     rs.data.list.forEach((it) => {
       apps.value.push({
         id: it.id,

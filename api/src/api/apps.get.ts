@@ -14,4 +14,7 @@ export interface GetAppsResponse {
     description?: string;
     redirect_url: string;
   }>;
+  pagination: {
+    count: number;
+  }
 }

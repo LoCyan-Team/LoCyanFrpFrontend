@@ -11,3 +11,7 @@ export class PostAuthorize extends API {
     super("/auth/oauth/authorize", Method.POST, params, {});
   }
 }
+
+export interface PostAuthorizeResponse {
+  refresh_token: string;
+}

@@ -44,7 +44,7 @@
               </n-el>
               <n-layout-content
                 :native-scrollbar="false"
-                class="content"
+                :class="{ content: pageSidebar }"
                 style="width: 100%"
               >
                 <nuxt-page style="min-height: calc(100dvh - 61px)" />

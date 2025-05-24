@@ -220,7 +220,7 @@
       footer-style="text-align: center;"
     >
       <n-qr-code
-        :value="modal.realPerson.qrCodeUrl ?? undefined"
+        :value="modal.realPerson.qrCodeUrl!"
         :size="200"
         :error-correction-level="'L'"
       />

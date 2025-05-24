@@ -60,7 +60,10 @@
       style="max-width: 600px"
     >
       <n-spin :show="loading.edit">
-        <app-config @submit="(app) => handleEdit(editModal.app.id, app)" />
+        <app-config
+          :default="editModal.app"
+          @submit="(app) => handleEdit(editModal.app.id, app)"
+        />
       </n-spin>
     </n-modal>
   </page-content>
@@ -134,7 +137,7 @@ async function handleEdit(
   appId: number,
   app: {
     name: string;
-    description: string;
+    description: string | null;
     redirectUrl: string;
   },
 ) {

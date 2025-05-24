@@ -7,7 +7,7 @@ export class PutApp extends API {
     name: string;
     description?: string;
     redirect_url: string;
-}) {
+  }) {
     super("/app", Method.PUT, params, {});
   }
 }

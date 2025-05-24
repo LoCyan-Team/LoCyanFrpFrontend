@@ -8,6 +8,6 @@ export class PostAuthorize extends API {
     redirect_url: string;
     scope_ids: number[];
   }) {
-    super("/auth/authorize", Method.POST, params, {});
+    super("/auth/oauth/authorize", Method.POST, params, {});
   }
 }

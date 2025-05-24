@@ -7,6 +7,6 @@ export class DeleteSession extends API {
     app_id: number;
     session_id?: string;
   }) {
-    super("/auth/authorization/session", Method.DELETE, params, {});
+    super("/auth/oauth/authorization/session", Method.DELETE, params, {});
   }
 }

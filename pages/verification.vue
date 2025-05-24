@@ -5,7 +5,7 @@
         请填写您的姓名和身份证证件号码进行身份认证（请确保信息真实准确，认证一旦成功除特殊情况外无法修改）
       </n-alert>
       <n-alert title="请勿冒用他人信息实名" type="warning">
-        我们允许未成年人注册，请勿冒用非本人身份证实名，已经实名过得既往不咎！
+        我们允许未成年人注册，请勿冒用非本人身份证实名，已经实名过的既往不咎！
       </n-alert>
       <n-spin :show="loading.page">
         <n-space vertical>
@@ -220,7 +220,7 @@
       footer-style="text-align: center;"
     >
       <n-qr-code
-        :value="modal.realPerson.qrCodeUrl"
+        :value="modal.realPerson.qrCodeUrl ?? undefined"
         :size="200"
         :error-correction-level="'L'"
       />

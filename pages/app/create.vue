@@ -8,33 +8,9 @@
         </n-a>
         。
       </n-alert>
-      <n-card title="创建应用">
-        <n-form :model="form">
-          <n-form-item label="应用名" path="name">
-            <n-input v-model:value="form.name" placeholder="请输入应用名" />
-          </n-form-item>
-          <n-form-item label="应用介绍" path="description">
-            <n-input
-              v-model:value="form.description"
-              placeholder="请输入应用介绍"
-            />
-          </n-form-item>
-          <n-form-item label="重定向 URL" path="redirectUrl">
-            <n-input
-              v-model:value="form.redirectUrl"
-              placeholder="请输入授权重定向 URL"
-            />
-          </n-form-item>
-          <n-button
-            :loading="loading.submit"
-            :disabled="loading.submit"
-            type="success"
-            @click="handleCreate"
-          >
-            提交
-          </n-button>
-        </n-form>
-      </n-card>
+      <n-spin :show="loading">
+        <app-config @submit="handleCreate" />
+      </n-spin>
     </n-space>
   </page-content>
 </template>
@@ -56,30 +32,20 @@ definePageMeta({
 const message = useMessage();
 const dialog = useDialog();
 
-const loading = ref<{
-  submit: boolean;
-}>({
-  submit: false,
-});
+const loading = ref<boolean>(false);
 
-const form = ref<{
-  name: string | null;
+async function handleCreate(app: {
+  name: string;
   description: string | null;
-  redirectUrl: string | null;
-}>({
-  name: null,
-  description: null,
-  redirectUrl: null,
-});
-
-async function handleCreate() {
-  loading.value.submit = true
+  redirectUrl: string;
+}) {
+  loading.value = true;
   const rs = await client.execute<PutAppResponse>(
     new PutApp({
       user_id: mainStore.userId!,
-      name: form.value.name!,
-      description: form.value.description ?? undefined,
-      redirectUrl: form.value.redirectUrl,
+      name: app.name,
+      description: app.description ?? undefined,
+      redirect_url: app.redirectUrl,
     }),
   );
   if (rs.status === 200) {
@@ -88,6 +54,6 @@ async function handleCreate() {
       content: "创建应用成功。",
     });
   } else message.error(rs.message);
-  loading.value.submit = false
+  loading.value = false;
 }
 </script>

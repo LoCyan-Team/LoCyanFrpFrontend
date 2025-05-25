@@ -2,12 +2,12 @@
   <page-content title="隧道管理">
     <n-space vertical>
       <n-space align="center">
-        <n-input placeholder="搜索项目...">
+        <n-input v-model:value="searchKeyword" placeholder="搜索项目..." @keydown.enter="handleSearch">
           <template #prefix>
             <n-icon :component="Search" />
           </template>
         </n-input>
-        <n-button type="success">搜索</n-button>
+        <n-button type="success" @click="handleSearch">搜索</n-button>
         <n-radio-group v-model:value="viewMode" name="viewMode">
           <n-radio-button value="card" label="卡片视图" />
           <n-radio-button value="list" label="列表视图" />
@@ -58,13 +58,13 @@
 
       <n-spin :show="loading.page">
         <n-space vertical>
-          <n-empty v-if="tunnels.length === 0" />
+          <n-empty v-if="displayTunnels.length === 0" />
           <n-el v-else>
             <!-- 卡片模式 -->
             <n-el v-if="viewMode === 'card'">
               <n-grid :y-gap="8" :x-gap="12" :cols="4" item-responsive>
                 <n-grid-item
-                  v-for="tunnel in tunnels"
+                  v-for="tunnel in displayTunnels"
                   :key="tunnel.id"
                   span="0:4 1000:1"
                 >
@@ -126,7 +126,7 @@
                               <n-button
                                 text
                                 @click="
-                                  $copyToClipboard(computeConnectAddr(tunnel))
+                                $copyToClipboard(computeConnectAddr(tunnel))
                                 "
                               >
                                 <n-code :code="computeConnectAddr(tunnel)" />
@@ -212,7 +212,7 @@
                     </n-tr>
                   </n-thead>
                   <n-tbody>
-                    <n-tr v-for="tunnel in tunnels" :key="tunnel.id">
+                    <n-tr v-for="tunnel in displayTunnels" :key="tunnel.id">
                       <n-td>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
@@ -243,7 +243,7 @@
                             <n-button
                               text
                               @click="
-                                $copyToClipboard(computeConnectAddr(tunnel))
+                              $copyToClipboard(computeConnectAddr(tunnel))
                               "
                             >
                               <n-code :code="computeConnectAddr(tunnel)" />
@@ -334,9 +334,9 @@
               :page-count="page.count"
               :on-update:page="
                 (pageSel) => {
-                  page.current = pageSel;
-                  getTunnels();
-                }
+                page.current = pageSel;
+                getTunnels();
+              }
               "
               :on-update:page-size="
                 (pageSizeSel) => {
@@ -540,23 +540,23 @@
         <tunnel-config
           :node="selectedNode"
           :default="{
-            name: selectedTunnel.name,
-            type: selectedTunnel.type,
-            localIp: selectedTunnel.localIp,
-            localPort: selectedTunnel.localPort,
-            remotePort: selectedTunnel.remotePort,
-            useEncryption: selectedTunnel.useEncryption,
-            useCompression: selectedTunnel.useCompression,
-            domain: selectedTunnel.domain,
-            locations: selectedTunnel.locations,
+          name: selectedTunnel.name,
+          type: selectedTunnel.type,
+          localIp: selectedTunnel.localIp,
+          localPort: selectedTunnel.localPort,
+          remotePort: selectedTunnel.remotePort,
+          useEncryption: selectedTunnel.useEncryption,
+          useCompression: selectedTunnel.useCompression,
+          domain: selectedTunnel.domain,
+          locations: selectedTunnel.locations,
           }"
           @submit="
-            (tunnelData) =>
-              handleSubmitModifyTunnel(
-                selectedTunnel.id,
-                selectedTunnel.status,
-                tunnelData,
-              )
+          (tunnelData) =>
+            handleSubmitModifyTunnel(
+              selectedTunnel.id,
+              selectedTunnel.status,
+              tunnelData,
+            )
           "
         />
       </n-form>
@@ -657,24 +657,24 @@ interface Tunnel {
 const tunnels = ref<Tunnel[]>([]);
 
 const selectedTunnel = ref<Tunnel>({
+  id: 0,
+  name: "",
+  type: "",
+  node: {
     id: 0,
-    name: "",
-    type: "",
-    node: {
-      id: 0,
-      name: null,
-      host: null,
-      ip: null,
-    },
-    localIp: "",
-    localPort: 0,
-    remotePort: null,
-    useEncryption: false,
-    useCompression: false,
-    domain: null,
-    locations: null,
-    status: "",
-  }),
+    name: null,
+    host: null,
+    ip: null,
+  },
+  localIp: "",
+  localPort: 0,
+  remotePort: null,
+  useEncryption: false,
+  useCompression: false,
+  domain: null,
+  locations: null,
+  status: "",
+}),
   selectedNode = ref<Node>({
     id: 0,
     name: "",
@@ -733,6 +733,23 @@ const page = ref<{
   size: 10,
   count: 1,
 });
+
+const searchKeyword = ref('');
+const displayTunnels = ref<Tunnel[]>([]);
+
+function handleSearch() {
+  if (!searchKeyword || !searchKeyword.value.trim()) {
+    displayTunnels.value = [...tunnels.value];
+    return;
+  }
+
+  const keyword = searchKeyword.value.trim().toLowerCase();
+  displayTunnels.value = tunnels.value.filter(tunnel => {
+    const nameMatch = tunnel.name.toLowerCase().includes(keyword);
+    const idMatch = tunnel.id.toString() === keyword;
+    return nameMatch || idMatch;
+  });
+}
 
 async function handleBatchEdit() {
   // TODO
@@ -904,6 +921,7 @@ async function getTunnels() {
       });
     });
     tunnels.value = sortTunnelsById(tunnels.value);
+    displayTunnels.value = [...tunnels.value];
   } else message.error(rs.message);
   loading.value.page = false;
 }

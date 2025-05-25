@@ -745,6 +745,7 @@ async function handleSearch() {
   loading.value.page = true;
   if (!searchKeyword.value || !searchKeyword.value.trim()) {
     displayTunnels.value = [...tunnels.value];
+    loading.value.page = false;
     return;
   }
 
@@ -752,9 +753,9 @@ async function handleSearch() {
   displayTunnels.value = tunnels.value.filter((tunnel) => {
     const nameMatch = tunnel.name.toLowerCase().includes(keyword);
     const idMatch = tunnel.id.toString() === keyword;
+    loading.value.page = false;
     return nameMatch || idMatch;
   });
-  loading.value.page = false;
 }
 
 async function handleBatchEdit() {

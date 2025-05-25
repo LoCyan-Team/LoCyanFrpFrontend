@@ -86,7 +86,8 @@
                             </n-space>
                           </n-text>
                           <n-text>
-                            授权时间: {{ new Date(session.authorizeTime) }}
+                            授权时间:
+                            {{ dayjs(session.authorizeTime).format("L LT") }}
                           </n-text>
                           <template #suffix>
                             <n-popconfirm
@@ -203,6 +204,8 @@ import {
 } from "@/api/src/api/auth/oauth/authorization/sessions.get";
 import { DeleteSession } from "@/api/src/api/auth/oauth/authorization/session.delete";
 import { DeleteApp as DeleteAppAuthorization } from "@/api/src/api/auth/oauth/authorization/app.delete";
+
+const dayjs = useDayjs();
 
 const mainStore = useMainStore();
 const client = new ApiClient(mainStore.token!);

@@ -741,7 +741,7 @@ const page = ref<{
 const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
 
-function handleSearch() {
+async function handleSearch() {
   loading.value.page = true;
   if (!searchKeyword.value || !searchKeyword.value.trim()) {
     displayTunnels.value = [...tunnels.value];

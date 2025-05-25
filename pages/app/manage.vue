@@ -152,7 +152,7 @@ async function handleEdit(
     }),
   );
   if (rs.status === 200) {
-    const index = apps.value.findIndex(item => item.id === appId);
+    const index = apps.value.findIndex((item) => item.id === appId);
     if (index !== -1) {
       apps.value[index] = {
         ...apps.value[index],

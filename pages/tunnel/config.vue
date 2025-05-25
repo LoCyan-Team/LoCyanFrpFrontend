@@ -198,6 +198,10 @@ async function getTunnelConfig(mode: Mode) {
   switch (mode) {
     case Mode.TUNNEL:
       {
+        if (tunnelSelected.value === 0) {
+          loading.value = false;
+          return;
+        }
         rs = await client.execute(
           new GetConfig({
             user_id: mainStore.userId!,
@@ -209,6 +213,10 @@ async function getTunnelConfig(mode: Mode) {
       break;
     case Mode.NODE:
       {
+        if (nodeSelected.value === 0) {
+          loading.value = false;
+          return;
+        }
         rs = await client.execute(
           new GetConfig({
             user_id: mainStore.userId!,
@@ -244,10 +252,12 @@ async function getTunnels() {
         value: it.id,
       });
     });
-    tunnelOptions.value.sort((a, b) => {
-      return (a.value as number) - (b.value as number);
-    });
-    tunnelSelected.value = tunnelOptions.value[0].value as number;
+    if (rs.data.list.length !== 0) {
+      tunnelOptions.value.sort((a, b) => {
+        return (a.value as number) - (b.value as number);
+      });
+      tunnelSelected.value = tunnelOptions.value[0].value as number;
+    }
   } else message.error(rs.message);
 }
 

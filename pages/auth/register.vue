@@ -56,6 +56,7 @@
             v-model:value="registerForm.password"
             type="password"
             placeholder="密码"
+            @keydown.enter="handleRegister"
           />
         </n-form-item>
         <n-form-item label="确认密码" path="confirmPassword">
@@ -63,6 +64,7 @@
             v-model:value="registerForm.confirmPassword"
             type="password"
             placeholder="确认密码"
+            @keydown.enter="handleRegister"
           />
         </n-form-item>
         <n-el>

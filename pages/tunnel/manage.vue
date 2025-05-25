@@ -2,7 +2,11 @@
   <page-content title="隧道管理">
     <n-space vertical>
       <n-space align="center">
-        <n-input v-model:value="searchKeyword" placeholder="搜索项目..." @keydown.enter="handleSearch">
+        <n-input
+          v-model:value="searchKeyword"
+          placeholder="搜索项目..."
+          @keydown.enter="handleSearch"
+        >
           <template #prefix>
             <n-icon :component="Search" />
           </template>
@@ -126,7 +130,7 @@
                               <n-button
                                 text
                                 @click="
-                                $copyToClipboard(computeConnectAddr(tunnel))
+                                  $copyToClipboard(computeConnectAddr(tunnel))
                                 "
                               >
                                 <n-code :code="computeConnectAddr(tunnel)" />
@@ -243,7 +247,7 @@
                             <n-button
                               text
                               @click="
-                              $copyToClipboard(computeConnectAddr(tunnel))
+                                $copyToClipboard(computeConnectAddr(tunnel))
                               "
                             >
                               <n-code :code="computeConnectAddr(tunnel)" />
@@ -334,9 +338,9 @@
               :page-count="page.count"
               :on-update:page="
                 (pageSel) => {
-                page.current = pageSel;
-                getTunnels();
-              }
+                  page.current = pageSel;
+                  getTunnels();
+                }
               "
               :on-update:page-size="
                 (pageSizeSel) => {
@@ -540,23 +544,23 @@
         <tunnel-config
           :node="selectedNode"
           :default="{
-          name: selectedTunnel.name,
-          type: selectedTunnel.type,
-          localIp: selectedTunnel.localIp,
-          localPort: selectedTunnel.localPort,
-          remotePort: selectedTunnel.remotePort,
-          useEncryption: selectedTunnel.useEncryption,
-          useCompression: selectedTunnel.useCompression,
-          domain: selectedTunnel.domain,
-          locations: selectedTunnel.locations,
+            name: selectedTunnel.name,
+            type: selectedTunnel.type,
+            localIp: selectedTunnel.localIp,
+            localPort: selectedTunnel.localPort,
+            remotePort: selectedTunnel.remotePort,
+            useEncryption: selectedTunnel.useEncryption,
+            useCompression: selectedTunnel.useCompression,
+            domain: selectedTunnel.domain,
+            locations: selectedTunnel.locations,
           }"
           @submit="
-          (tunnelData) =>
-            handleSubmitModifyTunnel(
-              selectedTunnel.id,
-              selectedTunnel.status,
-              tunnelData,
-            )
+            (tunnelData) =>
+              handleSubmitModifyTunnel(
+                selectedTunnel.id,
+                selectedTunnel.status,
+                tunnelData,
+              )
           "
         />
       </n-form>
@@ -657,24 +661,24 @@ interface Tunnel {
 const tunnels = ref<Tunnel[]>([]);
 
 const selectedTunnel = ref<Tunnel>({
-  id: 0,
-  name: "",
-  type: "",
-  node: {
     id: 0,
-    name: null,
-    host: null,
-    ip: null,
-  },
-  localIp: "",
-  localPort: 0,
-  remotePort: null,
-  useEncryption: false,
-  useCompression: false,
-  domain: null,
-  locations: null,
-  status: "",
-}),
+    name: "",
+    type: "",
+    node: {
+      id: 0,
+      name: null,
+      host: null,
+      ip: null,
+    },
+    localIp: "",
+    localPort: 0,
+    remotePort: null,
+    useEncryption: false,
+    useCompression: false,
+    domain: null,
+    locations: null,
+    status: "",
+  }),
   selectedNode = ref<Node>({
     id: 0,
     name: "",
@@ -734,21 +738,23 @@ const page = ref<{
   count: 1,
 });
 
-const searchKeyword = ref('');
+const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
 
 function handleSearch() {
-  if (!searchKeyword || !searchKeyword.value.trim()) {
+  loading.value.page = true;
+  if (!searchKeyword.value || !searchKeyword.value.trim()) {
     displayTunnels.value = [...tunnels.value];
     return;
   }
 
   const keyword = searchKeyword.value.trim().toLowerCase();
-  displayTunnels.value = tunnels.value.filter(tunnel => {
+  displayTunnels.value = tunnels.value.filter((tunnel) => {
     const nameMatch = tunnel.name.toLowerCase().includes(keyword);
     const idMatch = tunnel.id.toString() === keyword;
     return nameMatch || idMatch;
   });
+  loading.value.page = false;
 }
 
 async function handleBatchEdit() {

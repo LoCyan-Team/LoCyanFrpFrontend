@@ -54,7 +54,7 @@
     <n-modal
       v-model:show="editModal.show"
       preset="card"
-      title="批量编辑"
+      title="编辑应用"
       size="huge"
       :bordered="false"
       style="max-width: 600px"

@@ -301,7 +301,7 @@ async function handleThirdPartyButton(type: ThirdParty) {
   switch (type) {
     case ThirdParty.QQ:
       {
-        if (data.value.thirdParty.bind.qq) {
+        if (!data.value.thirdParty.bind.qq) {
           const rs = await client.execute(
             new GetQqBind({
               user_id: mainStore.userId!,

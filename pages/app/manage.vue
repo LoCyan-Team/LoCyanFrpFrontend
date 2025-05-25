@@ -152,6 +152,16 @@ async function handleEdit(
     }),
   );
   if (rs.status === 200) {
+    const index = apps.value.findIndex(item => item.id === appId);
+    if (index !== -1) {
+      apps.value[index] = {
+        ...apps.value[index],
+        name: app.name,
+        description: app.description,
+        redirectUrl: app.redirectUrl,
+      };
+    }
+    apps.value.sort((a, b) => a.id - b.id);
     dialog.success({
       title: "更新成功",
       content: "更新应用信息成功。",
@@ -191,6 +201,7 @@ async function getApps() {
         redirectUrl: it.redirect_url,
       });
     });
+    apps.value.sort((a, b) => a.id - b.id);
   } else message.error(rs.message);
   loading.value.page = false;
 }

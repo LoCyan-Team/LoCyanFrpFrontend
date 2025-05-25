@@ -15,7 +15,7 @@
             v-model:value="loginForm.password"
             type="password"
             placeholder="密码"
-            @keydown.enter="handleRegister"
+            @keydown.enter="loadCaptcha"
           />
         </n-form-item>
         <n-el>

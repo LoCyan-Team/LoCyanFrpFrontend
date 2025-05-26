@@ -41,56 +41,62 @@
         </n-form>
       </n-card>
 
-      <n-card v-if="donations.length === 0">
-        <n-empty />
-      </n-card>
-      <n-scrollbar v-else x-scrollable>
-        <n-table style="min-width: 800px" :bordered="true" :single-line="false">
-          <n-thead>
-            <n-tr>
-              <n-th>捐赠 ID</n-th>
-              <n-th>订单号</n-th>
-              <n-th>金额</n-th>
-              <n-th>付款方式</n-th>
-              <n-th>留言</n-th>
-            </n-tr>
-          </n-thead>
-          <n-tbody>
-            <n-tr v-for="donation in donations" :key="donation.id">
-              <n-td>{{ donation.id }}</n-td>
-              <n-td>{{ donation.tradeNo }}</n-td>
-              <n-td>{{ donation.amount }}</n-td>
-              <n-td>{{ donation.paymentMethod }}</n-td>
-              <n-td>{{ donation.comment }}</n-td>
-            </n-tr>
-          </n-tbody>
-        </n-table>
-      </n-scrollbar>
-      <n-space
-        v-if="donations.length !== 0"
-        justify="center"
-        style="width: 100%"
-      >
-        <n-pagination
-          v-model:page="page.current"
-          v-model:page-size="page.size"
-          :page-count="page.count"
-          :on-update:page="
-            (pageSel) => {
-              page.current = pageSel;
-              getDonations();
-            }
-          "
-          :on-update:page-size="
-            (pageSizeSel) => {
-              page.size = pageSizeSel;
-              getDonations();
-            }
-          "
-          show-size-picker
-          :page-sizes="[10, 25, 50, 100]"
-        />
-      </n-space>
+      <n-spin :show="loading.list">
+        <n-card v-if="donations.length === 0">
+          <n-empty />
+        </n-card>
+        <n-scrollbar v-else x-scrollable>
+          <n-table
+            style="min-width: 800px"
+            :bordered="true"
+            :single-line="false"
+          >
+            <n-thead>
+              <n-tr>
+                <n-th>捐赠 ID</n-th>
+                <n-th>订单号</n-th>
+                <n-th>金额</n-th>
+                <n-th>付款方式</n-th>
+                <n-th>留言</n-th>
+              </n-tr>
+            </n-thead>
+            <n-tbody>
+              <n-tr v-for="donation in donations" :key="donation.id">
+                <n-td>{{ donation.id }}</n-td>
+                <n-td>{{ donation.tradeNo }}</n-td>
+                <n-td>{{ donation.amount }}</n-td>
+                <n-td>{{ donation.paymentMethod }}</n-td>
+                <n-td>{{ donation.comment }}</n-td>
+              </n-tr>
+            </n-tbody>
+          </n-table>
+        </n-scrollbar>
+        <n-space
+          v-if="donations.length !== 0"
+          justify="center"
+          style="width: 100%"
+        >
+          <n-pagination
+            v-model:page="page.current"
+            v-model:page-size="page.size"
+            :page-count="page.count"
+            :on-update:page="
+              (pageSel) => {
+                page.current = pageSel;
+                getDonations();
+              }
+            "
+            :on-update:page-size="
+              (pageSizeSel) => {
+                page.size = pageSizeSel;
+                getDonations();
+              }
+            "
+            show-size-picker
+            :page-sizes="[10, 25, 50, 100]"
+          />
+        </n-space>
+      </n-spin>
     </n-space>
   </page-content>
 </template>
@@ -113,8 +119,10 @@ client.init();
 const message = useMessage();
 
 const loading = ref<{
+  list: boolean;
   submit: boolean;
 }>({
+  list: true,
   submit: false,
 });
 
@@ -168,6 +176,7 @@ async function handlePayment() {
 }
 
 async function getDonations() {
+  loading.value.list = true;
   const rs = await client.execute(
     new GetDonations({
       user_id: mainStore.userId!,
@@ -188,6 +197,7 @@ async function getDonations() {
       });
     });
   } else message.error(rs.message);
+  loading.value.list = false;
 }
 
 onMounted(async () => {

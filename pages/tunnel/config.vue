@@ -271,8 +271,8 @@ async function getNodes() {
   );
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
+    nodeOptions.value.length = 0;
     rs.data.list.forEach((it) => {
-      nodeOptions.value.length = 0;
       nodeOptions.value.push({
         label: it.name,
         value: it.id,

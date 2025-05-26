@@ -214,7 +214,7 @@ const form = ref<{
   secretKey: string | null;
 }>({
   name: props.default?.name ?? null,
-  type: props.default?.type ?? "tcp",
+  type: props.default?.type ?? "TCP",
   localIp: props.default?.localIp ?? "127.0.0.1",
   localPort: props.default?.localPort ?? null,
   remotePort: props.default?.remotePort ?? null,

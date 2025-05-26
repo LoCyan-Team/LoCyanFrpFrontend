@@ -943,8 +943,8 @@ async function getNodes() {
   );
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
+    nodes.value.length = 0;
     rs.data.list.forEach((it) => {
-      nodes.value.length = 0;
       nodes.value.push({
         id: it.id,
         name: it.name,

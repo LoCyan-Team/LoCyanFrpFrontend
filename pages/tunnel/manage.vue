@@ -560,7 +560,12 @@
           <n-button
             type="warning"
             secondary
-            @click="() => (modal.edit.nodeSelector = true)"
+            @click="
+              () => {
+                editNodeSelected = null;
+                modal.edit.nodeSelector = true;
+              }
+            "
           >
             更换节点
           </n-button>
@@ -604,7 +609,7 @@
                 type="success"
                 @click="
                   () => {
-                    selectedNode = findNode(editNodeSelected);
+                    selectedNode = findNode(editNodeSelected!);
                     modal.edit.nodeSelector = false;
                   }
                 "

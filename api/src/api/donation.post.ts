@@ -6,3 +6,7 @@ export class PostDonation extends API {
     super("/donation", Method.POST, params, {});
   }
 }
+
+export interface PostDonationResponse {
+  url: string;
+}

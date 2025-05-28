@@ -16,5 +16,5 @@ export interface GetAppsResponse {
   }>;
   pagination: {
     count: number;
-  }
+  };
 }

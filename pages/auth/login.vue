@@ -234,7 +234,6 @@ async function handlePasskeyLogin() {
 }
 
 async function handleThirdPartyLogin(type: ThirdParty) {
-  // TODO
   loading.value.threeSide = true;
   switch (type) {
     case ThirdParty.QQ: {

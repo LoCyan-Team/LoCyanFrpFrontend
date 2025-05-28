@@ -158,9 +158,12 @@ import { useMainStore } from "@/store/main";
 import type { SelectOption } from "naive-ui";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetTunnels } from "@/api/src/api/tunnels.get";
-import { GetNodes } from "@/api/src/api/nodes.get";
-import { GetConfig } from "@/api/src/api/tunnel/config.get";
+import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
+import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
+import {
+  GetConfig,
+  type GetConfigResponse,
+} from "@/api/src/api/tunnel/config.get";
 
 definePageMeta({
   title: "配置文件",
@@ -246,7 +249,7 @@ async function getTunnelConfig(mode: Mode) {
           loading.value = false;
           return;
         }
-        rs = await client.execute(
+        rs = await client.execute<GetConfigResponse>(
           new GetConfig({
             user_id: mainStore.userId!,
             node_id: nodeSelected.value,
@@ -265,7 +268,7 @@ async function getTunnelConfig(mode: Mode) {
 }
 
 async function getTunnels() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetTunnelsResponse>(
     new GetTunnels({
       user_id: mainStore.userId!,
       page: tunnelPage.value.current,
@@ -291,7 +294,7 @@ async function getTunnels() {
 }
 
 async function getNodes() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,
       page: nodePage.value.current,

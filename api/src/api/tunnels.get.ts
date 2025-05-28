@@ -8,7 +8,7 @@ export class GetTunnels extends API {
 }
 
 export interface GetTunnelsResponse {
-  list: {
+  list: Array<{
     domain: null | string;
     /**
      * 隧道 ID
@@ -16,7 +16,7 @@ export interface GetTunnelsResponse {
     id: number;
     local_ip: string;
     local_port: number;
-    locations: null | string;
+    locations: null | string[];
     name: string;
     node: {
       host: null | string;
@@ -29,11 +29,11 @@ export interface GetTunnelsResponse {
     };
     remote_port: number | null;
     secret_key: string;
-    status: number;
+    status: string;
     type: string;
     use_compression: boolean;
     use_encryption: boolean;
-  };
+  }>;
   pagination: {
     count: number;
   };

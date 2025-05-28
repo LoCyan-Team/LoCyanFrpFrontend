@@ -82,7 +82,7 @@
 import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
-import { PutPassword } from "@/api/src/api/user/password.put";
+import { PutPassword, type GetPasswordResponse as GetEmailCodeResponse } from "@/api/src/api/user/password.put";
 
 definePageMeta({
   title: "重置密码",
@@ -150,7 +150,7 @@ async function loadCaptcha() {
 async function handleEmailCodeSend(token: string, server?: string) {
   captcha.value.show = false;
   loading.value.emailCode = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetEmailCodeResponse>(
     new GetEmailCode({
       user: resetPasswordForm.value.user!,
       captcha_id: captcha.value.config.id!,

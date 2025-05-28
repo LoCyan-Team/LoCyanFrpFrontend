@@ -107,8 +107,14 @@
 import { useMainStore } from "@/store/main";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetDonations } from "@/api/src/api/donations.get";
-import { PostDonation } from "@/api/src/api/donation.post";
+import {
+  GetDonations,
+  type GetDonationsResponse,
+} from "@/api/src/api/donations.get";
+import {
+  PostDonation,
+  type PostDonationResponse,
+} from "@/api/src/api/donation.post";
 
 definePageMeta({
   title: "捐赠",
@@ -165,7 +171,7 @@ const page = ref<{
 
 async function handlePayment() {
   loading.value.submit = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostDonationResponse>(
     new PostDonation({
       user_id: mainStore.userId!,
       amount: formData.value.amount,
@@ -179,7 +185,7 @@ async function handlePayment() {
 
 async function getDonations() {
   loading.value.list = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetDonationsResponse>(
     new GetDonations({
       user_id: mainStore.userId!,
       page: page.value.current,
@@ -195,7 +201,7 @@ async function getDonations() {
         tradeNo: it.trade_no,
         amount: it.amount,
         paymentMethod: it.pay_type,
-        comment: it.comment,
+        comment: it.message,
       });
     });
   } else message.error(rs.message);

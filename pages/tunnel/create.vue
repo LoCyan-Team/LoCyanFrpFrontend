@@ -74,7 +74,7 @@
 import { useMainStore } from "@/store/main";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetNodes } from "@/api/src/api/nodes.get";
+import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import { PutTunnel } from "@/api/src/api/tunnel.put";
 
 definePageMeta({
@@ -142,7 +142,6 @@ async function handleCreate(tunnel: {
   secretKey: string | null;
 }) {
   loading.value.create = true;
-  // TODO
   const rs = await client.execute(
     new PutTunnel({
       user_id: mainStore.userId!,
@@ -171,7 +170,7 @@ async function handleCreate(tunnel: {
 
 async function getNodes() {
   loading.value.nodes = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,
       page: page.value.current,

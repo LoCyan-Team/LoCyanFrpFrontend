@@ -11,3 +11,7 @@ export class GetConfig extends API {
     super("/tunnel/config", Method.GET, params, {});
   }
 }
+
+export interface GetConfigResponse {
+  config: string;
+}

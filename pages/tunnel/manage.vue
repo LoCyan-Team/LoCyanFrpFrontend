@@ -424,7 +424,7 @@
                         text
                         @click="$copyToClipboard(selectedTunnel.node.host!)"
                       >
-                        <n-code :code="selectedTunnel.node.host" />
+                        <n-code :code="selectedTunnel.node.host!" />
                       </n-button>
                     </template>
                     点击复制
@@ -634,8 +634,8 @@ import { Error } from "@vicons/carbon";
 import { Search } from "@vicons/ionicons5";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetTunnels } from "@/api/src/api/tunnels.get";
-import { GetNodes } from "@/api/src/api/nodes.get";
+import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
+import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
 import { DeleteBatch as DeleteTunnelBatch } from "@/api/src/api/tunnel/batch.delete";
 import { PatchTunnel } from "@/api/src/api/tunnel.patch";
@@ -965,7 +965,7 @@ function handleSelectAll(val: boolean) {
 
 async function getTunnels() {
   loading.value.page = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetTunnelsResponse>(
     new GetTunnels({
       user_id: mainStore.userId!,
       page: page.value.current,
@@ -1003,7 +1003,7 @@ async function getTunnels() {
 }
 
 async function getNodes() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,
       page: nodePage.value.current,

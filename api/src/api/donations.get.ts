@@ -6,3 +6,18 @@ export class GetDonations extends API {
     super("/donations", Method.GET, params, {});
   }
 }
+
+export interface GetDonationsResponse {
+  list: Array<{
+    id: number;
+    message: string | null;
+    trade_no: string;
+    pay_type: string;
+    amount: number;
+    time: string;
+    status: string;
+  }>;
+  pagination: {
+    count: number;
+  };
+}

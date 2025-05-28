@@ -32,12 +32,13 @@
               :on-update:value="
                 (value) => {
                   selectedMode = value;
-                  page.current = 1;
                   switch (value) {
                     case 'tunnel':
+                      tunnelPage.current = 1;
                       getTunnelConfig(Mode.TUNNEL);
                       break;
                     case 'node':
+                      nodePage.current = 1;
                       getTunnelConfig(Mode.NODE);
                       break;
                   }
@@ -47,64 +48,83 @@
               <n-tab-pane name="tunnel" tab="按隧道">
                 <n-empty v-if="tunnelOptions.length === 0" />
                 <n-form-item v-else label="选择隧道" path="tunnelConfig">
-                  <n-select
-                    v-model:value="tunnelSelected"
-                    :options="tunnelOptions"
-                    @update:value="() => getTunnelConfig(Mode.TUNNEL)"
-                  />
+                  <n-space vertical style="width: 100%">
+                    <n-select
+                      v-model:value="tunnelSelected"
+                      :options="tunnelOptions"
+                      @update:value="() => getTunnelConfig(Mode.TUNNEL)"
+                    />
+                    <n-space
+                      v-if="tunnelOptions.length !== 0"
+                      justify="center"
+                      style="width: 100%"
+                    >
+                      <n-pagination
+                        v-model:page="tunnelPage.current"
+                        v-model:page-size="tunnelPage.size"
+                        :page-count="tunnelPage.count"
+                        :on-update:page="
+                          (pageSel) => {
+                            tunnelPage.current = pageSel;
+                            getTunnelConfig(Mode.TUNNEL);
+
+                            getTunnelConfig(Mode.NODE);
+                          }
+                        "
+                        :on-update:page-size="
+                          (pageSizeSel) => {
+                            tunnelPage.size = pageSizeSel;
+                            getTunnelConfig(Mode.TUNNEL);
+                          }
+                        "
+                        show-size-picker
+                        :page-sizes="[10, 25, 50, 100]"
+                      />
+                    </n-space>
+                  </n-space>
                 </n-form-item>
               </n-tab-pane>
               <n-tab-pane name="node" tab="按节点">
                 <n-empty v-if="nodeOptions.length === 0" />
                 <n-form-item v-else label="选择节点" path="nodeConfig">
-                  <n-select
-                    v-model:value="nodeSelected"
-                    :options="nodeOptions"
-                    @update:value="() => getTunnelConfig(Mode.NODE)"
-                  />
+                  <n-space vertical style="width: 100%">
+                    <n-select
+                      v-model:value="nodeSelected"
+                      :options="nodeOptions"
+                      @update:value="() => getTunnelConfig(Mode.NODE)"
+                    />
+                    <n-space
+                      v-if="nodeOptions.length !== 0"
+                      justify="center"
+                      style="width: 100%"
+                    >
+                      <n-pagination
+                        v-model:page="nodePage.current"
+                        v-model:page-size="nodePage.size"
+                        :page-count="nodePage.count"
+                        :on-update:page="
+                          (pageSel) => {
+                            nodePage.current = pageSel;
+                            getTunnelConfig(Mode.TUNNEL);
+
+                            getTunnelConfig(Mode.NODE);
+                          }
+                        "
+                        :on-update:page-size="
+                          (pageSizeSel) => {
+                            nodePage.size = pageSizeSel;
+                            getTunnelConfig(Mode.TUNNEL);
+                          }
+                        "
+                        show-size-picker
+                        :page-sizes="[10, 25, 50, 100]"
+                      />
+                    </n-space>
+                  </n-space>
                 </n-form-item>
               </n-tab-pane>
             </n-tabs>
           </n-form>
-          <n-space
-            v-if="tunnelOptions.length !== 0 || nodeOptions.length !== 0"
-            justify="center"
-            style="width: 100%"
-          >
-            <n-pagination
-              v-model:page="page.current"
-              v-model:page-size="page.size"
-              :page-count="page.count"
-              :on-update:page="
-                (pageSel) => {
-                  page.current = pageSel;
-                  switch (selectedMode) {
-                    case 'tunnel':
-                      getTunnelConfig(Mode.TUNNEL);
-                      break;
-                    case 'node':
-                      getTunnelConfig(Mode.NODE);
-                      break;
-                  }
-                }
-              "
-              :on-update:page-size="
-                (pageSizeSel) => {
-                  page.size = pageSizeSel;
-                  switch (selectedMode) {
-                    case 'tunnel':
-                      getTunnelConfig(Mode.TUNNEL);
-                      break;
-                    case 'node':
-                      getTunnelConfig(Mode.NODE);
-                      break;
-                  }
-                }
-              "
-              show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
-            />
-          </n-space>
         </n-card>
       </n-spin>
 
@@ -177,15 +197,24 @@ const tunnelSelected = ref<number>(0),
   nodeSelected = ref<number>(0);
 const formatSelected = ref<string>("JSON");
 
-const page = ref<{
-  current: number;
-  size: number;
-  count: number;
-}>({
-  current: 1,
-  size: 10,
-  count: 1,
-});
+const tunnelPage = ref<{
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
+  }),
+  nodePage = ref<{
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
+  });
 
 enum Mode {
   TUNNEL,
@@ -239,12 +268,12 @@ async function getTunnels() {
   const rs = await client.execute(
     new GetTunnels({
       user_id: mainStore.userId!,
-      page: page.value.current,
-      size: page.value.size,
+      page: tunnelPage.value.current,
+      size: tunnelPage.value.size,
     }),
   );
   if (rs.status === 200) {
-    page.value.count = rs.data.pagination.count;
+    tunnelPage.value.count = rs.data.pagination.count;
     tunnelOptions.value.length = 0;
     rs.data.list.forEach((it) => {
       tunnelOptions.value.push({
@@ -265,12 +294,12 @@ async function getNodes() {
   const rs = await client.execute(
     new GetNodes({
       user_id: mainStore.userId!,
-      page: page.value.current,
-      size: page.value.size,
+      page: nodePage.value.current,
+      size: nodePage.value.size,
     }),
   );
   if (rs.status === 200) {
-    page.value.count = rs.data.pagination.count;
+    nodePage.value.count = rs.data.pagination.count;
     nodeOptions.value.length = 0;
     rs.data.list.forEach((it) => {
       nodeOptions.value.push({

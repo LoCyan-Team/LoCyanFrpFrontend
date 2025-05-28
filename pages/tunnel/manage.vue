@@ -534,36 +534,87 @@
       :bordered="false"
       style="max-width: 600px"
     >
-      <n-form>
-        <n-form-item label="选择节点">
-          <n-select
-            v-model:value="selectedNode"
-            :options="editNodeSelectOptions"
-          />
-        </n-form-item>
-        <tunnel-config
-          :node="selectedNode"
-          :default="{
-            name: selectedTunnel.name,
-            type: selectedTunnel.type,
-            localIp: selectedTunnel.localIp,
-            localPort: selectedTunnel.localPort,
-            remotePort: selectedTunnel.remotePort,
-            useEncryption: selectedTunnel.useEncryption,
-            useCompression: selectedTunnel.useCompression,
-            domain: selectedTunnel.domain,
-            locations: selectedTunnel.locations,
-          }"
-          @submit="
-            (tunnelData) =>
-              handleSubmitModifyTunnel(
-                selectedTunnel.id,
-                selectedTunnel.status,
-                tunnelData,
-              )
-          "
-        />
-      </n-form>
+      <tunnel-config
+        :node="selectedNode"
+        :default="{
+          name: selectedTunnel.name,
+          type: selectedTunnel.type,
+          localIp: selectedTunnel.localIp,
+          localPort: selectedTunnel.localPort,
+          remotePort: selectedTunnel.remotePort,
+          useEncryption: selectedTunnel.useEncryption,
+          useCompression: selectedTunnel.useCompression,
+          domain: selectedTunnel.domain,
+          locations: selectedTunnel.locations,
+        }"
+        @submit="
+          (tunnelData) =>
+            handleSubmitModifyTunnel(
+              selectedTunnel.id,
+              selectedTunnel.status,
+              tunnelData,
+            )
+        "
+      >
+        <template #node-footer>
+          <n-button
+            type="warning"
+            secondary
+            @click="() => (modal.edit.nodeSelector = true)"
+          >
+            更换节点
+          </n-button>
+          <n-modal
+            v-model:show="modal.edit.nodeSelector"
+            preset="card"
+            title="选择节点"
+            size="huge"
+            :bordered="false"
+            style="max-width: 500px"
+          >
+            <n-form>
+              <n-form-item label="请选择节点">
+                <n-space vertical style="width: 100%">
+                  <n-select
+                    v-model:value="editNodeSelected"
+                    :options="editNodeSelectOptions"
+                  />
+                  <n-pagination
+                    v-model:page="nodePage.current"
+                    v-model:page-size="nodePage.size"
+                    :page-count="nodePage.count"
+                    :on-update:page="
+                      (pageSel) => {
+                        nodePage.current = pageSel;
+                        getNodes();
+                      }
+                    "
+                    :on-update:page-size="
+                      (pageSizeSel) => {
+                        nodePage.size = pageSizeSel;
+                        getNodes();
+                      }
+                    "
+                    show-size-picker
+                    :page-sizes="[10, 25, 50, 100]"
+                  />
+                </n-space>
+              </n-form-item>
+              <n-button
+                type="success"
+                @click="
+                  () => {
+                    selectedNode = findNode(editNodeSelected);
+                    modal.edit.nodeSelector = false;
+                  }
+                "
+              >
+                确定
+              </n-button>
+            </n-form>
+          </n-modal>
+        </template>
+      </tunnel-config>
     </n-modal>
   </page-content>
 </template>
@@ -693,6 +744,8 @@ const selectedTunnel = ref<Tunnel>({
       needIcp: false,
     },
   });
+
+const editNodeSelected = ref<number | null>(null);
 const editNodeSelectOptions = ref<Array<SelectOption>>([]);
 
 const batchSelectState = ref<boolean>(false);
@@ -712,6 +765,7 @@ const modal = ref<{
   };
   edit: {
     show: boolean;
+    nodeSelector: boolean;
   };
   batchEdit: {
     show: boolean;
@@ -722,6 +776,7 @@ const modal = ref<{
   },
   edit: {
     show: false,
+    nodeSelector: false,
   },
   batchEdit: {
     show: false,
@@ -729,14 +784,23 @@ const modal = ref<{
 });
 
 const page = ref<{
-  current: number;
-  size: number;
-  count: number;
-}>({
-  current: 1,
-  size: 10,
-  count: 1,
-});
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
+  }),
+  nodePage = ref<{
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
+  });
 
 const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
@@ -937,12 +1001,12 @@ async function getNodes() {
   const rs = await client.execute(
     new GetNodes({
       user_id: mainStore.userId!,
-      page: page.value.current,
-      size: page.value.size,
+      page: nodePage.value.current,
+      size: nodePage.value.size,
     }),
   );
   if (rs.status === 200) {
-    page.value.count = rs.data.pagination.count;
+    nodePage.value.count = rs.data.pagination.count;
     nodes.value.length = 0;
     rs.data.list.forEach((it) => {
       nodes.value.push({
@@ -969,7 +1033,7 @@ async function buildEditNodeSelectOptions() {
   nodes.value.forEach((it) => {
     editNodeSelectOptions.value.push({
       label: it.name,
-      value: it,
+      value: it.id,
     });
   });
 }

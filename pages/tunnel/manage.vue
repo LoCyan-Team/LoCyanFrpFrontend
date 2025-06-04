@@ -100,7 +100,6 @@
                           />
                         </n-el>
                       </template>
-                      <!-- TODO: Content -->
                       <n-text>
                         节点: {{ tunnel.node.name ?? "未知节点" }}
                       </n-text>

@@ -6,6 +6,9 @@
         <n-grid v-else :y-gap="8" :x-gap="12" :cols="4" item-responsive>
           <n-grid-item v-for="app in apps" :key="app.id" span="0:4 1000:1">
             <n-card :title="app.name">
+              <template #header-extra>
+                <n-tag type="info"> ID: {{ app.id }} </n-tag>
+              </template>
               <n-text>介绍: {{ app.description ?? "无" }}</n-text>
               <br />
               <n-text>重定向 URL:</n-text>

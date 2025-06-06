@@ -6,3 +6,8 @@ export class GetNotice extends API {
     super("/site/notice", Method.GET, {}, {});
   }
 }
+
+export interface GetNoticeResponse {
+  broadcast: string;
+  announcement: string;
+}

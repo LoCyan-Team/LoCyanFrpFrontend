@@ -80,7 +80,7 @@ import { useMainStore } from "@/store/main";
 import { usePageStore } from "@/store/page";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetNotice } from "@/api/src/api/site/notice.get";
+import {GetNotice, type GetNoticeResponse} from "@/api/src/api/site/notice.get";
 
 const runtimeConfig = useRuntimeConfig();
 
@@ -107,7 +107,7 @@ const naiveOsTheme = useOsTheme(),
 const mainStore = useMainStore();
 
 async function fetchSiteData() {
-  const notice = await api.execute(new GetNotice());
+  const notice = await api.execute<GetNoticeResponse>(new GetNotice());
   if (notice.status === 200) {
     mainStore.site.broadcast = notice.data.broadcast;
     mainStore.site.announcement = notice.data.announcement;

@@ -4,7 +4,7 @@ interface Group {
 }
 
 interface Limit {
-  tunnel: number;
+  tunnel: number | null;
   inbound: number;
   outbound: number;
 }
@@ -29,7 +29,7 @@ const defaultState = {
     name: "未知权限组",
   },
   limit: {
-    tunnel: 0,
+    tunnel: null,
     inbound: 0,
     outbound: 0,
   },

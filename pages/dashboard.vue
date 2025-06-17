@@ -26,7 +26,11 @@
               <n-gi span="1">
                 <n-statistic label="隧道数量限制" tabular-nums>
                   <n-text v-if="userStore.limit.tunnel === null">无限制</n-text>
-                  <n-number-animation v-else :from="0" :to="userStore.limit.tunnel" />
+                  <n-number-animation
+                    v-else
+                    :from="0"
+                    :to="userStore.limit.tunnel"
+                  />
                   <template #suffix>条</template>
                 </n-statistic>
               </n-gi>
@@ -88,7 +92,10 @@ import { useUserStore } from "@/store/user";
 import { useOsTheme } from "naive-ui";
 
 import { Client as ApiClient } from "@/api/src/client";
-import { GetNotice, type GetNoticeResponse } from "@/api/src/api/site/notice.get";
+import {
+  GetNotice,
+  type GetNoticeResponse,
+} from "@/api/src/api/site/notice.get";
 import { PostTraffic as PostResetTraffic } from "@/api/src/api/user/traffic.post";
 
 const naiveOsTheme = useOsTheme();

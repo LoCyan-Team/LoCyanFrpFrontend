@@ -32,34 +32,39 @@
             </template>
             将以此身份继续: {{ userStore.username }}
           </n-tooltip>
-          <n-space>
-            <n-button
-              :loading="loading.accept"
-              :disabled="loading.accept"
-              type="success"
-              @click="doAuthorize"
-            >
-              同意
-            </n-button>
-            <n-button
-              :loading="loading.deny"
-              :disabled="loading.deny"
-              @click="deny"
-            >
-              拒绝
-            </n-button>
-          </n-space>
+          <n-button
+            :loading="loading.accept"
+            :disabled="loading.accept"
+            type="success"
+            @click="doAuthorize"
+          >
+            同意
+          </n-button>
         </n-space>
         <n-divider />
         <n-el style="text-align: center">
-          <n-text>
+          <n-text v-if="params.mode == 'CALLBACK'">
             授权后，您将被重定向到以下地址:
             <br />
             {{ params.redirectUrl }}
           </n-text>
+          <n-text v-if="params.mode == 'CODE'">
+            授权后，您将获得一个一次性授权代码。
+          </n-text>
+          <br />
+          <n-text> 若您不想进行此次授权，您可以关闭此标签页。 </n-text>
         </n-el>
       </n-card>
-      <n-card v-else>
+      <n-card
+        v-else-if="status === Status.AUTHORIZED_CODE"
+        :title="appData.name"
+      >
+        <n-text>{{ appData.description ?? "无介绍信息" }}</n-text>
+        <n-divider />
+        <n-text>授权成功，一次性代码为:</n-text>
+        <n-code @click="$copyToClipboard(result.code)" :code="result.code" />
+      </n-card>
+      <n-card v-else title="发生错误">
         <n-text>无效请求，请检查 URL 参数</n-text>
       </n-card>
     </n-spin>
@@ -73,7 +78,8 @@ import { useUserStore } from "@/store/user";
 import { Client as ApiClient } from "@/api/src/client";
 import {
   PostAuthorize,
-  type PostAuthorizeResponse,
+  type PostAuthorizeCallbackResponse,
+  type PostAuthorizeCodeResponse,
 } from "@/api/src/api/auth/oauth/authorize.post";
 import {
   GetPermissions,
@@ -98,12 +104,14 @@ const route = useRoute();
 
 let params: {
   appId: number;
-  redirectUrl: string;
+  redirectUrl: string | null;
   scopes: string;
+  mode: string;
 } = {
   appId: 0,
-  redirectUrl: "",
+  redirectUrl: null,
   scopes: "",
+  mode: "",
 };
 
 const loading = ref<{
@@ -138,10 +146,17 @@ const data = ref<{
   permissionRequested: [],
 });
 
+const result = ref<{
+  code: string;
+}>({
+  code: "",
+});
+
 enum Status {
   WORKING,
   ERROR,
   VALID,
+  AUTHORIZED_CODE,
 }
 
 const status = ref<Status>(Status.WORKING);
@@ -168,79 +183,104 @@ async function doAuthorize() {
   data.value.permissionRequested.forEach((permission) => {
     permissionIds.push(permission.id);
   });
-  const rs = await client.execute<PostAuthorizeResponse>(
-    new PostAuthorize({
-      user_id: mainStore.userId!,
-      app_id: params.appId,
-      redirect_url: appData.value.redirectUrl,
-      scope_ids: permissionIds,
-    }),
-  );
-  if (rs.status === 200) {
-    message.success("授权成功，正在重定向，请不要刷新浏览器");
+  let rs;
+  switch (params.mode) {
+    case "CALLBACK": {
+      rs = await client.execute<PostAuthorizeCallbackResponse>(
+        new PostAuthorize({
+          user_id: mainStore.userId!,
+          app_id: params.appId,
+          redirect_url: params.redirectUrl!,
+          scope_ids: permissionIds,
+          mode: "CALLBACK",
+        }),
+      );
+      if (rs.status === 200) {
+        message.success("授权成功，正在重定向，请不要刷新浏览器");
 
-    const urlType = getUrlType(params.redirectUrl);
-    switch (urlType) {
-      case UrlType.QUERY_STRING:
-        if (params.redirectUrl![params.redirectUrl.length - 1] == "?") {
-          window.location.href = `${params.redirectUrl}refresh_token=${rs.data.refresh_token}`;
-        } else {
-          window.location.href = `${params.redirectUrl}&refresh_token=${rs.data.refresh_token}`;
+        const urlType = getUrlType(params.redirectUrl);
+        switch (urlType) {
+          case UrlType.QUERY_STRING:
+            if (params.redirectUrl![params.redirectUrl.length - 1] == "?") {
+              window.location.href = `${params.redirectUrl}refresh_token=${rs.data.refresh_token}`;
+            } else {
+              window.location.href = `${params.redirectUrl}&refresh_token=${rs.data.refresh_token}`;
+            }
+            break;
+          case UrlType.HASH: {
+            const strArr = params.redirectUrl.split("#");
+            window.location.href = `${strArr[0]}?refresh_token=${rs.data.refresh_token}#${strArr[1]}`;
+            break;
+          }
+          case UrlType.NORMAL:
+          default:
+            window.location.href = `${params.redirectUrl}?refresh_token=${rs.data.refresh_token}`;
+            break;
         }
-        break;
-      case UrlType.HASH: {
-        const strArr = params.redirectUrl.split("#");
-        window.location.href = `${strArr[0]}?refresh_token=${rs.data.refresh_token}#${strArr[1]}`;
-        break;
-      }
-      case UrlType.NORMAL:
-      default:
-        window.location.href = `${params.redirectUrl}?refresh_token=${rs.data.refresh_token}`;
-        break;
-    }
-  } else if (rs.status === 403) {
-    notification.error({
-      title: "授权失败",
-      content: `服务器拒绝授权，原因: ${rs.message}`,
-      duration: 2500,
-    });
-  } else message.error(rs.message);
-  loading.value.accept = false;
-}
-
-function deny() {
-  loading.value.deny = true;
-  const urlType = getUrlType(params.redirectUrl);
-  switch (urlType) {
-    case UrlType.QUERY_STRING:
-      if (params.redirectUrl![params.redirectUrl!.length - 1] == "?") {
-        window.location.href = `${params.redirectUrl}error=user.deny`;
-      } else {
-        window.location.href = `${params.redirectUrl}&error=user.deny`;
-      }
-      break;
-    case UrlType.HASH: {
-      const strArr = params.redirectUrl.split("#");
-      window.location.href = `${strArr[0]}?error=user.deny#${strArr[1]}`;
+      } else if (rs.status === 403) {
+        notification.error({
+          title: "授权失败",
+          content: `服务器拒绝授权，原因: ${rs.message}`,
+          duration: 2500,
+        });
+      } else message.error(rs.message);
+      loading.value.accept = false;
       break;
     }
-    case UrlType.NORMAL:
+    case "CODE": {
+      rs = await client.execute<PostAuthorizeCodeResponse>(
+        new PostAuthorize({
+          user_id: mainStore.userId!,
+          app_id: params.appId,
+          scope_ids: permissionIds,
+          mode: "CODE",
+        }),
+      );
+      if (rs.status === 200) {
+        result.value.code = rs.data.code;
+        status.value = Status.AUTHORIZED_CODE;
+      } else if (rs.status === 403) {
+        notification.error({
+          title: "授权失败",
+          content: `服务器拒绝授权，原因: ${rs.message}`,
+          duration: 2500,
+        });
+      } else message.error(rs.message);
+      loading.value.accept = false;
+      break;
+    }
     default:
-      window.location.href = `${params.redirectUrl}?error=user.deny`;
-      break;
+      message.error("未知的授权模式，请检查传入参数");
+      return;
   }
-  loading.value.deny = false;
 }
 
 onMounted(async () => {
-  if (!route.query.app_id || !route.query.redirect_url || !route.query.scopes) {
+  if (!route.query.app_id || !route.query.mode || !route.query.scopes) {
     status.value = Status.ERROR;
   } else {
     params = {
       appId: Number(route.query.app_id as string),
-      redirectUrl: route.query.redirect_url as string,
+      redirectUrl: route.query.redirect_url as string | null,
       scopes: route.query.scopes as string,
+      mode: route.query.mode as string,
     };
+
+    switch (params.mode) {
+      case "CODE":
+        break;
+      case "CALLBACK":
+        if (!route.query.redirect_url) {
+          status.value = Status.ERROR;
+          loading.value.page = false;
+          return;
+        }
+        break;
+      default:
+        status.value = Status.ERROR;
+        loading.value.page = false;
+        return;
+    }
 
     const reqApp = await client.execute<GetAppResponse>(
       new GetApp({
@@ -256,6 +296,8 @@ onMounted(async () => {
       };
     } else {
       message.error(reqApp.message);
+      status.value = Status.ERROR;
+      loading.value.page = false;
       return;
     }
 

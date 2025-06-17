@@ -82,7 +82,10 @@
 import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
-import { PutPassword, type GetPasswordResponse as GetEmailCodeResponse } from "@/api/src/api/user/password.put";
+import {
+  PutPassword,
+  type GetPasswordResponse as GetEmailCodeResponse,
+} from "@/api/src/api/user/password.put";
 
 definePageMeta({
   title: "重置密码",

@@ -198,17 +198,17 @@ async function doAuthorize() {
       if (rs.status === 200) {
         message.success("授权成功，正在重定向，请不要刷新浏览器");
 
-        const urlType = getUrlType(params.redirectUrl);
+        const urlType = getUrlType(params.redirectUrl!);
         switch (urlType) {
           case UrlType.QUERY_STRING:
-            if (params.redirectUrl![params.redirectUrl.length - 1] == "?") {
+            if (params.redirectUrl![params.redirectUrl!.length - 1] == "?") {
               window.location.href = `${params.redirectUrl}refresh_token=${rs.data.refresh_token}`;
             } else {
               window.location.href = `${params.redirectUrl}&refresh_token=${rs.data.refresh_token}`;
             }
             break;
           case UrlType.HASH: {
-            const strArr = params.redirectUrl.split("#");
+            const strArr = params.redirectUrl!.split("#");
             window.location.href = `${strArr[0]}?refresh_token=${rs.data.refresh_token}#${strArr[1]}`;
             break;
           }

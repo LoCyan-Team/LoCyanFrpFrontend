@@ -12,6 +12,7 @@
     </n-thing>
     <n-space style="height: 60px" class="menu">
       <n-button
+        v-show="mainStore.token !== null"
         circle
         style="margin-top: 15px; margin-right: 10px"
         @click="() => (showNotification = true)"

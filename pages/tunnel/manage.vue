@@ -632,7 +632,6 @@ import type { SelectOption } from "naive-ui";
 import { Error } from "@vicons/carbon";
 import { Search } from "@vicons/ionicons5";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
 import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
@@ -645,8 +644,7 @@ definePageMeta({
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

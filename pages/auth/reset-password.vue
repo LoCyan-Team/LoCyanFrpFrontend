@@ -79,7 +79,6 @@
 </template>
 
 <script setup lang="ts">
-import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
 import {
@@ -96,8 +95,7 @@ definePageMeta({
 const message = useMessage();
 const notification = useNotification();
 
-const client = new ApiClient();
-client.init();
+const client = useApiClient();
 
 const loading = ref<{
   reset: boolean;

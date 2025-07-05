@@ -114,7 +114,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetSystem } from "@/api/src/api/site/notification/system.get";
 import { GetUser } from "@/api/src/api/site/notification/user.get";
 import { PutRead as PutSystemRead } from "@/api/src/api/site/notification/system/read.put";
@@ -125,8 +124,7 @@ import { PutBatch as PutUserReadBatch } from "@/api/src/api/site/notification/us
 const dayjs = useDayjs();
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

@@ -138,13 +138,11 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetPort } from "@/api/src/api/node/port.get";
 
 const mainStore = useMainStore();
 
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

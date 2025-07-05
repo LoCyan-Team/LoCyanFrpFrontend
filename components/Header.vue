@@ -60,7 +60,6 @@ import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { DeleteToken } from "@/api/src/api/user/token.delete";
 
 const mainStore = useMainStore();
@@ -106,8 +105,7 @@ async function handleAvatarOptionSelect(key) {
       showUserInfo.value = true;
       break;
     case "logout": {
-      const client = new ApiClient(mainStore.token);
-      client.init();
+      const client = useApiClient();
       const rs = await client.execute(
         new DeleteToken({
           user_id: mainStore.userId,

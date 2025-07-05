@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetRealPerson } from "@/api/src/api/verification/real-person.get";
 
 definePageMeta({
@@ -26,8 +25,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 enum Status {
   WORKING,

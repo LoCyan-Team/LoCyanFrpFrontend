@@ -241,15 +241,13 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetDomains } from "@/api/src/api/domains.get";
 import { GetVerifications } from "@/api/src/api/domain/verifications.get";
 import { PutDns as PutDnsVerification } from "@/api/src/api/domain/verification/dns.put";
 import { PostDns as PostDnsVerification } from "@/api/src/api/domain/verification/dns.post";
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const notification = useNotification();

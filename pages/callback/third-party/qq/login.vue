@@ -10,7 +10,6 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Client as ApiClient } from "@/api/src/client";
 import {
   PostLogin,
   type PostLoginResponse,
@@ -27,8 +26,7 @@ const notification = useNotification();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient();
-client.init();
+const client = useApiClient();
 
 const route = useRoute();
 

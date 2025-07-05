@@ -95,7 +95,6 @@ import { Qq } from "@vicons/fa";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import {
   PostLogin,
@@ -121,8 +120,7 @@ const notification = useNotification();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient();
-client.init();
+const client = useApiClient({ auth: false });
 
 const route = useRoute();
 

@@ -243,7 +243,6 @@ import { useMainStore } from "@/store/main";
 
 import { FileDownloadDoneOutlined } from "@vicons/material";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetVerification as GetStatus } from "@/api/src/api/verification.get";
 import { PostPayment as PostBuyAccreditation } from "@/api/src/api/verification/real-person/payment.post";
 import { PostGiven as PostGivenAccreditation } from "@/api/src/api/verification/real-person/given.post";
@@ -257,8 +256,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

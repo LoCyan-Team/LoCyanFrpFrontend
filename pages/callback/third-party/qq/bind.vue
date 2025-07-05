@@ -17,7 +17,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { PostBind } from "@/api/src/api/user/third-party/qq/bind.post";
 
 definePageMeta({
@@ -27,8 +26,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const route = useRoute();
 

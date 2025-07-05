@@ -20,15 +20,15 @@ try {
 export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
-  ssr: false,
+  // ssr: false,
   modules: [
     "@nuxt/eslint",
-    "nuxtjs-naive-ui",
     "nuxt-umami",
     "@pinia/nuxt",
     "pinia-plugin-persistedstate/nuxt",
     "dayjs-nuxt",
     "@nuxtjs/mdc",
+    "@bg-dev/nuxt-naiveui",
   ],
   runtimeConfig: {
     public: {

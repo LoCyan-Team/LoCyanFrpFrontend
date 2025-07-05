@@ -94,7 +94,6 @@
   </n-el>
 </template>
 <script setup lang="ts">
-import { Client as ApiClient } from "@/api/src/client";
 import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
@@ -108,8 +107,7 @@ definePageMeta({
 const message = useMessage();
 const notification = useNotification();
 
-const client = new ApiClient();
-client.init();
+const client = useApiClient();
 
 const loading = ref<{
   register: boolean;

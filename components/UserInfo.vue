@@ -211,7 +211,6 @@ import { useUserStore } from "@/store/user";
 
 import { Qq } from "@vicons/fa";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetThirdParty as GetThirdPartyBind } from "@/api/src/api/user/third-party.get";
 import { GetBind as GetQqBind } from "@/api/src/api/user/third-party/qq/bind.get";
 import { DeleteBind as DeleteQqBind } from "@/api/src/api/user/third-party/qq/bind.delete";
@@ -228,8 +227,7 @@ const emit = defineEmits<{
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

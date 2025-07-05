@@ -18,12 +18,10 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { PutApp, type PutAppResponse } from "@/api/src/api/app.put";
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 definePageMeta({
   title: "创建应用",

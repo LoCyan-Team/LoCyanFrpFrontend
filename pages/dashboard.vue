@@ -91,7 +91,6 @@ import { useUserStore } from "@/store/user";
 
 import { useOsTheme } from "naive-ui";
 
-import { Client as ApiClient } from "@/api/src/client";
 import {
   GetNotice,
   type GetNoticeResponse,
@@ -107,8 +106,7 @@ definePageMeta({
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

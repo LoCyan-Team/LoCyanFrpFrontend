@@ -73,7 +73,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import { PutTunnel } from "@/api/src/api/tunnel.put";
 
@@ -82,8 +81,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

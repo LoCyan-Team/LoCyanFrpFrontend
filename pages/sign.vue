@@ -49,7 +49,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetSign } from "@/api/src/api/sign.get";
 import { PostSign } from "@/api/src/api/sign.post";
 
@@ -60,8 +59,7 @@ definePageMeta({
 const dayjs = useDayjs();
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

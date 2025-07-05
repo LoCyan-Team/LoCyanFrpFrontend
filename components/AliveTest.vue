@@ -6,7 +6,6 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetUser } from "@/api/src/api/user.get";
 
 const mainStore = useMainStore();
@@ -20,8 +19,7 @@ const notification = useNotification();
 async function aliveTest() {
   if (!mainStore.token) return;
 
-  const client = new ApiClient(mainStore.token!);
-  client.init();
+  const client = useApiClient();
 
   const rs = await client.execute(
     new GetUser({

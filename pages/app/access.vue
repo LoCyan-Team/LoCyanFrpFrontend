@@ -189,7 +189,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import {
   GetAuthorizations,
   type GetAuthorizationsResponse,
@@ -208,8 +207,7 @@ import { DeleteApp as DeleteAppAuthorization } from "@/api/src/api/auth/oauth/au
 const dayjs = useDayjs();
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

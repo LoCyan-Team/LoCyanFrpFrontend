@@ -55,7 +55,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetComments } from "@/api/src/api/donation/comments.get";
 
 definePageMeta({
@@ -67,8 +66,7 @@ const dayjs = useDayjs();
 const message = useMessage();
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const data = ref<
   {

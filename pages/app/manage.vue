@@ -75,14 +75,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetApps, type GetAppsResponse } from "@/api/src/api/apps.get";
 import { DeleteApp } from "@/api/src/api/app.delete";
 import { PatchApp } from "@/api/src/api/app.patch";
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 definePageMeta({
   title: "应用管理",

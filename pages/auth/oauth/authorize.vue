@@ -75,7 +75,6 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Client as ApiClient } from "@/api/src/client";
 import {
   PostAuthorize,
   type PostAuthorizeCallbackResponse,
@@ -94,8 +93,7 @@ definePageMeta({
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const notification = useNotification();

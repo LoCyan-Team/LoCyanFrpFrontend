@@ -106,7 +106,6 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { Client as ApiClient } from "@/api/src/client";
 import {
   GetDonations,
   type GetDonationsResponse,
@@ -121,8 +120,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

@@ -164,7 +164,6 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetDomains } from "@/api/src/api/domains.get";
 import { GetIcp as GetIcpDomains } from "@/api/src/api/domain/icp.get";
 import { GetImage as GetMiitCaptchaImage } from "@/api/src/api/domain/icp/miit/image.get";
@@ -172,8 +171,7 @@ import { PostSign as PostMiitCaptchaSign } from "@/api/src/api/domain/icp/miit/s
 import { PutIcp } from "@/api/src/api/domain/icp.put";
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();

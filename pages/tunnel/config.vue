@@ -157,7 +157,6 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import { Client as ApiClient } from "@/api/src/client";
 import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
 import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import {
@@ -170,8 +169,7 @@ definePageMeta({
 });
 
 const mainStore = useMainStore();
-const client = new ApiClient(mainStore.token!);
-client.init();
+const client = useApiClient();
 
 const message = useMessage();
 

@@ -4,6 +4,14 @@
 
 ## 开发
 
+注意: 启动 dev 服务器前请先关闭 SSR，否则可能会无法正常启动。
+
+```ts
+export default defineNuxtConfig({
+    // ssr: false // <-- uncomment this
+})
+```
+
 首先请先安装 Bun
 
 ### 安装依赖

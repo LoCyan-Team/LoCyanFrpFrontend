@@ -96,7 +96,7 @@ export class Client {
         baseURL: this.currentBaseURL,
       });
       return this.buildResponse(result);
-    } catch (error: any) {
+    } catch (error: unknown) {
       // 捕获 FetchError
       if (error instanceof FetchError) {
         if (!error.response && this.currentBaseURL === this.urlConfig.v3.main) {
@@ -147,7 +147,7 @@ export class Client {
       message = response.message;
       data = response.data;
     }
-    const finalData: T = data === null || data === undefined ? ({} as T) : data;
+    const finalData: T = data ?? ({} as T);
 
     return new Response(status, message, finalData);
   }

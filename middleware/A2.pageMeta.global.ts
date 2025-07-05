@@ -1,6 +1,6 @@
 import { usePageStore } from "@/store/page";
 
-export default defineNuxtRouteMiddleware((to, _) => {
+export default defineNuxtRouteMiddleware((to) => {
   const pageStore = usePageStore();
   // Title
   useHead({

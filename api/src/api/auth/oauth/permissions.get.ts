@@ -8,9 +8,9 @@ export class GetPermissions extends API {
 }
 
 export interface GetPermissionsResponse {
-  list: Array<{
+  list: {
     id: number;
     node: string;
     description: string;
-  }>;
+  }[];
 }

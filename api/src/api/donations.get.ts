@@ -8,7 +8,7 @@ export class GetDonations extends API {
 }
 
 export interface GetDonationsResponse {
-  list: Array<{
+  list: {
     id: number;
     message: string | null;
     trade_no: string;
@@ -16,7 +16,7 @@ export interface GetDonationsResponse {
     amount: number;
     time: string;
     status: string;
-  }>;
+  }[];
   pagination: {
     count: number;
   };

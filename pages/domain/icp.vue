@@ -254,7 +254,7 @@ let markerData: {
   string: null,
 };
 
-const domainOptions = ref<Array<SelectOption>>([]);
+const domainOptions = ref<SelectOption[]>([]);
 
 const domainPage = ref<{
     current: number;

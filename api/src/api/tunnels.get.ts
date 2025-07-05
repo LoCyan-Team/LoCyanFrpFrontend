@@ -8,7 +8,7 @@ export class GetTunnels extends API {
 }
 
 export interface GetTunnelsResponse {
-  list: Array<{
+  list: {
     domain: null | string;
     /**
      * 隧道 ID
@@ -33,7 +33,7 @@ export interface GetTunnelsResponse {
     type: string;
     use_compression: boolean;
     use_encryption: boolean;
-  }>;
+  }[];
   pagination: {
     count: number;
   };

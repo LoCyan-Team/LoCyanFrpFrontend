@@ -8,12 +8,12 @@ export class GetAuthorizations extends API {
 }
 
 export interface GetAuthorizationsResponse {
-  list: Array<{
+  list: {
     app_id: number;
     app_name: string;
     app_description: string;
-    authorized_permissions: Array<number>;
-  }>;
+    authorized_permissions: number[];
+  }[];
   pagination: {
     count: number;
   };

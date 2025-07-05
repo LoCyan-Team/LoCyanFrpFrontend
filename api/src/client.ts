@@ -151,11 +151,11 @@ export class Client {
   ): Response<T> {
     return new Response(
       // @ts-expect-error Vue eslint rules bug
-      result?.status ?? result?.response?.status,
+      result.status ?? result.response?.status,
       // @ts-expect-error Vue eslint rules bug
-      result?.data?.message ?? result?.response?.data?.message,
+      result.data?.message ?? result.response?.data?.message,
       // @ts-expect-error Vue eslint rules bug
-      result?.data?.data ?? result?.response?.data?.data,
+      result.data?.data ?? result.response?.data?.data,
     );
   }
 }

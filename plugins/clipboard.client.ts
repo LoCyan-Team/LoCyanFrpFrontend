@@ -5,7 +5,7 @@ export default defineNuxtPlugin(() => {
     if (!notification) {
       throw new TypeError("Call before Dialog API provided.");
     }
-    if (navigator && navigator.clipboard) {
+    if (navigator?.clipboard) {
       try {
         await navigator.clipboard.writeText(text);
         notification.success({

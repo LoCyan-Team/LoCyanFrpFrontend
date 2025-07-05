@@ -8,7 +8,7 @@ export class GetNodes extends API {
 }
 
 export interface GetNodesResponse {
-  list: Array<{
+  list: {
     name: string;
     id: number;
     host: string;
@@ -22,7 +22,7 @@ export interface GetNodesResponse {
       allow_http: boolean;
       need_icp: boolean;
     };
-  }>;
+  }[];
   pagination: {
     count: number;
   };

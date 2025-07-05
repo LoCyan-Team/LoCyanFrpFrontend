@@ -282,8 +282,8 @@ onMounted(async () => {
 });
 
 function sortByTime(
-  data: Array<SystemNotification | UserNotification>,
-): Array<SystemNotification | UserNotification> {
+  data: SystemNotification[] | UserNotification[],
+): SystemNotification[] | UserNotification[] {
   return data.sort((a, b) => {
     if (dayjs(a.time).isBefore(dayjs(b.time))) {
       return -1;

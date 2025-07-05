@@ -13,10 +13,10 @@ export class GetSessions extends API {
 }
 
 export interface GetSessionsResponse {
-  list: Array<{
+  list: {
     refresh_token: string;
     authorize_time: string;
-  }>;
+  }[];
   pagination: {
     count: number;
   };

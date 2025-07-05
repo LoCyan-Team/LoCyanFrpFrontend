@@ -748,7 +748,7 @@ const selectedTunnel = ref<Tunnel>({
   });
 
 const editNodeSelected = ref<number | null>(null);
-const editNodeSelectOptions = ref<Array<SelectOption>>([]);
+const editNodeSelectOptions = ref<SelectOption[]>([]);
 
 const batchSelectState = ref<boolean>(false);
 const batchSelected = ref<number[]>([]);

@@ -8,12 +8,12 @@ export class GetApps extends API {
 }
 
 export interface GetAppsResponse {
-  list: Array<{
+  list: {
     id: number;
     name: string;
     description?: string;
     redirect_url: string;
-  }>;
+  }[];
   pagination: {
     count: number;
   };

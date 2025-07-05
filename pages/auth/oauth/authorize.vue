@@ -139,7 +139,7 @@ interface Permission {
 }
 
 const data = ref<{
-  permissionRequested: Array<Permission>;
+  permissionRequested: Permission[];
 }>({
   permissionRequested: [],
 });

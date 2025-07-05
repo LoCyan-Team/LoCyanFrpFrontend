@@ -222,7 +222,7 @@ interface Authorization {
   appId: number;
   appName: string;
   appDescription: string;
-  authorizedPermissions: Array<number>;
+  authorizedPermissions: number[];
 }
 
 interface AuthSession {
@@ -234,11 +234,11 @@ interface AuthSession {
 const authorizations = ref<Authorization[]>([]);
 const sessions = ref<AuthSession[]>([]);
 
-const permissions: Array<{
+const permissions: {
   id: number;
   node: string;
   description: string | null;
-}> = [];
+}[] = [];
 
 const authorizationPage = ref<{
     current: number;
@@ -250,12 +250,12 @@ const authorizationPage = ref<{
     count: 1,
   }),
   sessionPages = ref<
-    Array<{
+    {
       appId: number;
       current: number;
       size: number;
       count: number;
-    }>
+    }[]
   >([]);
 
 function findPermission(permId: number) {

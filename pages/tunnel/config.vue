@@ -177,9 +177,9 @@ const loading = ref(true);
 
 const content = ref("什么也没有呀~");
 
-const tunnelOptions = ref<Array<SelectOption>>([]),
-  nodeOptions = ref<Array<SelectOption>>([]);
-const formatOptions = ref<Array<SelectOption>>([
+const tunnelOptions = ref<SelectOption[]>([]),
+  nodeOptions = ref<SelectOption[]>([]);
+const formatOptions = ref<SelectOption[]>([
   {
     label: "JSON",
     value: "JSON",

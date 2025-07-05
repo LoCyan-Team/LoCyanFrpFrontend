@@ -27,7 +27,7 @@
           </client-only>
           <n-layout
             v-show="!loaded"
-            style="height: 100dvh; background: #565555"
+            style="height: 100dvh; background: #868686"
           >
             <n-spin :show="true" class="load-container">
               <template #description>

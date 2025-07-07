@@ -68,8 +68,14 @@ const ldb = useLoadingIndicator();
 
 ldb.finish();
 
-const naiveOsTheme = useOsTheme(),
-  osTheme = computed(() => (naiveOsTheme.value === "dark" ? darkTheme : null));
+const osTheme = ref<typeof darkTheme | null>(null);
+
+onMounted(() => {
+  if (import.meta.client) {
+    const naiveOsTheme = useOsTheme();
+    osTheme.value = naiveOsTheme.value === "dark" ? darkTheme : null;
+  }
+});
 </script>
 
 <style scoped>

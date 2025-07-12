@@ -59,6 +59,8 @@
                   <n-th>金额</n-th>
                   <n-th>付款方式</n-th>
                   <n-th>留言</n-th>
+                  <n-th>付款状态</n-th>
+                  <n-th>操作</n-th>
                 </n-tr>
               </n-thead>
               <n-tbody>
@@ -68,6 +70,44 @@
                   <n-td>{{ donation.amount }}</n-td>
                   <n-td>{{ donation.paymentMethod }}</n-td>
                   <n-td>{{ donation.comment }}</n-td>
+                  <n-td>
+                    <n-tag v-if="donation.status === 'PAID'" type="success">
+                      已支付
+                    </n-tag>
+                    <n-tag
+                      v-else-if="donation.status === 'UNPAID'"
+                      type="error"
+                    >
+                      未支付
+                    </n-tag>
+                    <n-tag v-else type="warning">未知</n-tag>
+                  </n-td>
+                  <n-td>
+                    <n-spin :show="loading.donationList.includes(donation.id)">
+                      <n-space v-if="donation.status === 'PAID'">
+                        <n-button
+                          type="success"
+                          secondary
+                          @click="handleButtonComment(donation.id)"
+                        >
+                          {{ donation.comment !== null ? "修改" : "添加" }}留言
+                        </n-button>
+                      </n-space>
+                      <n-space v-else-if="donation.status === 'UNPAID'">
+                        <n-button
+                          type="success"
+                          @click="handleButtonPayment(donation.id)"
+                          >支付</n-button
+                        >
+                        <n-button
+                          type="warning"
+                          secondary
+                          @click="handleButtonCancel(donation.id)"
+                          >取消订单</n-button
+                        >
+                      </n-space>
+                    </n-spin>
+                  </n-td>
                 </n-tr>
               </n-tbody>
             </n-table>
@@ -100,6 +140,7 @@
         </n-space>
       </n-spin>
     </n-space>
+    <n-modal :show="commentModal.show"> </n-modal>
   </page-content>
 </template>
 
@@ -127,9 +168,25 @@ const message = useMessage();
 const loading = ref<{
   list: boolean;
   submit: boolean;
+  donationList: number[];
 }>({
   list: true,
   submit: false,
+  donationList: [],
+});
+
+const commentModal = ref<{
+  show: boolean;
+  form: {
+    id: number;
+    message: string | number;
+  };
+}>({
+  show: false,
+  form: {
+    id: 0,
+    message: null,
+  },
 });
 
 const formData = ref<{
@@ -147,6 +204,7 @@ const donations = ref<
     amount: number;
     paymentMethod: string;
     comment: string | null;
+    status: "PAID" | "UNPAID";
   }[]
 >([]);
 
@@ -181,6 +239,57 @@ async function handlePayment() {
   loading.value.submit = false;
 }
 
+async function handleButtonComment(donationId: number) {
+  commentModal.value.form.id = donationId;
+  commentModal.value.show = true;
+}
+
+async function handleComment(donationId: number) {
+  loading.value.donationList[donationId] = true;
+  const rs = await client.execute<PutDonationCommentResponse>(
+    new PutDonationComment({
+      user_id: number,
+      donation_id: number,
+    }),
+  );
+  if (rs.status === 200) {
+    message.success("留言成功—");
+  } else message.error(rs.message);
+  loading.value.donationList[donationId] = false;
+}
+
+async function handleButtonPayment(donationId: number) {
+  loading.value.donationList.push(donationId);
+  const rs = await client.execute<PostDonationPaymentResponse>(
+    new PostDonationPayment({
+      user_id: number,
+      donation_id: number,
+    }),
+  );
+  if (rs.status === 200) {
+    window.open(rs.data.url);
+  } else message.error(rs.message);
+  loading.value.donationList = loading.value.donationList.filter(
+    (val) => val !== donationId,
+  );
+}
+
+async function handleButtonCancel(donationId: number) {
+  loading.value.donationList.push(donationId);
+  const rs = await client.execute<DeleteDonationPaymentResponse>(
+    new DeleteDonationPayment({
+      user_id: number,
+      donation_id: number,
+    }),
+  );
+  if (rs.status === 200) {
+    window.open(rs.data.url);
+  } else message.error(rs.message);
+  loading.value.donationList = loading.value.donationList.filter(
+    (val) => val !== donationId,
+  );
+}
+
 async function getDonations() {
   loading.value.list = true;
   const rs = await client.execute<GetDonationsResponse>(
@@ -200,6 +309,7 @@ async function getDonations() {
         amount: it.amount,
         paymentMethod: it.pay_type,
         comment: it.message,
+        status: it.status,
       });
     });
   } else message.error(rs.message);

@@ -45,7 +45,7 @@
             "
             @unsupported="
               message.error(
-                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试'
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
               )
             "
             @callback="handleEmailCodeSend"
@@ -238,7 +238,7 @@ async function handleEmailCodeSend(token: string, server?: string) {
       captcha_id: captcha.value.config.id!,
       captcha_token: token,
       captcha_server: server,
-    })
+    }),
   );
   if (rs.status === 200) {
     notification.success({
@@ -258,7 +258,7 @@ async function handleRegister() {
       password: registerForm.value.password!,
       email: registerForm.value.email!,
       verify_code: registerForm.value.verifyCode!,
-    })
+    }),
   );
   if (rs.status === 200) {
     notification.success({

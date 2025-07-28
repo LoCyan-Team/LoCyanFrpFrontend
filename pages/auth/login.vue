@@ -91,7 +91,7 @@
 
 <script setup lang="ts">
 import Qq from "@vicons/fa/Qq";
-import type { FormInst, FormItemRule } from 'naive-ui'
+import type { FormInst, FormItemRule } from "naive-ui";
 
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
@@ -132,22 +132,22 @@ const formRules = {
   user: [
     {
       required: true,
-      message: '请输入用户名或邮箱',
-      trigger: ['input', 'blur']
-    }
+      message: "请输入用户名或邮箱",
+      trigger: ["input", "blur"],
+    },
   ] as FormItemRule[],
   password: [
     {
       required: true,
-      message: '请输入密码',
-      trigger: ['input', 'blur']
+      message: "请输入密码",
+      trigger: ["input", "blur"],
     },
     {
       min: 6,
-      message: '密码长度至少6位',
-      trigger: ['input', 'blur']
-    }
-  ] as FormItemRule[]
+      message: "密码长度至少6位",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
 };
 
 const loading = ref<{

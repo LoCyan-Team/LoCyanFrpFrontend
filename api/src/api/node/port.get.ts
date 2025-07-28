@@ -6,3 +6,8 @@ export class GetPort extends API {
     super("/node/port", Method.GET, params, {});
   }
 }
+
+export interface GetPortResponse {
+  port: number;
+}
+

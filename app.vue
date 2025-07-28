@@ -6,34 +6,31 @@
     :locale="zhCN"
     :date-locale="dateZhCN"
   >
-    <n-watermark
-      v-if="env.devMode"
-      content="开发版本，不代表最终品质"
-      cross
-      fullscreen
-      :font-size="16"
-      :line-height="48"
-      :width="512"
-      :height="512"
-      :x-offset="128"
-      :y-offset="128"
-      :rotate="-15"
-    />
+    <client-only>
+      <n-watermark
+        v-if="env.devMode"
+        content="开发版本，不代表最终品质"
+        cross
+        fullscreen
+        :font-size="16"
+        :line-height="48"
+        :width="512"
+        :height="512"
+        :x-offset="128"
+        :y-offset="128"
+        :rotate="-15"
+      />
+    </client-only>
     <n-message-provider>
       <n-dialog-provider>
         <n-notification-provider>
           <client-only>
             <notification-inject />
           </client-only>
-          <n-layout
-            v-show="!loaded"
-            class="loading-layout"
-          >
+          <n-layout v-show="!loaded" class="loading-layout">
             <n-spin :show="true" class="load-container">
               <template #description>
-                <n-text class="loading-text">
-                  加载中，稍安勿躁......
-                </n-text>
+                <n-text class="loading-text"> 加载中，稍安勿躁...... </n-text>
               </template>
             </n-spin>
           </n-layout>

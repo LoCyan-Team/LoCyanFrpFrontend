@@ -23,8 +23,8 @@ export default defineNuxtConfig({
   // ssr: false,
   nitro: {
     experimental: {
-      wasm: true
-    }
+      wasm: true,
+    },
   },
   modules: [
     "@nuxt/eslint",
@@ -37,7 +37,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      devMode: process.env.NODE_ENV === 'development',
+      devMode: process.env.NODE_ENV === "development",
       turnstileSitekey: "",
       vaptchaVid: "",
       git: {

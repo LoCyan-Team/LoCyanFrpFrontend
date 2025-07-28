@@ -136,10 +136,10 @@
 </template>
 
 <script setup lang="ts">
-import type { FormInst, FormItemRule } from 'naive-ui'
+import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 
-import { GetPort } from "@/api/src/api/node/port.get";
+import { GetPort, type GetPortResponse } from "@/api/src/api/node/port.get";
 
 const mainStore = useMainStore();
 
@@ -148,45 +148,6 @@ const client = useApiClient();
 const message = useMessage();
 
 const tunnelFormRef = ref<FormInst | null>(null);
-
-// 表单验证规则
-const formRules = {
-  name: [
-    {
-      required: true,
-      message: '请输入隧道名称',
-      trigger: ['input', 'blur']
-    },
-    {
-      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
-      message: '隧道名称长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符',
-      trigger: ['input', 'blur']
-    }
-  ] as FormItemRule[],
-  localPort: [
-    {
-      required: true,
-      message: '请输入内网端口',
-      trigger: ['input', 'blur']
-    },
-    {
-      type: 'number',
-      min: 1,
-      max: 65535,
-      message: '端口范围应在1-65535之间',
-      trigger: ['input', 'blur']
-    }
-  ] as FormItemRule[],
-  remotePort: [
-    {
-      type: 'number',
-      min: 1,
-      max: 65535,
-      message: '端口范围应在1-65535之间',
-      trigger: ['input', 'blur']
-    }
-  ] as FormItemRule[]
-};
 
 const props = defineProps<{
   node: {
@@ -272,33 +233,138 @@ const hasOption = {
   secretKey: ["XTCP", "STCP", "SUDP"],
 };
 
+// 动态表单验证规则
+const formRules = computed(() => ({
+  name: [
+    {
+      required: true,
+      message: "请输入隧道名称",
+      trigger: ["input", "blur"],
+    },
+    {
+      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      message:
+        "隧道名称长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  type: [
+    {
+      required: true,
+      message: "请选择穿透协议",
+      trigger: ["change", "blur"],
+    },
+  ] as FormItemRule[],
+  localIp: [
+    {
+      required: true,
+      message: "请输入内网IP",
+      trigger: ["input", "blur"],
+    },
+    {
+      pattern:
+        /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+      message: "请输入有效的IP地址",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  localPort: [
+    {
+      required: true,
+      message: "请输入内网端口",
+      trigger: ["input", "blur"],
+    },
+    {
+      type: "number",
+      min: 1,
+      max: 65535,
+      message: "端口范围应在1-65535之间",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  remotePort: hasOption.remotePort.includes(form.value.type)
+    ? ([
+        {
+          required: true,
+          message: "请输入远程端口",
+          trigger: ["input", "blur"],
+        },
+        {
+          type: "number",
+          min: 1,
+          max: 65535,
+          message: "端口范围应在1-65535之间",
+          trigger: ["input", "blur"],
+        },
+      ] as FormItemRule[])
+    : ([] as FormItemRule[]),
+  domain: hasOption.domain.includes(form.value.type)
+    ? ([
+        {
+          required: true,
+          message: "请输入自定义域名",
+          trigger: ["input", "blur"],
+        },
+        {
+          pattern:
+            /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+          message: "请输入有效的域名格式",
+          trigger: ["input", "blur"],
+        },
+      ] as FormItemRule[])
+    : ([] as FormItemRule[]),
+  locations: [] as FormItemRule[], // locations不需要required
+  secretKey: hasOption.secretKey.includes(form.value.type)
+    ? ([
+        {
+          required: true,
+          message: "请输入访问密钥",
+          trigger: ["input", "blur"],
+        },
+        {
+          min: 6,
+          message: "访问密钥长度至少6位",
+          trigger: ["input", "blur"],
+        },
+      ] as FormItemRule[])
+    : ([] as FormItemRule[]),
+}));
+
 async function handleRandomRemotePort() {
   loading.value.randomPort = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetPortResponse>(
     new GetPort({
       user_id: mainStore.userId!,
       node_id: props.node.id,
     }),
   );
 
-  if (rs.status === 200) form.value.remotePort = rs.data.port;
+  if (rs.status === 200)
+    form.value.remotePort = (rs.data as { port: number }).port;
   else message.error(rs.message);
 
   loading.value.randomPort = false;
 }
 
-function handleSubmit() {
-  emit("submit", {
-    name: form.value.name!,
-    type: form.value.type,
-    localIp: form.value.localIp,
-    localPort: form.value.localPort!,
-    remotePort: form.value.remotePort,
-    useEncryption: form.value.useEncryption,
-    useCompression: form.value.useCompression,
-    domain: form.value.domain,
-    locations: form.value.locations,
-    secretKey: form.value.secretKey,
-  });
+async function handleSubmit() {
+  if (!tunnelFormRef.value) return;
+
+  try {
+    await tunnelFormRef.value.validate();
+    emit("submit", {
+      name: form.value.name!,
+      type: form.value.type,
+      localIp: form.value.localIp,
+      localPort: form.value.localPort!,
+      remotePort: form.value.remotePort,
+      useEncryption: form.value.useEncryption,
+      useCompression: form.value.useCompression,
+      domain: form.value.domain,
+      locations: form.value.locations,
+      secretKey: form.value.secretKey,
+    });
+  } catch {
+    message.error("请检查表单输入");
+  }
 }
 </script>

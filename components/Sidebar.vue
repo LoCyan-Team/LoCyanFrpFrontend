@@ -11,16 +11,18 @@
     @collapse="collapsed = true"
     @expand="collapsed = false"
   >
-    <n-menu
-      ref="menuInstRef"
-      :collapsed="collapsed"
-      :collapsed-width="64"
-      :collapsed-icon-size="22"
-      :options="menuOptions"
-      style=""
-      :value="activeKey"
-      @update:value="handleUpdateValue"
-    />
+    <client-only>
+      <n-menu
+        ref="menuInstRef"
+        :collapsed="collapsed"
+        :collapsed-width="64"
+        :collapsed-icon-size="22"
+        :options="menuOptions"
+        style=""
+        :value="activeKey"
+        @update:value="handleUpdateValue"
+      />
+    </client-only>
   </n-layout-sider>
 </template>
 

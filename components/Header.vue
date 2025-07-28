@@ -11,25 +11,29 @@
       </nuxt-link>
     </n-thing>
     <n-space style="height: 60px" class="menu">
-      <n-button
-        v-show="useLoggedIn()"
-        circle
-        style="margin-top: 15px; margin-right: 10px"
-        @click="() => (showNotification = true)"
-      >
-        <template #icon>
-          <n-icon><MdNotifications /></n-icon>
-        </template>
-      </n-button>
-      <n-dropdown :options="avatarOptions" @select="handleAvatarOptionSelect">
-        <n-avatar
+      <client-only>
+        <n-button
           v-show="useLoggedIn()"
-          round
-          size="medium"
-          style="margin-top: 15px; margin-right: 23px"
-          :src="userStore.avatar"
-        />
-      </n-dropdown>
+          circle
+          style="margin-top: 15px; margin-right: 10px"
+          @click="() => (showNotification = true)"
+        >
+          <template #icon>
+            <n-icon><MdNotifications /></n-icon>
+          </template>
+        </n-button>
+      </client-only>
+      <client-only>
+        <n-dropdown :options="avatarOptions" @select="handleAvatarOptionSelect">
+          <n-avatar
+            v-show="useLoggedIn()"
+            round
+            size="medium"
+            style="margin-top: 15px; margin-right: 23px"
+            :src="userStore.avatar"
+          />
+        </n-dropdown>
+      </client-only>
     </n-space>
   </n-space>
   <n-modal

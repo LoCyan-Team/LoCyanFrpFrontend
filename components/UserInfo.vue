@@ -2,7 +2,9 @@
   <n-space vertical>
     <n-card>
       <n-el style="text-align: center">
-        <n-avatar round :size="80" :src="userStore.avatar + '?s=480'" />
+        <client-only>
+          <n-avatar round :size="80" :src="userStore.avatar + '?s=480'" />
+        </client-only>
         <br />
         <n-text style="font-size: 20px">
           {{ userStore.username }}
@@ -54,7 +56,9 @@
                   circle
                   @click="handleThirdPartyButton(ThirdParty.QQ)"
                 >
-                  <n-icon><Qq /></n-icon>
+                  <client-only>
+                    <n-icon><Qq /></n-icon>
+                  </client-only>
                 </n-button>
               </template>
               <n-el v-if="data.thirdParty.bind.qq">已绑定</n-el>

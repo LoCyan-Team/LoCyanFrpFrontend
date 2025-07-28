@@ -28,14 +28,10 @@
           <n-layout
             v-show="!loaded"
             class="loading-layout"
-            :class="{ 'loading-layout--dark': isDark }"
           >
             <n-spin :show="true" class="load-container">
               <template #description>
-                <n-text
-                  class="loading-text"
-                  :class="{ 'loading-text--dark': isDark }"
-                >
+                <n-text class="loading-text">
                   加载中，稍安勿躁......
                 </n-text>
               </template>
@@ -164,13 +160,16 @@ onMounted(async () => {
 <style scoped>
 .loading-layout {
   height: 100dvh;
-  /* 亮色模式：使用默认背景，不设置颜色 */
-  transition: background-color 0.3s ease;
 }
 
-/* 基于类名的暗色主题 */
-.loading-layout--dark {
-  background-color: #101014;
+/* 使用 CSS 媒体查询检测暗色模式 */
+@media (prefers-color-scheme: dark) {
+  .loading-layout {
+    background-color: #101014;
+  }
+  .loading-text {
+    color: white !important;
+  }
 }
 
 .load-container {
@@ -181,20 +180,9 @@ onMounted(async () => {
 }
 
 .loading-text {
-  /* 亮色模式：使用默认文字颜色 */
   font-weight: 500;
   font-size: 14px;
   transition: color 0.3s ease;
-}
-
-/* 基于类名的暗色文字 */
-.loading-text--dark {
-  color: rgba(255, 255, 255, 0.82) !important;
-}
-
-/* 为加载动画添加主题适配 */
-.loading-layout--dark :deep(.n-spin-content) {
-  color: rgba(255, 255, 255, 0.65);
 }
 
 @media screen and (max-width: 700px) {

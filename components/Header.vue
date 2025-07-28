@@ -55,8 +55,9 @@
 </template>
 
 <script setup>
-import { MdNotifications } from "@vicons/ionicons4";
-import { PersonCircleOutline, LogOutOutline } from "@vicons/ionicons5";
+import MdNotifications from "@vicons/ionicons4/MdNotifications";
+import PersonCircleOutline from "@vicons/ionicons5/PersonCircleOutline";
+import LogOutOutline from "@vicons/ionicons5/LogOutOutline";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 

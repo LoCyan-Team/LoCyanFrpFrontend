@@ -629,8 +629,8 @@ import { useUserStore } from "@/store/user";
 
 import type { SelectOption } from "naive-ui";
 
-import { Error } from "@vicons/carbon";
-import { Search } from "@vicons/ionicons5";
+import Error from "@vicons/carbon/Error";
+import Search from "@vicons/ionicons5/Search";
 
 import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
 import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";

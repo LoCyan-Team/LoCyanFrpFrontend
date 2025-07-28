@@ -241,7 +241,7 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { FileDownloadDoneOutlined } from "@vicons/material";
+import FileDownloadDoneOutlined from "@vicons/material/FileDownloadDoneOutlined";
 
 import { GetVerification as GetStatus } from "@/api/src/api/verification.get";
 import { PostPayment as PostBuyAccreditation } from "@/api/src/api/verification/real-person/payment.post";

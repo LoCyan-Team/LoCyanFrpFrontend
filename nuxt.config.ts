@@ -21,6 +21,11 @@ export default defineNuxtConfig({
   compatibilityDate: "2024-11-01",
   devtools: { enabled: true },
   // ssr: false,
+  nitro: {
+    experimental: {
+      wasm: true
+    }
+  },
   modules: [
     "@nuxt/eslint",
     "nuxt-umami",
@@ -32,7 +37,7 @@ export default defineNuxtConfig({
   ],
   runtimeConfig: {
     public: {
-      devMode: false,
+      devMode: process.env.NODE_ENV === 'development',
       turnstileSitekey: "",
       vaptchaVid: "",
       git: {

@@ -90,7 +90,7 @@
 </template>
 
 <script setup lang="ts">
-import { Qq } from "@vicons/fa";
+import Qq from "@vicons/fa/Qq";
 
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";

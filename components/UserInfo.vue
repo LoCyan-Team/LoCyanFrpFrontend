@@ -209,7 +209,7 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { Qq } from "@vicons/fa";
+import Qq from "@vicons/fa/Qq";
 
 import { GetThirdParty as GetThirdPartyBind } from "@/api/src/api/user/third-party.get";
 import { GetBind as GetQqBind } from "@/api/src/api/user/third-party/qq/bind.get";

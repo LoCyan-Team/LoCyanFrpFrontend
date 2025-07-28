@@ -27,33 +27,29 @@
 <script setup lang="ts">
 import type { MenuOption } from "naive-ui";
 
-import {
-  Add,
-  BookOutline,
-  CloudDownloadOutline,
-  FileTrayFull,
-  List,
-  PaperPlane,
-  PencilSharp,
-  Person,
-  CompassSharp,
-  GameController,
-  LogInOutline,
-  MailOpenOutline,
-} from "@vicons/ionicons5";
-import { GuiManagement, Api, ContentDeliveryNetwork } from "@vicons/carbon";
-import {
-  MoreCircle20Filled,
-  Box24Filled,
-  KeyReset20Regular,
-  CommentMultiple16Regular,
-} from "@vicons/fluent";
-import {
-  AttachMoneyFilled,
-  AccountTreeOutlined,
-  AccountBalanceWalletFilled,
-  VerifiedOutlined,
-} from "@vicons/material";
+import Add from "@vicons/ionicons5/Add";
+import BookOutline from "@vicons/ionicons5/BookOutline";
+import CloudDownloadOutline from "@vicons/ionicons5/CloudDownloadOutline";
+import FileTrayFull from "@vicons/ionicons5/FileTrayFull";
+import List from "@vicons/ionicons5/List";
+import PaperPlane from "@vicons/ionicons5/PaperPlane";
+import PencilSharp from "@vicons/ionicons5/PencilSharp";
+import Person from "@vicons/ionicons5/Person";
+import CompassSharp from "@vicons/ionicons5/CompassSharp";
+import GameController from "@vicons/ionicons5/GameController";
+import LogInOutline from "@vicons/ionicons5/LogInOutline";
+import MailOpenOutline from "@vicons/ionicons5/MailOpenOutline";
+import GuiManagement from "@vicons/carbon/GuiManagement";
+import Api from "@vicons/carbon/Api";
+import ContentDeliveryNetwork from "@vicons/carbon/ContentDeliveryNetwork";
+import MoreCircle20Filled from "@vicons/fluent/MoreCircle20Filled";
+import Box24Filled from "@vicons/fluent/Box24Filled";
+import KeyReset20Regular from "@vicons/fluent/KeyReset20Regular";
+import CommentMultiple16Regular from "@vicons/fluent/CommentMultiple16Regular";
+import AttachMoneyFilled from "@vicons/material/AttachMoneyFilled";
+import AccountTreeOutlined from "@vicons/material/AccountTreeOutlined";
+import AccountBalanceWalletFilled from "@vicons/material/AccountBalanceWalletFilled";
+import VerifiedOutlined from "@vicons/material/VerifiedOutlined";
 
 import { usePageStore } from "@/store/page";
 
@@ -260,7 +256,7 @@ if (document.body.clientWidth >= 1000) collapsed.value = false;
 
 const route = useRoute();
 
-function handleUpdateValue(_: any, item: MenuOption) {
+function handleUpdateValue(_: unknown, item: MenuOption) {
   computeActiveKey(menuOptions.value, item.path);
   navigateTo(item.path as string);
 }

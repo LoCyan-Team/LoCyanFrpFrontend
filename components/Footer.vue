@@ -56,7 +56,7 @@
 </template>
 
 <script setup lang="ts">
-import { GitAlt } from "@vicons/fa";
+import GitAlt from "@vicons/fa/GitAlt";
 
 const currentYear = new Date().getFullYear();
 

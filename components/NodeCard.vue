@@ -69,7 +69,8 @@
 </template>
 
 <script setup lang="ts">
-import { CheckmarkCircle, CloseCircle } from "@vicons/ionicons5";
+import CheckmarkCircle from "@vicons/ionicons5/CheckmarkCircle";
+import CloseCircle from "@vicons/ionicons5/CloseCircle";
 
 const props = defineProps<{
   node: {

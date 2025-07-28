@@ -51,6 +51,7 @@ import { useMainStore } from "@/store/main";
 
 import { GetSign } from "@/api/src/api/sign.get";
 import { PostSign } from "@/api/src/api/sign.post";
+import type { GetSignResponse, PostSignResponse } from "~/api/src/type/sign";
 
 definePageMeta({
   title: "签到",
@@ -91,7 +92,7 @@ async function loadImageAsBlob() {
 }
 
 async function handleSign() {
-  const rs = await client.execute(
+  const rs = await client.execute<PostSignResponse>(
     new PostSign({
       user_id: mainStore.userId!,
     }),
@@ -101,7 +102,7 @@ async function handleSign() {
     data.value.totalGetTraffic += rs.data.get_traffic;
     data.value.totalSign++;
     data.value.lastSign = dayjs().format("L LT");
-    await loadImageAsBlob();
+    loadImageAsBlob();
     dialog.success({
       title: "签到成功",
       content: `本次签到获得 ${rs.data.get_traffic} GiB 流量${rs.data.first_sign ? "，这是您的首次签到。" : "。"}`,
@@ -110,7 +111,7 @@ async function handleSign() {
 }
 
 onMounted(async () => {
-  const rs = await client.execute(
+  const rs = await client.execute<GetSignResponse>(
     new GetSign({
       user_id: mainStore.userId!,
     }),
@@ -120,9 +121,7 @@ onMounted(async () => {
     data.value.totalSign = rs.data.total_sign;
     data.value.totalGetTraffic = rs.data.total_get_traffic;
     data.value.lastSign = dayjs(rs.data.last_sign).format("L LT");
-    if (data.value.signed) {
-      await loadImageAsBlob();
-    }
+    if (data.value.signed) loadImageAsBlob();
   } else message.error(rs.message);
 
   loading.value = false;

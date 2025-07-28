@@ -17,7 +17,7 @@ const message = useMessage();
 const notification = useNotification();
 
 async function aliveTest() {
-  if (!mainStore.token) return;
+  if (!useLoggedIn()) return;
 
   const client = useApiClient();
 

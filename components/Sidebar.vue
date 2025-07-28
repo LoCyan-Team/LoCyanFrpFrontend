@@ -252,14 +252,13 @@ const menuOptions = computed(() => {
 const activeKey = ref<string>("");
 const collapsed = ref<boolean>(true);
 
-if (document.body.clientWidth >= 1000) collapsed.value = false;
-
 const route = useRoute();
 
 function handleUpdateValue(_: unknown, item: MenuOption) {
   computeActiveKey(menuOptions.value, item.path);
   navigateTo(item.path as string);
 }
+
 function computeActiveKey(menuOptions: MenuOption[], path: string) {
   for (const option of menuOptions) {
     if (option.children instanceof Array) {
@@ -271,7 +270,13 @@ function computeActiveKey(menuOptions: MenuOption[], path: string) {
   }
 }
 
+// 初始化时计算 activeKey
+computeActiveKey(menuOptions.value, route.path);
+
 onMounted(() => {
-  computeActiveKey(menuOptions.value, route.path);
+  // 在客户端检查屏幕宽度
+  if (window.innerWidth >= 1000) {
+    collapsed.value = false;
+  }
 });
 </script>

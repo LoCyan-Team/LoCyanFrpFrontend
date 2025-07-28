@@ -95,7 +95,9 @@ definePageMeta({
 const message = useMessage();
 const notification = useNotification();
 
-const client = useApiClient();
+const client = useApiClient({
+  auth: false,
+});
 
 const loading = ref<{
   reset: boolean;

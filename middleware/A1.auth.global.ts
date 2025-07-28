@@ -1,14 +1,10 @@
-import { useMainStore } from "@/store/main";
-import { usePageStore } from "@/store/page";
+import { usePageStore } from "~/store/page";
 
 export default defineNuxtRouteMiddleware((to) => {
-  const mainStore = useMainStore();
-  const { token } = mainStore;
-
   const pageStore = usePageStore();
 
   if (to.meta.needLogin === false) {
-    if (to.meta.redirectLogined === true && token !== null) {
+    if (to.meta.redirectLogined === true && useLoggedIn()) {
       pageStore.setSidebarMode("logined");
       return navigateTo({
         path: "/dashboard",
@@ -18,7 +14,7 @@ export default defineNuxtRouteMiddleware((to) => {
     return;
   }
 
-  if (token === null) {
+  if (!useLoggedIn()) {
     const router = useRouter();
     const routeExists = router.hasRoute(to.name!);
 

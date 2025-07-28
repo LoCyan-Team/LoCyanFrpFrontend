@@ -12,7 +12,7 @@
     </n-thing>
     <n-space style="height: 60px" class="menu">
       <n-button
-        v-show="mainStore.token !== null"
+        v-show="useLoggedIn()"
         circle
         style="margin-top: 15px; margin-right: 10px"
         @click="() => (showNotification = true)"
@@ -23,7 +23,7 @@
       </n-button>
       <n-dropdown :options="avatarOptions" @select="handleAvatarOptionSelect">
         <n-avatar
-          v-show="mainStore.token !== null"
+          v-show="useLoggedIn()"
           round
           size="medium"
           style="margin-top: 15px; margin-right: 23px"
@@ -81,8 +81,8 @@ const avatarOptions = [
   },
 ];
 
-const showUserInfo = ref(false),
-  showNotification = ref(false);
+const showUserInfo = ref(false);
+const showNotification = ref(false);
 
 function handleUserInfoModalLogout() {
   showUserInfo.value = false;

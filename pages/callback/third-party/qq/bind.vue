@@ -21,7 +21,6 @@ import { PostBind } from "@/api/src/api/user/third-party/qq/bind.post";
 
 definePageMeta({
   title: "QQ 绑定回调界面",
-  needLogin: false,
   sidebar: false,
 });
 
@@ -40,10 +39,17 @@ const status = ref<Status>(Status.WORKING);
 const error = ref<string>("");
 
 onMounted(async () => {
+  const code = route.query.code as string;
+  if (!code) {
+    error.value = "缺少授权码";
+    status.value = Status.ERROR;
+    return;
+  }
+
   const rs = await client.execute(
     new PostBind({
       user_id: mainStore.userId!,
-      code: route.query.code as string,
+      code,
     }),
   );
   if (rs.status === 200) {

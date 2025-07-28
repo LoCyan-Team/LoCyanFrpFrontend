@@ -31,9 +31,14 @@ const client = useApiClient();
 const route = useRoute();
 
 onMounted(async () => {
+  const code = route.query.code as string;
+  if (!code) {
+    message.error("缺少授权码");
+  }
+
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
-      code: route.query.code as string,
+      code,
     }),
   );
   if (rs.status === 200) {

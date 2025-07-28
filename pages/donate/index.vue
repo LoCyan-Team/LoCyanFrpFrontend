@@ -147,6 +147,7 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
+import { PutComment } from "@/api/src/api/donation/comment.put";
 import {
   GetDonations,
   type GetDonationsResponse,
@@ -155,6 +156,11 @@ import {
   PostDonation,
   type PostDonationResponse,
 } from "@/api/src/api/donation.post";
+import {
+  PostPayment as PostDonationPayment,
+  type PostPaymentResponse as PostDonationPaymentResponse,
+} from "@/api/src/api/donation/payment.post";
+import { DeleteDonation } from "~/api/src/api/donation.delete";
 
 definePageMeta({
   title: "捐赠",
@@ -179,7 +185,7 @@ const commentModal = ref<{
   show: boolean;
   form: {
     id: number;
-    message: string | number;
+    message: string | null;
   };
 }>({
   show: false,
@@ -245,25 +251,28 @@ async function handleButtonComment(donationId: number) {
 }
 
 async function handleComment(donationId: number) {
-  loading.value.donationList[donationId] = true;
-  const rs = await client.execute<PutDonationCommentResponse>(
-    new PutDonationComment({
-      user_id: number,
-      donation_id: number,
+  loading.value.donationList.push(donationId);
+  const rs = await client.execute(
+    new PutComment({
+      user_id: mainStore.userId!,
+      donation_id: donationId,
+      comment: commentModal.value.form.message!,
     }),
   );
   if (rs.status === 200) {
-    message.success("留言成功—");
+    message.success("留言成功");
   } else message.error(rs.message);
-  loading.value.donationList[donationId] = false;
+  loading.value.donationList = loading.value.donationList.filter(
+    (val) => val !== donationId,
+  );
 }
 
 async function handleButtonPayment(donationId: number) {
   loading.value.donationList.push(donationId);
   const rs = await client.execute<PostDonationPaymentResponse>(
     new PostDonationPayment({
-      user_id: number,
-      donation_id: number,
+      user_id: mainStore.userId!,
+      donation_id: donationId,
     }),
   );
   if (rs.status === 200) {
@@ -276,15 +285,13 @@ async function handleButtonPayment(donationId: number) {
 
 async function handleButtonCancel(donationId: number) {
   loading.value.donationList.push(donationId);
-  const rs = await client.execute<DeleteDonationPaymentResponse>(
-    new DeleteDonationPayment({
-      user_id: number,
-      donation_id: number,
+  const rs = await client.execute(
+    new DeleteDonation({
+      user_id: mainStore.userId!,
+      donation_id: donationId,
     }),
   );
-  if (rs.status === 200) {
-    window.open(rs.data.url);
-  } else message.error(rs.message);
+  if (rs.status !== 200) message.error(rs.message);
   loading.value.donationList = loading.value.donationList.filter(
     (val) => val !== donationId,
   );
@@ -309,7 +316,7 @@ async function getDonations() {
         amount: it.amount,
         paymentMethod: it.pay_type,
         comment: it.message,
-        status: it.status,
+        status: it.status as "PAID" | "UNPAID",
       });
     });
   } else message.error(rs.message);

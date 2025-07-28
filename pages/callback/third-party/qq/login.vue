@@ -26,7 +26,9 @@ const notification = useNotification();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
-const client = useApiClient();
+const client = useApiClient({
+  auth: false,
+});
 
 const route = useRoute();
 

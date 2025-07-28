@@ -12,7 +12,7 @@
       </template>
     </node-card>
     <n-card title="隧道信息">
-      <n-form>
+      <n-form ref="tunnelFormRef" :model="form" :rules="formRules">
         <n-grid :y-gap="8" :x-gap="12" :cols="2" item-responsive>
           <!-- 隧道名 -->
           <n-grid-item span="0:2 700:1">
@@ -136,6 +136,7 @@
 </template>
 
 <script setup lang="ts">
+import type { FormInst, FormItemRule } from 'naive-ui'
 import { useMainStore } from "@/store/main";
 
 import { GetPort } from "@/api/src/api/node/port.get";
@@ -145,6 +146,47 @@ const mainStore = useMainStore();
 const client = useApiClient();
 
 const message = useMessage();
+
+const tunnelFormRef = ref<FormInst | null>(null);
+
+// 表单验证规则
+const formRules = {
+  name: [
+    {
+      required: true,
+      message: '请输入隧道名称',
+      trigger: ['input', 'blur']
+    },
+    {
+      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      message: '隧道名称长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符',
+      trigger: ['input', 'blur']
+    }
+  ] as FormItemRule[],
+  localPort: [
+    {
+      required: true,
+      message: '请输入内网端口',
+      trigger: ['input', 'blur']
+    },
+    {
+      type: 'number',
+      min: 1,
+      max: 65535,
+      message: '端口范围应在1-65535之间',
+      trigger: ['input', 'blur']
+    }
+  ] as FormItemRule[],
+  remotePort: [
+    {
+      type: 'number',
+      min: 1,
+      max: 65535,
+      message: '端口范围应在1-65535之间',
+      trigger: ['input', 'blur']
+    }
+  ] as FormItemRule[]
+};
 
 const props = defineProps<{
   node: {

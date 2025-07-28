@@ -2,7 +2,7 @@
   <n-el class="register-box">
     <n-h1>注册</n-h1>
     <n-card title="账户注册">
-      <n-form>
+      <n-form ref="registerFormRef" :model="registerForm" :rules="formRules">
         <n-form-item label="用户名" path="username">
           <n-input
             v-model:value="registerForm.username"
@@ -45,7 +45,7 @@
             "
             @unsupported="
               message.error(
-                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试'
               )
             "
             @callback="handleEmailCodeSend"
@@ -94,6 +94,7 @@
   </n-el>
 </template>
 <script setup lang="ts">
+import type { FormInst, FormItemRule } from "naive-ui";
 import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
@@ -108,6 +109,78 @@ const message = useMessage();
 const notification = useNotification();
 
 const client = useApiClient();
+
+const registerFormRef = ref<FormInst | null>(null);
+
+// 表单验证规则
+const formRules = {
+  username: [
+    {
+      required: true,
+      message: "请输入用户名",
+      trigger: ["input", "blur"],
+    },
+    {
+      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      message:
+        "用户名长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  email: [
+    {
+      required: true,
+      message: "请输入邮箱",
+      trigger: ["input", "blur"],
+    },
+    {
+      pattern:
+        /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/,
+      message: "请输入有效的邮箱地址",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  verifyCode: [
+    {
+      required: true,
+      message: "请输入验证码",
+      trigger: ["input", "blur"],
+    },
+    {
+      type: "number",
+      message: "验证码必须是数字",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  password: [
+    {
+      required: true,
+      message: "请输入密码",
+      trigger: ["input", "blur"],
+    },
+    {
+      min: 6,
+      message: "密码长度至少6位",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  confirmPassword: [
+    {
+      required: true,
+      message: "请确认密码",
+      trigger: ["input", "blur"],
+    },
+    {
+      validator: (_rule: FormItemRule, value: string) => {
+        if (value !== registerForm.value.password) {
+          return new Error("两次输入的密码不一致");
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+};
 
 const loading = ref<{
   register: boolean;
@@ -165,7 +238,7 @@ async function handleEmailCodeSend(token: string, server?: string) {
       captcha_id: captcha.value.config.id!,
       captcha_token: token,
       captcha_server: server,
-    }),
+    })
   );
   if (rs.status === 200) {
     notification.success({
@@ -178,11 +251,6 @@ async function handleEmailCodeSend(token: string, server?: string) {
 }
 
 async function handleRegister() {
-  if (registerForm.value.password !== registerForm.value.confirmPassword) {
-    message.error("两次输入的密码不匹配");
-    return;
-  }
-
   loading.value.register = true;
   const rs = await client.execute(
     new PostRegister({
@@ -190,7 +258,7 @@ async function handleRegister() {
       password: registerForm.value.password!,
       email: registerForm.value.email!,
       verify_code: registerForm.value.verifyCode!,
-    }),
+    })
   );
   if (rs.status === 200) {
     notification.success({

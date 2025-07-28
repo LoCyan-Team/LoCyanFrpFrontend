@@ -2,12 +2,12 @@
   <n-el class="login-box">
     <n-h1>登录</n-h1>
     <n-card title="账户登录">
-      <n-form>
+      <n-form ref="loginFormRef" :model="loginForm" :rules="formRules">
         <n-form-item label="用户名 / 邮箱" path="user">
           <n-input
             v-model:value="loginForm.user"
             type="text"
-            placeholder="用户名"
+            placeholder="用户名或邮箱"
           />
         </n-form-item>
         <n-form-item label="密码" path="password">
@@ -91,6 +91,7 @@
 
 <script setup lang="ts">
 import Qq from "@vicons/fa/Qq";
+import type { FormInst, FormItemRule } from 'naive-ui'
 
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
@@ -123,6 +124,31 @@ const userStore = useUserStore();
 const client = useApiClient({ auth: false });
 
 const route = useRoute();
+
+const loginFormRef = ref<FormInst | null>(null);
+
+// 表单验证规则
+const formRules = {
+  user: [
+    {
+      required: true,
+      message: '请输入用户名或邮箱',
+      trigger: ['input', 'blur']
+    }
+  ] as FormItemRule[],
+  password: [
+    {
+      required: true,
+      message: '请输入密码',
+      trigger: ['input', 'blur']
+    },
+    {
+      min: 6,
+      message: '密码长度至少6位',
+      trigger: ['input', 'blur']
+    }
+  ] as FormItemRule[]
+};
 
 const loading = ref<{
   login: boolean;

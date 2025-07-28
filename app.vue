@@ -27,11 +27,17 @@
           </client-only>
           <n-layout
             v-show="!loaded"
-            style="height: 100dvh; background: #868686"
+            class="loading-layout"
+            :class="{ 'loading-layout--dark': isDark }"
           >
             <n-spin :show="true" class="load-container">
               <template #description>
-                <n-text style="color: white">加载中，稍安勿躁......</n-text>
+                <n-text
+                  class="loading-text"
+                  :class="{ 'loading-text--dark': isDark }"
+                >
+                  加载中，稍安勿躁......
+                </n-text>
               </template>
             </n-spin>
           </n-layout>
@@ -79,7 +85,7 @@
 <script setup lang="ts">
 import "@/assets/css/style.css";
 
-import { dateZhCN, zhCN, useOsTheme, darkTheme } from "naive-ui";
+import { dateZhCN, zhCN, darkTheme, useOsTheme } from "naive-ui";
 
 import SiteHeader from "@/components/Header.vue";
 import SiteFooter from "@/components/Footer.vue";
@@ -117,13 +123,26 @@ const pageSidebar = computed(() => pageStore.sidebar);
 
 // const mainStore = useMainStore();
 
+// 避免水合错误：服务端渲染时使用null，客户端挂载后再检测主题
 const osTheme = ref<typeof darkTheme | null>(null);
+const isDark = ref(false);
 
+// 在客户端挂载后使用Naive UI的useOsTheme
 onMounted(() => {
-  if (import.meta.client) {
-    const naiveOsTheme = useOsTheme();
+  // 只在客户端执行主题检测
+  const naiveOsTheme = useOsTheme();
+
+  // 立即更新主题状态
+  const updateTheme = () => {
+    isDark.value = naiveOsTheme.value === "dark";
     osTheme.value = naiveOsTheme.value === "dark" ? darkTheme : null;
-  }
+  };
+
+  // 初始化主题
+  updateTheme();
+
+  // 监听主题变化
+  watch(naiveOsTheme, updateTheme);
 });
 
 // const api = useApiClient({ auth: false });
@@ -143,11 +162,39 @@ onMounted(async () => {
 </script>
 
 <style scoped>
+.loading-layout {
+  height: 100dvh;
+  /* 亮色模式：使用默认背景，不设置颜色 */
+  transition: background-color 0.3s ease;
+}
+
+/* 基于类名的暗色主题 */
+.loading-layout--dark {
+  background-color: #101014;
+}
+
 .load-container {
   display: flex;
   justify-content: center;
   align-items: center;
   height: 100%;
+}
+
+.loading-text {
+  /* 亮色模式：使用默认文字颜色 */
+  font-weight: 500;
+  font-size: 14px;
+  transition: color 0.3s ease;
+}
+
+/* 基于类名的暗色文字 */
+.loading-text--dark {
+  color: rgba(255, 255, 255, 0.82) !important;
+}
+
+/* 为加载动画添加主题适配 */
+.loading-layout--dark :deep(.n-spin-content) {
+  color: rgba(255, 255, 255, 0.65);
 }
 
 @media screen and (max-width: 700px) {

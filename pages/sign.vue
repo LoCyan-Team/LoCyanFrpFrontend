@@ -33,10 +33,10 @@
                 </n-text>
               </n-el>
               <n-image
-                v-if="data.signed"
+                v-if="data.signed && imageBlob"
                 lazy
                 width="100%"
-                src="https://api.imlazy.ink/img"
+                :src="imageBlob"
               />
             </n-space>
           </n-card>
@@ -78,6 +78,18 @@ const data = ref<{
   totalGetTraffic: 0,
 });
 
+const imageBlob = ref<string | null>(null);
+
+async function loadImageAsBlob() {
+  try {
+    const response = await fetch("https://api.imlazy.ink/img");
+    const blob = await response.blob();
+    imageBlob.value = URL.createObjectURL(blob);
+  } catch (error) {
+    console.error("Failed to load image as blob:", error);
+  }
+}
+
 async function handleSign() {
   const rs = await client.execute(
     new PostSign({
@@ -89,6 +101,7 @@ async function handleSign() {
     data.value.totalGetTraffic += rs.data.get_traffic;
     data.value.totalSign++;
     data.value.lastSign = dayjs().format("L LT");
+    await loadImageAsBlob();
     dialog.success({
       title: "签到成功",
       content: `本次签到获得 ${rs.data.get_traffic} GiB 流量${rs.data.first_sign ? "，这是您的首次签到。" : "。"}`,
@@ -107,8 +120,17 @@ onMounted(async () => {
     data.value.totalSign = rs.data.total_sign;
     data.value.totalGetTraffic = rs.data.total_get_traffic;
     data.value.lastSign = dayjs(rs.data.last_sign).format("L LT");
+    if (data.value.signed) {
+      await loadImageAsBlob();
+    }
   } else message.error(rs.message);
 
   loading.value = false;
+});
+
+onBeforeUnmount(() => {
+  if (imageBlob.value) {
+    URL.revokeObjectURL(imageBlob.value);
+  }
 });
 </script>

@@ -2,7 +2,7 @@
   <n-el class="reset-box">
     <n-h1>重置密码</n-h1>
     <n-card title="修改密码">
-      <n-form>
+      <n-form ref="resetPasswordFormRef" :model="resetPasswordForm" :rules="formRules">
         <n-form-item label="用户名 / 邮箱" path="user">
           <n-input
             v-model:value="resetPasswordForm.user"
@@ -79,6 +79,7 @@
 </template>
 
 <script setup lang="ts">
+import type { FormInst, FormItemRule } from "naive-ui";
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import {
   GetPassword as GetEmailCode,
@@ -101,6 +102,41 @@ const notification = useNotification();
 const client = useApiClient({
   auth: false,
 });
+
+const resetPasswordFormRef = ref<FormInst | null>(null);
+
+const formRules = {
+  user: [
+    {
+      required: true,
+      message: "请输入用户名或邮箱",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  verifyCode: [
+    {
+      validator: (_rule: FormItemRule, value: number | null) => {
+        if (value === null || value === undefined) {
+          return new Error("请输入验证码");
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  password: [
+    {
+      required: true,
+      message: "请输入新密码",
+      trigger: ["input", "blur"],
+    },
+    {
+      min: 6,
+      message: "密码长度至少6位",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+};
 
 const loading = ref<{
   reset: boolean;

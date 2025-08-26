@@ -140,7 +140,36 @@
         </n-space>
       </n-spin>
     </n-space>
-    <n-modal :show="commentModal.show"> </n-modal>
+    <n-modal
+      v-model:show="commentModal.show"
+      preset="card"
+      title="留言"
+      size="huge"
+      :bordered="false"
+      style="max-width: 500px"
+    >
+      <n-form>
+        <n-form-item label="留言内容">
+          <n-input
+            v-model:value="commentModal.form.message"
+            type="textarea"
+            placeholder="请输入留言内容"
+            :rows="3"
+          />
+        </n-form-item>
+      </n-form>
+      <template #footer>
+        <n-space justify="end">
+          <n-button @click="commentModal.show = false">取消</n-button>
+          <n-button
+            type="success"
+            @click="handleComment(commentModal.form.id); commentModal.show = false"
+          >
+            确定
+          </n-button>
+        </n-space>
+      </template>
+    </n-modal>
   </page-content>
 </template>
 
@@ -246,7 +275,9 @@ async function handlePayment() {
 }
 
 async function handleButtonComment(donationId: number) {
+  const donation = donations.value.find(d => d.id === donationId);
   commentModal.value.form.id = donationId;
+  commentModal.value.form.message = donation?.comment || '';
   commentModal.value.show = true;
 }
 

@@ -6,7 +6,11 @@
       </n-alert>
       <n-empty v-if="data.length === 0" />
       <n-grid v-else :y-gap="8" :x-gap="12" :cols="3" item-responsive>
-        <n-grid-item v-for="comment in data" :key="comment.toString()" span="0:3 1000:1">
+        <n-grid-item
+          v-for="comment in data"
+          :key="comment.toString()"
+          span="0:3 1000:1"
+        >
           <n-card>
             <n-space align="center" style="width: 100%">
               <n-gradient-text type="success">
@@ -55,9 +59,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetComments, type GetCommentsResponse } from "@/api/src/api/donation/comments.get";
+import {
+  GetComments,
+  type GetCommentsResponse,
+} from "@/api/src/api/donation/comments.get";
 
-definePageMeta({
+useHead({
   title: "留言",
 });
 

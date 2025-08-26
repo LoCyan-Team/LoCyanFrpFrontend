@@ -100,9 +100,12 @@ import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
 
 definePageMeta({
-  title: "注册",
   needLogin: false,
   redirectLogined: true,
+});
+
+useHead({
+  title: "注册",
 });
 
 const message = useMessage();

@@ -176,7 +176,7 @@ const client = useApiClient();
 const message = useMessage();
 const dialog = useDialog();
 
-definePageMeta({
+useHead({
   title: "ICP 备案白名单",
 });
 

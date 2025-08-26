@@ -80,16 +80,19 @@
 
 <script setup lang="ts">
 import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
-import { GetPassword as GetEmailCode } from "@/api/src/api/email/password.get";
 import {
-  PutPassword,
+  GetPassword as GetEmailCode,
   type GetPasswordResponse as GetEmailCodeResponse,
-} from "@/api/src/api/user/password.put";
+} from "@/api/src/api/email/password.get";
+import { PutPassword } from "@/api/src/api/user/password.put";
 
 definePageMeta({
-  title: "重置密码",
   needLogin: false,
   redirectLogined: true,
+});
+
+useHead({
+  title: "重置密码",
 });
 
 const message = useMessage();

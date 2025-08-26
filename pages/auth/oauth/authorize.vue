@@ -87,8 +87,11 @@ import {
 import { GetApp, type GetAppResponse } from "@/api/src/api/app.get";
 
 definePageMeta({
-  title: "应用授权",
   sidebar: false,
+});
+
+useHead({
+  title: "应用授权",
 });
 
 const mainStore = useMainStore();

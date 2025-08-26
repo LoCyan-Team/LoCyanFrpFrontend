@@ -16,9 +16,12 @@ import {
 } from "@/api/src/api/auth/third-party/qq/login.post";
 
 definePageMeta({
-  title: "QQ 登录回调界面",
   needLogin: false,
   sidebar: false,
+});
+
+useHead({
+  title: "QQ 登录回调界面",
 });
 
 const message = useMessage();

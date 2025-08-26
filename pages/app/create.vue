@@ -23,7 +23,7 @@ import { PutApp, type PutAppResponse } from "@/api/src/api/app.put";
 const mainStore = useMainStore();
 const client = useApiClient();
 
-definePageMeta({
+useHead({
   title: "创建应用",
 });
 

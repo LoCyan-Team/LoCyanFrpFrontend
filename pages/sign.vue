@@ -53,7 +53,7 @@ import { GetSign } from "@/api/src/api/sign.get";
 import { PostSign } from "@/api/src/api/sign.post";
 import type { GetSignResponse, PostSignResponse } from "~/api/src/type/sign";
 
-definePageMeta({
+useHead({
   title: "签到",
 });
 

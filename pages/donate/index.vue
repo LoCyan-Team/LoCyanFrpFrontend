@@ -163,7 +163,10 @@
           <n-button @click="commentModal.show = false">取消</n-button>
           <n-button
             type="success"
-            @click="handleComment(commentModal.form.id); commentModal.show = false"
+            @click="
+              handleComment(commentModal.form.id);
+              commentModal.show = false;
+            "
           >
             确定
           </n-button>
@@ -191,7 +194,7 @@ import {
 } from "@/api/src/api/donation/payment.post";
 import { DeleteDonation } from "~/api/src/api/donation.delete";
 
-definePageMeta({
+useHead({
   title: "捐赠",
 });
 
@@ -275,9 +278,9 @@ async function handlePayment() {
 }
 
 async function handleButtonComment(donationId: number) {
-  const donation = donations.value.find(d => d.id === donationId);
+  const donation = donations.value.find((d) => d.id === donationId);
   commentModal.value.form.id = donationId;
-  commentModal.value.form.message = donation?.comment || '';
+  commentModal.value.form.message = donation?.comment || "";
   commentModal.value.show = true;
 }
 

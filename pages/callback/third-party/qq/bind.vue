@@ -20,8 +20,11 @@ import { useMainStore } from "@/store/main";
 import { PostBind } from "@/api/src/api/user/third-party/qq/bind.post";
 
 definePageMeta({
-  title: "QQ 绑定回调界面",
   sidebar: false,
+});
+
+useHead({
+  title: "QQ 绑定回调界面",
 });
 
 const mainStore = useMainStore();

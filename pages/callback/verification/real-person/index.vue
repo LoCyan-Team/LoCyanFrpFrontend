@@ -20,8 +20,11 @@ import { useMainStore } from "@/store/main";
 import { GetRealPerson } from "@/api/src/api/verification/real-person.get";
 
 definePageMeta({
-  title: "身份认证回调界面",
   sidebar: false,
+});
+
+useHead({
+  title: "身份认证回调界面",
 });
 
 const mainStore = useMainStore();

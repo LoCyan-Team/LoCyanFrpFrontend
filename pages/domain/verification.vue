@@ -252,7 +252,7 @@ const client = useApiClient();
 const message = useMessage();
 const notification = useNotification();
 
-definePageMeta({
+useHead({
   title: "所有权验证",
 });
 

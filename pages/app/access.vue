@@ -211,7 +211,7 @@ const client = useApiClient();
 
 const message = useMessage();
 
-definePageMeta({
+useHead({
   title: "授权管理",
 });
 

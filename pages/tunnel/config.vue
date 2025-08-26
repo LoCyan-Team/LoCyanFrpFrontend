@@ -164,7 +164,7 @@ import {
   type GetConfigResponse,
 } from "@/api/src/api/tunnel/config.get";
 
-definePageMeta({
+useHead({
   title: "配置文件",
 });
 

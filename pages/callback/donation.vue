@@ -7,9 +7,12 @@
 
 <script setup lang="ts">
 definePageMeta({
-  title: "捐赠回调界面",
   needLogin: false,
   sidebar: false,
+});
+
+useHead({
+  title: "捐赠回调界面",
 });
 </script>
 

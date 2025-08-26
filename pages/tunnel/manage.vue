@@ -638,7 +638,7 @@ import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
 import { DeleteBatch as DeleteTunnelBatch } from "@/api/src/api/tunnel/batch.delete";
 import { PatchTunnel } from "@/api/src/api/tunnel.patch";
 
-definePageMeta({
+useHead({
   title: "隧道管理",
 });
 

@@ -82,7 +82,7 @@ import { PatchApp } from "@/api/src/api/app.patch";
 const mainStore = useMainStore();
 const client = useApiClient();
 
-definePageMeta({
+useHead({
   title: "应用管理",
 });
 

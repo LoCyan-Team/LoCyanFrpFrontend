@@ -111,9 +111,12 @@ import {
 } from "@/api/src/api/auth/third-party/qq/login.get";
 
 definePageMeta({
-  title: "登录",
   needLogin: false,
   redirectLogined: true,
+});
+
+useHead({
+  title: "登录",
 });
 
 const message = useMessage();

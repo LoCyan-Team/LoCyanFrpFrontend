@@ -147,6 +147,7 @@ const formRules = {
   ] as FormItemRule[],
   verifyCode: [
     {
+      required: true,
       validator: (_rule: FormItemRule, value: number | null) => {
         if (value === null || value === undefined) {
           return new Error("请输入验证码");

@@ -147,13 +147,12 @@ const formRules = {
   ] as FormItemRule[],
   verifyCode: [
     {
-      required: true,
-      message: "请输入验证码",
-      trigger: ["input", "blur"],
-    },
-    {
-      type: "number",
-      message: "验证码必须是数字",
+      validator: (_rule: FormItemRule, value: number | null) => {
+        if (value === null || value === undefined) {
+          return new Error("请输入验证码");
+        }
+        return true;
+      },
       trigger: ["input", "blur"],
     },
   ] as FormItemRule[],

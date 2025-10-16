@@ -192,7 +192,7 @@ import {
   PostPayment as PostDonationPayment,
   type PostPaymentResponse as PostDonationPaymentResponse,
 } from "@/api/src/api/donation/payment.post";
-import { DeleteDonation } from "~/api/src/api/donation.delete";
+import { DeleteDonation } from "@/api/src/api/donation.delete";
 
 useHead({
   title: "捐赠",

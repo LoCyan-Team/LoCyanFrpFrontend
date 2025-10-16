@@ -5,3 +5,5 @@ export enum Method {
   PATCH = "PATCH",
   DELETE = "DELETE",
 }
+
+export default Method;

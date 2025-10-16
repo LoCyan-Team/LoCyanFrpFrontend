@@ -51,7 +51,7 @@ import { useMainStore } from "@/store/main";
 
 import { GetSign } from "@/api/src/api/sign.get";
 import { PostSign } from "@/api/src/api/sign.post";
-import type { GetSignResponse, PostSignResponse } from "~/api/src/type/sign";
+import type { GetSignResponse, PostSignResponse } from "@/api/src/type/sign";
 
 useHead({
   title: "签到",

@@ -44,7 +44,7 @@
     "unplugin-auto-import": "^19.3.0",
     "unplugin-vue-components": "^28.8.0",
     "vue": "^3.5.22",
-    "vue-router": "^4.6.2",
+    "vue-router": "^4.6.3",
     "vue-turnstile": "^1.0.11"
   }
 }

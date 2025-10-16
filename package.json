@@ -41,7 +41,7 @@
     "prettier": "^3.6.2",
     "sockjs-client": "^1.6.1",
     "stompjs": "^2.3.3",
-    "unplugin-auto-import": "^19.3.0",
+    "unplugin-auto-import": "^20.2.0",
     "unplugin-vue-components": "^28.8.0",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3",

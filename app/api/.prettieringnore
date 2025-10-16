@@ -1,0 +1,9 @@
+.*
+node_modules/
+
+bun.lock
+
+package.json
+tsconfig.json
+
+README.md

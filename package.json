@@ -30,7 +30,7 @@
     "eslint": "^9.37.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
-    "git-rev-sync": "wkl007/git-rev-sync-js",
+    "git-rev-sync": "https://github.com/wkl007/git-rev-sync-js.git",
     "highcharts-vue": "^2.0.1",
     "highlight.js": "^11.11.1",
     "naive-ui": "^2.43.1",

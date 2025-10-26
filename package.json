@@ -27,7 +27,7 @@
     "api": "./app/api",
     "dayjs": "^1.11.18",
     "dayjs-nuxt": "^2.1.11",
-    "eslint": "^9.37.0",
+    "eslint": "^9.38.0",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "git-rev-sync": "https://github.com/wkl007/git-rev-sync-js.git",

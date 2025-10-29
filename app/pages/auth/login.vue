@@ -4,69 +4,36 @@
     <n-card title="账户登录">
       <n-form ref="loginFormRef" :model="loginForm" :rules="formRules">
         <n-form-item label="用户名 / 邮箱" path="user">
-          <n-input
-            v-model:value="loginForm.user"
-            type="text"
-            placeholder="用户名或邮箱"
-          />
+          <n-input v-model:value="loginForm.user" type="text" placeholder="用户名或邮箱" />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input
-            v-model:value="loginForm.password"
-            type="password"
-            placeholder="密码"
-            @keydown.enter="loadCaptcha"
-          />
+          <n-input v-model:value="loginForm.password" type="password" placeholder="密码" @keydown.enter="handleLogin" />
         </n-form-item>
         <n-el>
           <n-space style="margin-bottom: 1rem">
-            <n-button
-              ghost
-              text
-              type="success"
-              @click="() => navigateTo('/auth/register')"
-            >
+            <!-- 因为 CapJS 特性，改为永久显示 -->
+            <captcha-dialog @unsupported="
+              message.error(
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+              )
+              " @callback="handleCaptchaResponse" />
+          </n-space>
+          <n-space style="margin-bottom: 1rem">
+            <n-button ghost text type="success" @click="() => navigateTo('/auth/register')">
               没有账户？去注册
             </n-button>
           </n-space>
           <n-space>
-            <n-button
-              type="success"
-              :loading="loading.login"
-              :disabled="loading.login"
-              @click="loadCaptcha"
-            >
+            <n-button type="success" :loading="loading.login" :disabled="loading.login" @click="handleLogin">
               登录
             </n-button>
-            <captcha-dialog
-              :show="captcha.show"
-              :type="captcha.config.type"
-              :vaptcha-scene="2"
-              @error="
-                (code: unknown) => {
-                  message.error('发生错误: ' + code);
-                  captcha.show = false;
-                }
-              "
-              @unsupported="
-                message.error(
-                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-                )
-              "
-              @callback="handleLogin"
-            />
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button
-        type="success"
-        secondary
-        style="width: 100%"
-        @click="handlePasskeyLogin"
-      >
+      <n-button type="success" secondary style="width: 100%" @click="handlePasskeyLogin">
         通行密钥登录
       </n-button>
     </n-spin>
@@ -74,11 +41,7 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button
-            type="info"
-            circle
-            @click="handleThirdPartyLogin(ThirdParty.QQ)"
-          >
+          <n-button type="info" circle @click="handleThirdPartyLogin(ThirdParty.QQ)">
             <n-icon>
               <Qq />
             </n-icon>
@@ -96,7 +59,6 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import {
   PostLogin,
   type PostLoginResponse,
@@ -127,6 +89,7 @@ const userStore = useUserStore();
 const client = useApiClient({ auth: false });
 
 const route = useRoute();
+
 
 const loginFormRef = ref<FormInst | null>(null);
 
@@ -172,42 +135,32 @@ const loginForm = ref<{
 });
 
 const captcha = ref<{
-  show: boolean;
-  config: {
-    id: string | null;
-    type: string | null;
-  };
+  response: string | null;
 }>({
-  show: false,
-  config: {
-    id: null,
-    type: null,
-  },
+  response: "",
 });
 
-async function loadCaptcha() {
-  loading.value.login = true;
-  const rs = await client.execute<GetCaptchaResponse>(
-    new GetCaptcha({ action: "login" }),
-  );
-  if (rs.status === 200) {
-    captcha.value.config.id = rs.data.id;
-    captcha.value.config.type = rs.data.type;
-    captcha.value.show = true;
-  } else message.error(rs.message);
-  loading.value.login = false;
+async function handleCaptchaResponse(response: string) {
+  captcha.value.response = response;
 }
 
-async function handleLogin(token: string, server?: string) {
-  captcha.value.show = false;
+async function handleLogin() {
+
+  if (captcha.value.response === null || captcha.value.response === "") {
+    notification.error({
+      title: "登录失败",
+      content: "请完成验证码验证后再尝试登录",
+      duration: 2500,
+    });
+    return;
+  }
+
   loading.value.login = true;
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
-      captcha_id: captcha.value.config.id!,
-      captcha_token: token,
-      captcha_server: server,
+      response: captcha.value.response!,
     }),
   );
   if (rs.status === 200) {

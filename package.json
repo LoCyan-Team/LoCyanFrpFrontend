@@ -14,6 +14,7 @@
   },
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",
+    "@cap.js/widget": "^0.1.30",
     "@chongying-star/vue-vaptcha": "^1.0.0-beta.1",
     "@nuxt/eslint": "1.9.0",
     "@nuxtjs/mdc": "0.18.0",
@@ -39,12 +40,9 @@
     "pinia": "^3.0.3",
     "pinia-plugin-persistedstate": "^4.5.0",
     "prettier": "^3.6.2",
-    "sockjs-client": "^1.6.1",
-    "stompjs": "^2.3.3",
     "unplugin-auto-import": "^20.2.0",
     "unplugin-vue-components": "^30.0.0",
     "vue": "^3.5.22",
-    "vue-router": "^4.6.3",
-    "vue-turnstile": "^1.0.11"
+    "vue-router": "^4.6.3"
   }
 }

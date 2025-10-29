@@ -4,42 +4,85 @@
     <n-card title="账户注册">
       <n-form ref="registerFormRef" :model="registerForm" :rules="formRules">
         <n-form-item label="用户名" path="username">
-          <n-input v-model:value="registerForm.username" type="text" placeholder="用户名" />
+          <n-input
+            v-model:value="registerForm.username"
+            type="text"
+            placeholder="用户名"
+          />
         </n-form-item>
         <n-form-item label="邮箱" path="email">
-          <n-input v-model:value="registerForm.email" type="text" placeholder="邮箱" />
-        </n-form-item>
-        <n-form-item>
-          <captcha-dialog @unsupported="
-            message.error(
-              '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-            )
-            " @callback="handleCaptchaResponse" />
+          <n-input
+            v-model:value="registerForm.email"
+            type="text"
+            placeholder="邮箱"
+          />
         </n-form-item>
         <n-form-item label="邮件验证代码" path="verifyCode">
-          <n-input-number v-model:value="registerForm.verifyCode" placeholder="邮件验证代码" clearable
-            style="width: 100%; margin-right: 1rem" />
-          <n-button type="success" secondary :loading="loading.emailCode" :disabled="loading.emailCode"
-            @click="handleEmailCodeSend">
+          <n-input-number
+            v-model:value="registerForm.verifyCode"
+            placeholder="邮件验证代码"
+            clearable
+            style="width: 100%; margin-right: 1rem"
+          />
+          <captcha-dialog
+            ref="captchaRef"
+            @unsupported="
+              message.error(
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+              )
+            "
+            @error="
+              (e) => {
+                message.error(e);
+                loading.emailCode = false;
+              }
+            "
+            @callback="handleEmailCodeSend"
+          />
+          <n-button
+            type="success"
+            secondary
+            :loading="loading.emailCode"
+            :disabled="loading.emailCode"
+            @click="handleEmailCodeSendButton"
+          >
             获取验证码
           </n-button>
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input v-model:value="registerForm.password" type="password" placeholder="密码"
-            @keydown.enter="handleRegister" />
+          <n-input
+            v-model:value="registerForm.password"
+            type="password"
+            placeholder="密码"
+            @keydown.enter="handleRegister"
+          />
         </n-form-item>
         <n-form-item label="确认密码" path="confirmPassword">
-          <n-input v-model:value="registerForm.confirmPassword" type="password" placeholder="确认密码"
-            @keydown.enter="handleRegister" />
+          <n-input
+            v-model:value="registerForm.confirmPassword"
+            type="password"
+            placeholder="确认密码"
+            @keydown.enter="handleRegister"
+          />
         </n-form-item>
         <n-el>
           <n-space style="margin-bottom: 1rem">
-            <n-button ghost text type="success" @click="() => navigateTo('/auth/login')">
+            <n-button
+              ghost
+              text
+              type="success"
+              @click="() => navigateTo('/auth/login')"
+            >
               已有账户？去登录
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" :loading="loading.register" :disabled="loading.register" @click="handleRegister">
+            <n-button
+              type="success"
+              :loading="loading.register"
+              :disabled="loading.register"
+              @click="handleRegister"
+            >
               注册
             </n-button>
           </n-space>
@@ -68,6 +111,9 @@ const notification = useNotification();
 const client = useApiClient({
   auth: false,
 });
+
+// 添加 captchaRef 引用
+const captchaRef: typeof CaptchaDialog | null = ref(null);
 
 const registerFormRef = ref<FormInst | null>(null);
 
@@ -163,33 +209,16 @@ const registerForm = ref<{
   confirmPassword: null,
 });
 
-const captcha = ref<{
-  response: string | null;
-}>({
-  response: "",
-});
-
-async function handleCaptchaResponse(response: string) {
-  captcha.value.response = response;
+async function handleEmailCodeSendButton() {
+  loading.value.emailCode = true;
+  captchaRef.value?.solve();
 }
 
-async function handleEmailCodeSend() {
-
-  const response = captcha.value.response;
-  if (response === null || response === "") {
-    notification.error({
-      title: "发送失败",
-      content: "请先完成验证码。",
-      duration: 2500,
-    });
-    return;
-  }
-
-  loading.value.emailCode = true;
+async function handleEmailCodeSend(captchaToken: string) {
   const rs = await client.execute(
     new GetEmailCode({
       email: registerForm.value.email!,
-      response: response,
+      response: captchaToken,
     }),
   );
   if (rs.status === 200) {

@@ -4,27 +4,53 @@
     <n-card title="账户登录">
       <n-form ref="loginFormRef" :model="loginForm" :rules="formRules">
         <n-form-item label="用户名 / 邮箱" path="user">
-          <n-input v-model:value="loginForm.user" type="text" placeholder="用户名或邮箱" />
+          <n-input
+            v-model:value="loginForm.user"
+            type="text"
+            placeholder="用户名或邮箱"
+          />
         </n-form-item>
         <n-form-item label="密码" path="password">
-          <n-input v-model:value="loginForm.password" type="password" placeholder="密码" @keydown.enter="handleLogin" />
+          <n-input
+            v-model:value="loginForm.password"
+            type="password"
+            placeholder="密码"
+            @keydown.enter="handleLoginButton"
+          />
         </n-form-item>
         <n-el>
-          <n-space style="margin-bottom: 1rem">
-            <!-- 因为 CapJS 特性，改为永久显示 -->
-            <captcha-dialog @unsupported="
+          <captcha-dialog
+            ref="captchaRef"
+            @unsupported="
               message.error(
                 '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
               )
-              " @callback="handleCaptchaResponse" />
-          </n-space>
+            "
+            @error="
+              (e) => {
+                message.error(e);
+                loading.login = false;
+              }
+            "
+            @callback="handleLogin"
+          />
           <n-space style="margin-bottom: 1rem">
-            <n-button ghost text type="success" @click="() => navigateTo('/auth/register')">
+            <n-button
+              ghost
+              text
+              type="success"
+              @click="() => navigateTo('/auth/register')"
+            >
               没有账户？去注册
             </n-button>
           </n-space>
           <n-space>
-            <n-button type="success" :loading="loading.login" :disabled="loading.login" @click="handleLogin">
+            <n-button
+              type="success"
+              :loading="loading.login"
+              :disabled="loading.login"
+              @click="handleLoginButton"
+            >
               登录
             </n-button>
           </n-space>
@@ -33,7 +59,12 @@
     </n-card>
     <br />
     <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button type="success" secondary style="width: 100%" @click="handlePasskeyLogin">
+      <n-button
+        type="success"
+        secondary
+        style="width: 100%"
+        @click="handlePasskeyLogin"
+      >
         通行密钥登录
       </n-button>
     </n-spin>
@@ -41,7 +72,11 @@
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">
-          <n-button type="info" circle @click="handleThirdPartyLogin(ThirdParty.QQ)">
+          <n-button
+            type="info"
+            circle
+            @click="handleThirdPartyLogin(ThirdParty.QQ)"
+          >
             <n-icon>
               <Qq />
             </n-icon>
@@ -90,6 +125,8 @@ const client = useApiClient({ auth: false });
 
 const route = useRoute();
 
+// 添加 captchaRef 引用
+const captchaRef: typeof CaptchaDialog | null = ref(null);
 
 const loginFormRef = ref<FormInst | null>(null);
 
@@ -134,33 +171,17 @@ const loginForm = ref<{
   password: null,
 });
 
-const captcha = ref<{
-  response: string | null;
-}>({
-  response: "",
-});
-
-async function handleCaptchaResponse(response: string) {
-  captcha.value.response = response;
+async function handleLoginButton() {
+  loading.value.login = true;
+  captchaRef.value?.solve();
 }
 
-async function handleLogin() {
-
-  if (captcha.value.response === null || captcha.value.response === "") {
-    notification.error({
-      title: "登录失败",
-      content: "请完成验证码验证后再尝试登录",
-      duration: 2500,
-    });
-    return;
-  }
-
-  loading.value.login = true;
+async function handleLogin(captchaToken: string) {
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
-      response: captcha.value.response!,
+      response: captchaToken,
     }),
   );
   if (rs.status === 200) {

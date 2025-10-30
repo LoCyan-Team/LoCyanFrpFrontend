@@ -15,10 +15,25 @@
             v-model:value="loginForm.password"
             type="password"
             placeholder="密码"
-            @keydown.enter="loadCaptcha"
+            @keydown.enter="handleLoginButton"
           />
         </n-form-item>
         <n-el>
+          <captcha-dialog
+            ref="captchaRef"
+            @unsupported="
+              message.error(
+                '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
+              )
+            "
+            @error="
+              (e) => {
+                message.error(e);
+                loading.login = false;
+              }
+            "
+            @callback="handleLogin"
+          />
           <n-space style="margin-bottom: 1rem">
             <n-button
               ghost
@@ -34,27 +49,10 @@
               type="success"
               :loading="loading.login"
               :disabled="loading.login"
-              @click="loadCaptcha"
+              @click="handleLoginButton"
             >
               登录
             </n-button>
-            <captcha-dialog
-              :show="captcha.show"
-              :type="captcha.config.type"
-              :vaptcha-scene="2"
-              @error="
-                (code: unknown) => {
-                  message.error('发生错误: ' + code);
-                  captcha.show = false;
-                }
-              "
-              @unsupported="
-                message.error(
-                  '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
-                )
-              "
-              @callback="handleLogin"
-            />
           </n-space>
         </n-el>
       </n-form>
@@ -96,7 +94,6 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { GetCaptcha, type GetCaptchaResponse } from "@/api/src/api/captcha.get";
 import {
   PostLogin,
   type PostLoginResponse,
@@ -109,10 +106,11 @@ import {
   GetLogin as GetQqLogin,
   type GetLoginResponse as GetQqLoginResponse,
 } from "@/api/src/api/auth/third-party/qq/login.get";
+import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({
   needLogin: false,
-  redirectLogined: true,
+  redirectLoggedIn: true,
 });
 
 useHead({
@@ -127,6 +125,8 @@ const userStore = useUserStore();
 const client = useApiClient({ auth: false });
 
 const route = useRoute();
+
+const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
 const loginFormRef = ref<FormInst | null>(null);
 
@@ -171,56 +171,34 @@ const loginForm = ref<{
   password: null,
 });
 
-const captcha = ref<{
-  show: boolean;
-  config: {
-    id: string | null;
-    type: string | null;
-  };
-}>({
-  show: false,
-  config: {
-    id: null,
-    type: null,
-  },
-});
-
-async function loadCaptcha() {
+async function handleLoginButton() {
   loading.value.login = true;
-  const rs = await client.execute<GetCaptchaResponse>(
-    new GetCaptcha({ action: "login" }),
-  );
-  if (rs.status === 200) {
-    captcha.value.config.id = rs.data.id;
-    captcha.value.config.type = rs.data.type;
-    captcha.value.show = true;
-  } else message.error(rs.message);
-  loading.value.login = false;
+  captchaRef?.value?.solve();
 }
 
-async function handleLogin(token: string, server?: string) {
-  captcha.value.show = false;
-  loading.value.login = true;
+async function handleLogin(captchaToken: string) {
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
-      captcha_id: captcha.value.config.id!,
-      captcha_token: token,
-      captcha_server: server,
+      captcha_token: captchaToken,
     }),
   );
   if (rs.status === 200) {
-    mainStore.token = rs.data.token;
-    mainStore.userId = rs.data.user_id;
-    userStore.frpToken = rs.data.frp_token;
-    userStore.username = rs.data.user_info.username;
-    userStore.email = rs.data.user_info.email;
-    userStore.group = rs.data.user_info.group;
-    userStore.limit = rs.data.user_info.limit;
-    userStore.traffic = rs.data.user_info.traffic;
-    userStore.avatar = rs.data.user_info.avatar;
-    userStore.registerTime = rs.data.user_info.register_time;
+    mainStore.$patch({
+      token: rs.data.token,
+      userId: rs.data.user_id,
+    });
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+      username: rs.data.user_info.username,
+      email: rs.data.user_info.email,
+      group: rs.data.user_info.group,
+      limit: rs.data.user_info.limit,
+      traffic: rs.data.user_info.traffic,
+      avatar: rs.data.user_info.avatar,
+      registerTime: rs.data.user_info.register_time,
+    });
 
     notification.success({
       title: "登录成功",
@@ -239,16 +217,20 @@ async function handlePasskeyLogin() {
     new PostWebauthnLogin({ credential: "" }),
   );
   if (rs.status === 200) {
-    mainStore.token = rs.data.token;
-    mainStore.userId = rs.data.user_id;
-    userStore.frpToken = rs.data.frp_token;
-    userStore.username = rs.data.user_info.username;
-    userStore.email = rs.data.user_info.email;
-    userStore.group = rs.data.user_info.group;
-    userStore.limit = rs.data.user_info.limit;
-    userStore.traffic = rs.data.user_info.traffic;
-    userStore.avatar = rs.data.user_info.avatar;
-    userStore.registerTime = rs.data.user_info.register_time;
+    mainStore.$patch({
+      token: rs.data.token,
+      userId: rs.data.user_id,
+    });
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+      username: rs.data.user_info.username,
+      email: rs.data.user_info.email,
+      group: rs.data.user_info.group,
+      limit: rs.data.user_info.limit,
+      traffic: rs.data.user_info.traffic,
+      avatar: rs.data.user_info.avatar,
+      registerTime: rs.data.user_info.register_time,
+    });
 
     notification.success({
       title: "登录成功",

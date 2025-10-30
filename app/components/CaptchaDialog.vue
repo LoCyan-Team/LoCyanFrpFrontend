@@ -1,90 +1,71 @@
 <template>
-  <!-- Turnstile -->
-  <n-modal :show="showTurnstileInstance" :mask-closable="false">
-    <n-card title="请完成人机验证" style="min-width: 300px; width: min-content">
-      <vue-turnstile
-        v-model="turnstileToken"
-        :site-key="env.turnstileSiteKey"
-        @error="error"
-        @unsupported="unsupported"
-      />
-    </n-card>
-  </n-modal>
-  <!-- VAPTCHA -->
-  <n-modal :show="showVaptchaInstance" :mask-closable="false">
-    <n-card title="请完成人机验证" style="min-width: 300px; width: min-content">
-      <vaptcha-button
-        v-model="vaptchaToken"
-        v-model:server="vaptchaServer"
-        v-model:scene="props.vaptchaScene"
-        :vid="env.vaptchaVid"
-      />
-    </n-card>
-  </n-modal>
+  <!-- CAPJS invisible mode -->
+  <client-only>
+    <cap-widget
+      v-if="isClient"
+      style="display: none"
+      id="cap"
+      @solve="callback"
+    />
+  </client-only>
 </template>
 
 <script setup lang="ts">
-import VueTurnstile from "vue-turnstile";
-import "@chongying-star/vue-vaptcha/style.css";
-import { VaptchaButton } from "@chongying-star/vue-vaptcha";
-import { ref, watch } from "vue";
+import type { Cap, SolveResult } from "@cap.js/widget";
+
+let instance: Cap | null = null;
+const isClient = ref(false);
 
 const runtimeConfig = useRuntimeConfig();
 
 const env = {
-  turnstileSiteKey: runtimeConfig.public.turnstileSitekey,
-  vaptchaVid: runtimeConfig.public.vaptchaVid,
+  endpoint: runtimeConfig.public.capJsEndpoint,
+  siteKey: runtimeConfig.public.capJsSiteKey,
 };
-
-const props = defineProps<{
-  show: boolean;
-  type: string | null;
-  vaptchaScene?: number;
-}>();
 
 const emit = defineEmits<{
   (e: "error", error: string): void;
   (e: "unsupported"): void;
-  (e: "callback", token: string, server?: string): void;
+  (e: "callback", token: string): void;
 }>();
 
-let showTurnstileInstance = ref(false),
-  showVaptchaInstance = ref(false);
+function callback(event: SolveResult) {
+  if (event.success) {
+    const token = event.token;
+    emit("callback", token);
+  } else {
+    emit("error", "Captcha solve failed.");
+  }
+}
 
-watch(
-  () => props.show,
-  (value, _) => {
-    if (value && props.type === "turnstile") showTurnstileInstance.value = true;
-    if (value && props.type === "vaptcha") showVaptchaInstance.value = true;
-    if (!value) {
-      showTurnstileInstance.value = false;
-      showVaptchaInstance.value = false;
+onMounted(async () => {
+  isClient.value = true;
+  try {
+    const module = await import("@cap.js/widget");
+    instance = new module.default({
+      apiEndpoint: `${env.endpoint}/${env.siteKey}/`,
+    });
+  } catch (e) {
+    console.error(e);
+    emit("unsupported");
+  }
+});
+
+// solve只负责触发cap的solve，返回由@callback返回
+const solve = async () => {
+  if (instance) {
+    try {
+      const event = await instance.solve();
+      callback(event);
+    } catch (e) {
+      emit("error", "Error happend while solving captcha.");
     }
-  },
-);
+  } else {
+    emit("error", "Instance not loaded.");
+  }
+};
 
-let turnstileToken = ref("");
-let vaptchaToken = ref(""),
-  vaptchaServer = ref("");
-
-watch(turnstileToken, (token, _) => {
-  callback(token, undefined);
+defineExpose({
+  solve,
 });
-watch(vaptchaToken, (token, _) => {
-  callback(token, vaptchaServer.value);
-});
-
-function callback(token: string, server?: string) {
-  emit("callback", token, server);
-}
-
-function unsupported() {
-  emit("unsupported");
-}
-
-function error(err: unknown) {
-  showTurnstileInstance.value = false;
-  showVaptchaInstance.value = false;
-  emit("error", err);
-}
 </script>

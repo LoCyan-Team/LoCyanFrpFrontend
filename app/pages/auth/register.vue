@@ -24,32 +24,30 @@
             clearable
             style="width: 100%; margin-right: 1rem"
           />
-          <n-button
-            type="success"
-            secondary
-            :loading="loading.emailCode"
-            :disabled="loading.emailCode"
-            @click="loadCaptcha"
-          >
-            获取验证码
-          </n-button>
           <captcha-dialog
-            :show="captcha.show"
-            :type="captcha.config.type"
-            :vaptcha-scene="3"
-            @error="
-              (code: unknown) => {
-                message.error('发生错误: ' + code);
-                captcha.show = false;
-              }
-            "
+            ref="captchaRef"
             @unsupported="
               message.error(
                 '您的浏览器不支持加载验证码，请更换或升级浏览器后重试',
               )
             "
+            @error="
+              (e) => {
+                message.error(e);
+                loading.emailCode = false;
+              }
+            "
             @callback="handleEmailCodeSend"
           />
+          <n-button
+            type="success"
+            secondary
+            :loading="loading.emailCode"
+            :disabled="loading.emailCode"
+            @click="handleEmailCodeSendButton"
+          >
+            获取验证码
+          </n-button>
         </n-form-item>
         <n-form-item label="密码" path="password">
           <n-input
@@ -95,13 +93,13 @@
 </template>
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
-import { GetCaptcha } from "@/api/src/api/captcha.get";
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
+import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({
   needLogin: false,
-  redirectLogined: true,
+  redirectLoggedIn: true,
 });
 
 useHead({
@@ -114,6 +112,8 @@ const notification = useNotification();
 const client = useApiClient({
   auth: false,
 });
+
+const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
 const registerFormRef = ref<FormInst | null>(null);
 
@@ -209,40 +209,16 @@ const registerForm = ref<{
   confirmPassword: null,
 });
 
-const captcha = ref<{
-  show: boolean;
-  config: {
-    id: string | null;
-    type: string | null;
-  };
-}>({
-  show: false,
-  config: {
-    id: null,
-    type: null,
-  },
-});
-
-async function loadCaptcha() {
+async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
-  const rs = await client.execute(new GetCaptcha({ action: "register" }));
-  if (rs.status === 200) {
-    captcha.value.config.id = rs.data.id;
-    captcha.value.config.type = rs.data.type;
-    captcha.value.show = true;
-  } else message.error(rs.message);
-  loading.value.emailCode = false;
+  captchaRef?.value?.solve();
 }
 
-async function handleEmailCodeSend(token: string, server?: string) {
-  captcha.value.show = false;
-  loading.value.emailCode = true;
+async function handleEmailCodeSend(captchaToken: string) {
   const rs = await client.execute(
     new GetEmailCode({
       email: registerForm.value.email!,
-      captcha_id: captcha.value.config.id!,
-      captcha_token: token,
-      captcha_server: server,
+      captcha_token: captchaToken,
     }),
   );
   if (rs.status === 200) {
@@ -287,6 +263,7 @@ async function handleRegister() {
   align-items: center;
   padding-block: 0.5rem;
 }
+
 @media screen and (max-width: 500px) {
   .register-box {
     margin-inline: 0.5rem;

@@ -21,7 +21,7 @@ export default defineNuxtConfig({
   future: {
     compatibilityVersion: 4,
   },
-  compatibilityDate: '2025-10-16',
+  compatibilityDate: "2025-10-16",
   devtools: { enabled: true },
   // ssr: false,
   nitro: {
@@ -41,12 +41,21 @@ export default defineNuxtConfig({
   runtimeConfig: {
     public: {
       devMode: process.env.NODE_ENV === "development",
-      turnstileSitekey: "",
-      vaptchaVid: "",
+      capJsEndpoint: "",
+      capJsSiteKey: "",
       git: {
         branch: GIT_BRANCH,
         commitHash: GIT_COMMIT_HASH,
         lastCommitDate: GIT_LAST_COMMIT_DATE,
+      },
+    },
+  },
+  vue: {
+    compilerOptions: {
+      isCustomElement: (tag) => {
+        const customElements = ["cap-widget"];
+
+        return customElements.includes(tag);
       },
     },
   },

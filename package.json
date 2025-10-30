@@ -10,7 +10,8 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "@types/git-rev-sync": "^2.0.2"
   },
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",

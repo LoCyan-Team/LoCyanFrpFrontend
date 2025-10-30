@@ -106,10 +106,11 @@ import {
   GetLogin as GetQqLogin,
   type GetLoginResponse as GetQqLoginResponse,
 } from "@/api/src/api/auth/third-party/qq/login.get";
+import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({
   needLogin: false,
-  redirectLogined: true,
+  redirectLoggedIn: true,
 });
 
 useHead({
@@ -125,8 +126,7 @@ const client = useApiClient({ auth: false });
 
 const route = useRoute();
 
-// 添加 captchaRef 引用
-const captchaRef: typeof CaptchaDialog | null = ref(null);
+const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
 const loginFormRef = ref<FormInst | null>(null);
 
@@ -173,7 +173,7 @@ const loginForm = ref<{
 
 async function handleLoginButton() {
   loading.value.login = true;
-  captchaRef.value?.solve();
+  captchaRef?.value?.solve();
 }
 
 async function handleLogin(captchaToken: string) {
@@ -181,20 +181,24 @@ async function handleLogin(captchaToken: string) {
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
-      response: captchaToken,
+      captcha_token: captchaToken,
     }),
   );
   if (rs.status === 200) {
-    mainStore.token = rs.data.token;
-    mainStore.userId = rs.data.user_id;
-    userStore.frpToken = rs.data.frp_token;
-    userStore.username = rs.data.user_info.username;
-    userStore.email = rs.data.user_info.email;
-    userStore.group = rs.data.user_info.group;
-    userStore.limit = rs.data.user_info.limit;
-    userStore.traffic = rs.data.user_info.traffic;
-    userStore.avatar = rs.data.user_info.avatar;
-    userStore.registerTime = rs.data.user_info.register_time;
+    mainStore.$patch({
+      token: rs.data.token,
+      userId: rs.data.user_id,
+    });
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+      username: rs.data.user_info.username,
+      email: rs.data.user_info.email,
+      group: rs.data.user_info.group,
+      limit: rs.data.user_info.limit,
+      traffic: rs.data.user_info.traffic,
+      avatar: rs.data.user_info.avatar,
+      registerTime: rs.data.user_info.register_time,
+    });
 
     notification.success({
       title: "登录成功",
@@ -213,16 +217,20 @@ async function handlePasskeyLogin() {
     new PostWebauthnLogin({ credential: "" }),
   );
   if (rs.status === 200) {
-    mainStore.token = rs.data.token;
-    mainStore.userId = rs.data.user_id;
-    userStore.frpToken = rs.data.frp_token;
-    userStore.username = rs.data.user_info.username;
-    userStore.email = rs.data.user_info.email;
-    userStore.group = rs.data.user_info.group;
-    userStore.limit = rs.data.user_info.limit;
-    userStore.traffic = rs.data.user_info.traffic;
-    userStore.avatar = rs.data.user_info.avatar;
-    userStore.registerTime = rs.data.user_info.register_time;
+    mainStore.$patch({
+      token: rs.data.token,
+      userId: rs.data.user_id,
+    });
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+      username: rs.data.user_info.username,
+      email: rs.data.user_info.email,
+      group: rs.data.user_info.group,
+      limit: rs.data.user_info.limit,
+      traffic: rs.data.user_info.traffic,
+      avatar: rs.data.user_info.avatar,
+      registerTime: rs.data.user_info.register_time,
+    });
 
     notification.success({
       title: "登录成功",

@@ -89,10 +89,11 @@ import {
   type GetPasswordResponse as GetEmailCodeResponse,
 } from "@/api/src/api/email/password.get";
 import { PutPassword } from "@/api/src/api/user/password.put";
+import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({
   needLogin: false,
-  redirectLogined: true,
+  redirectLoggedIn: true,
 });
 
 useHead({
@@ -106,7 +107,7 @@ const client = useApiClient({
   auth: false,
 });
 
-const captchaRef: typeof CaptchaDialog | null = ref(null);
+const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
 const resetPasswordFormRef = ref<FormInst | null>(null);
 
@@ -170,7 +171,7 @@ const data: {
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
-  captchaRef.value?.solve();
+  captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {

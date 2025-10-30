@@ -4,7 +4,7 @@ import { Method } from "../../type/method";
 export class GetRegister extends API {
   constructor(params: {
     email: string;
-    response: string;
+    captcha_token: string;
   }) {
     super("/email/register", Method.GET, params, {});
   }

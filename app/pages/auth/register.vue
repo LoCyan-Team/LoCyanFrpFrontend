@@ -95,10 +95,11 @@
 import type { FormInst, FormItemRule } from "naive-ui";
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
+import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({
   needLogin: false,
-  redirectLogined: true,
+  redirectLoggedIn: true,
 });
 
 useHead({
@@ -112,8 +113,7 @@ const client = useApiClient({
   auth: false,
 });
 
-// 添加 captchaRef 引用
-const captchaRef: typeof CaptchaDialog | null = ref(null);
+const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
 const registerFormRef = ref<FormInst | null>(null);
 
@@ -211,14 +211,14 @@ const registerForm = ref<{
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
-  captchaRef.value?.solve();
+  captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {
   const rs = await client.execute(
     new GetEmailCode({
       email: registerForm.value.email!,
-      response: captchaToken,
+      captcha_token: captchaToken,
     }),
   );
   if (rs.status === 200) {

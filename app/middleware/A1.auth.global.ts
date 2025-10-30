@@ -4,7 +4,7 @@ export default defineNuxtRouteMiddleware((to) => {
   const pageStore = usePageStore();
 
   if (to.meta.needLogin === false) {
-    if (to.meta.redirectLogined === true && useLoggedIn()) {
+    if (to.meta.redirectLoggedIn === true && useLoggedIn()) {
       pageStore.setSidebarMode("logined");
       return navigateTo({
         path: "/dashboard",

@@ -2,7 +2,7 @@ import { useMainStore } from "~/store/main";
 import { Response } from "@/api/src/type/response";
 import { Method } from "@/api/src/type/method";
 import type { API } from "@/api/src/type/api";
-import { FetchError } from "ofetch";
+import { FetchError, type FetchOptions } from "ofetch";
 
 // ApiUrlConfig
 export interface ApiUrlConfig {
@@ -42,7 +42,6 @@ export class Client {
 
   constructor(
     token?: string,
-    timeout = 10000,
     apiUrlConfig: ApiUrlConfig = new DefaultApiUrlConfig(),
   ) {
     this.token = token;
@@ -61,7 +60,7 @@ export class Client {
       headers: {
         ...api.headers,
       },
-      server: false,
+      // server: false,
     };
 
     // 添加 Authorization header
@@ -94,7 +93,7 @@ export class Client {
       result = await $fetch<T>(api.endpoint, {
         ...requestConfig,
         baseURL: this.currentBaseURL,
-      });
+      } as never);
       return this.buildResponse(result);
     } catch (error: unknown) {
       // 捕获 FetchError
@@ -106,7 +105,7 @@ export class Client {
             result = await $fetch<T>(api.endpoint, {
               ...requestConfig,
               baseURL: this.currentBaseURL,
-            });
+            } as never);
             return this.buildResponse(result);
           } catch (retryError: unknown) {
             return this.buildResponse(retryError);
@@ -120,7 +119,7 @@ export class Client {
     const params = new URLSearchParams();
     for (const key in data) {
       if (Object.prototype.hasOwnProperty.call(data, key)) {
-        params.append(key, data[key]);
+        params.append(key, data[key] as string);
       }
     }
     return params.toString();
@@ -142,10 +141,10 @@ export class Client {
       message = response.message;
       data = null;
     } else {
-      response as RawResponse<typeof response.data>;
-      status = response.status;
-      message = response.message;
-      data = response.data;
+      const rawResponse = response as RawResponse<T>;
+      status = rawResponse.status;
+      message = rawResponse.message;
+      data = rawResponse.data;
     }
     const finalData: T = data ?? ({} as T);
 

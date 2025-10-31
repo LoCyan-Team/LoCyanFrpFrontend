@@ -101,6 +101,7 @@ async function handleSign() {
     data.value.totalGetTraffic += rs.data.get_traffic;
     data.value.totalSign++;
     data.value.lastSign = dayjs().format("L LT");
+    // noinspection ES6MissingAwait
     loadImageAsBlob();
     dialog.success({
       title: "签到成功",
@@ -120,7 +121,10 @@ onMounted(async () => {
     data.value.totalSign = rs.data.total_sign;
     data.value.totalGetTraffic = rs.data.total_get_traffic;
     data.value.lastSign = dayjs(rs.data.last_sign).format("L LT");
-    if (data.value.signed) loadImageAsBlob();
+    if (data.value.signed) {
+      // noinspection ES6MissingAwait
+      loadImageAsBlob();
+    }
   } else message.error(rs.message);
 
   loading.value = false;

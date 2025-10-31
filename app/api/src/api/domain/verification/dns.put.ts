@@ -6,3 +6,8 @@ export class PutDns extends API {
     super("/domain/verification/dns", Method.PUT, params, {});
   }
 }
+
+export interface PutDnsResponse {
+  record_type: string
+  record_data: string
+}

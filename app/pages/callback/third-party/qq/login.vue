@@ -47,16 +47,20 @@ onMounted(async () => {
     }),
   );
   if (rs.status === 200) {
-    mainStore.token = rs.data.token;
-    mainStore.userId = rs.data.user_id;
-    userStore.frpToken = rs.data.frp_token;
-    userStore.username = rs.data.user_info.username;
-    userStore.email = rs.data.user_info.email;
-    userStore.group = rs.data.user_info.group;
-    userStore.limit = rs.data.user_info.limit;
-    userStore.traffic = rs.data.user_info.traffic;
-    userStore.avatar = rs.data.user_info.avatar;
-    userStore.registerTime = rs.data.user_info.register_time;
+    mainStore.$patch({
+      token: rs.data.token,
+      userId: rs.data.user_id,
+    });
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+      username: rs.data.user_info.username,
+      email: rs.data.user_info.email,
+      group: rs.data.user_info.group,
+      limit: rs.data.user_info.limit,
+      traffic: rs.data.user_info.traffic,
+      avatar: rs.data.user_info.avatar,
+      registerTime: rs.data.user_info.register_time,
+    });
 
     notification.success({
       title: "登录成功",

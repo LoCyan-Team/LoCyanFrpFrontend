@@ -6,3 +6,8 @@ export class PostSign extends API {
     super("/sign", Method.POST, params, {});
   }
 }
+
+export interface PostSignResponse {
+  get_traffic: number;
+  first_sign: boolean;
+}

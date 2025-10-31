@@ -3,8 +3,8 @@
   <client-only>
     <cap-widget
       v-if="isClient"
-      style="display: none"
       id="cap"
+      style="display: none"
       @solve="callback"
     />
   </client-only>
@@ -24,9 +24,8 @@ const env = {
 };
 
 const emit = defineEmits<{
-  (e: "error", error: string): void;
+  (e: "error" | "callback", errorOrToken: string): void;
   (e: "unsupported"): void;
-  (e: "callback", token: string): void;
 }>();
 
 function callback(event: SolveResult) {
@@ -58,7 +57,8 @@ const solve = async () => {
       const event = await instance.solve();
       callback(event);
     } catch (e) {
-      emit("error", "Error happend while solving captcha.");
+      console.error(e);
+      emit("error", "Error happened while solving captcha.");
     }
   } else {
     emit("error", "Instance not loaded.");

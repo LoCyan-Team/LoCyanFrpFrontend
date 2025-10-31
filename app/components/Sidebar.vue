@@ -80,7 +80,7 @@ const guestMenuOptions: MenuOption[] = [
   },
 ];
 
-const loginedMenuOptions: MenuOption[] = [
+const loggedInMenuOptions: MenuOption[] = [
   {
     path: "/dashboard",
     label: "仪表盘",
@@ -243,8 +243,8 @@ const loginedMenuOptions: MenuOption[] = [
 
 const menuOptions = computed(() => {
   switch (pageSidebarMode.value) {
-    case "logined":
-      return loginedMenuOptions;
+    case "loggedIn":
+      return loggedInMenuOptions;
     case "guest":
     default:
       return guestMenuOptions;
@@ -257,7 +257,7 @@ const collapsed = ref<boolean>(true);
 const route = useRoute();
 
 function handleUpdateValue(_: unknown, item: MenuOption) {
-  computeActiveKey(menuOptions.value, item.path);
+  computeActiveKey(menuOptions.value, item.path as string);
   navigateTo(item.path as string);
 }
 

@@ -57,7 +57,7 @@
                       </n-button>
                     </n-space>
                   </n-tab-pane>
-                  <n-tab-pane name="recieve" tab="赠送">
+                  <n-tab-pane name="presentation" tab="赠送">
                     <n-form
                       :model="verificationForm"
                       label-width="auto"

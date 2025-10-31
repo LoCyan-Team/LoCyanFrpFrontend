@@ -1042,6 +1042,7 @@ async function buildEditNodeSelectOptions() {
 
 onMounted(async () => {
   await getTunnels();
+  // noinspection ES6MissingAwait
   getNodes();
 });
 

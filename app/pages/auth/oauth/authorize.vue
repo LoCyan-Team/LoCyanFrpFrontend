@@ -62,7 +62,7 @@
         <n-text>{{ appData.description ?? "无介绍信息" }}</n-text>
         <n-divider />
         <n-text>授权成功，一次性代码为:</n-text>
-        <n-code @click="$copyToClipboard(result.code)" :code="result.code" />
+        <n-code :code="result.code" @click="$copyToClipboard(result.code)" />
       </n-card>
       <n-card v-else title="发生错误">
         <n-text>无效请求，请检查 URL 参数</n-text>

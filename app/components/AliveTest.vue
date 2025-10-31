@@ -28,13 +28,15 @@ async function aliveTest() {
   );
   switch (rs.status) {
     case 200:
-      userStore.traffic = rs.data.traffic;
-      userStore.limit = {
-        tunnel: rs.data.limit.tunnel,
-        inbound: rs.data.limit.inbound,
-        outbound: rs.data.limit.outbound,
-      };
-      userStore.email = rs.data.email;
+      userStore.$patch({
+        traffic: rs.data.traffic,
+        limit: {
+          tunnel: rs.data.limit.tunnel,
+          inbound: rs.data.limit.inbound,
+          outbound: rs.data.limit.outbound,
+        },
+        email: rs.data.email,
+      });
       break;
     case 401:
       mainStore.$reset();

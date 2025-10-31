@@ -105,7 +105,7 @@
           </n-spin>
         </n-tab-pane>
 
-        <n-tab-pane name="submited" tab="认证中域名">
+        <n-tab-pane name="submitted" tab="认证中域名">
           <n-spin :show="loading.list.verification">
             <n-space vertical>
               <n-alert type="warning">
@@ -241,9 +241,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetDomains } from "@/api/src/api/domains.get";
+import { GetDomains, type GetDomainsResponse } from "@/api/src/api/domains.get";
 import { GetVerifications } from "@/api/src/api/domain/verifications.get";
-import { PutDns as PutDnsVerification } from "@/api/src/api/domain/verification/dns.put";
+import {
+  PutDns as PutDnsVerification,
+  type PutDnsResponse as PutDnsVerificationResponse,
+} from "@/api/src/api/domain/verification/dns.put";
 import { PostDns as PostDnsVerification } from "@/api/src/api/domain/verification/dns.post";
 
 const mainStore = useMainStore();
@@ -333,7 +336,7 @@ const domainBatchSelected = ref<number[]>([]);
 
 async function handleSubmitDomain() {
   loading.value.submit = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PutDnsVerificationResponse>(
     new PutDnsVerification({
       user_id: mainStore.userId!,
       domain: formData.value.domain!,
@@ -393,7 +396,7 @@ function handleDomainSelectAll(val: boolean) {
 
 async function getDomains() {
   loading.value.list.domain = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetDomainsResponse>(
     new GetDomains({
       user_id: mainStore.userId!,
       page: domainPage.value.current,

@@ -6,3 +6,14 @@ export class GetDomains extends API {
     super("/domains", Method.GET, params, {});
   }
 }
+
+export interface GetDomainsResponse {
+  "list": {
+      "id": number,
+      "domain": string,
+      "icp_id": number | null
+    }[],
+  "pagination": {
+    "count": number
+  }
+}

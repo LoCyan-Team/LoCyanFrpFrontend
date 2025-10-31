@@ -5,7 +5,7 @@ export default defineNuxtRouteMiddleware((to) => {
 
   if (to.meta.needLogin === false) {
     if (to.meta.redirectLoggedIn === true && useLoggedIn()) {
-      pageStore.setSidebarMode("logined");
+      pageStore.setSidebarMode("loggedIn");
       return navigateTo({
         path: "/dashboard",
       });
@@ -27,5 +27,5 @@ export default defineNuxtRouteMiddleware((to) => {
         },
       });
     }
-  } else pageStore.setSidebarMode("logined");
+  } else pageStore.setSidebarMode("loggedIn");
 });

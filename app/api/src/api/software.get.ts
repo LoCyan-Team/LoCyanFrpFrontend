@@ -11,7 +11,7 @@ export interface GetSoftwareResponse {
   list: {
     id: number;
     name: string;
-    tags: Array<{ type: string, name: string }>
+    tags: { type: string, name: string }[]
   }[];
   pagination: {
     count: number;

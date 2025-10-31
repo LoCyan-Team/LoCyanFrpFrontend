@@ -49,9 +49,8 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetSign } from "@/api/src/api/sign.get";
-import { PostSign } from "@/api/src/api/sign.post";
-import type { GetSignResponse, PostSignResponse } from "@/api/src/type/sign";
+import { GetSign, type GetSignResponse } from "@/api/src/api/sign.get";
+import { PostSign, type PostSignResponse } from "@/api/src/api/sign.post";
 
 useHead({
   title: "签到",

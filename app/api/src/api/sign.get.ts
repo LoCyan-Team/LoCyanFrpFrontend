@@ -6,3 +6,10 @@ export class GetSign extends API {
     super("/sign", Method.GET, params, {});
   }
 }
+
+export interface GetSignResponse {
+  status: boolean;
+  total_sign: number;
+  total_get_traffic: number;
+  last_sign: string;
+}

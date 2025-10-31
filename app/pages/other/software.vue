@@ -1,16 +1,16 @@
 <template>
-  <n-el class="container">
-    <n-card title="软件下载" class="full-width-card">
-      <n-space vertical size="large">
-        <n-form-item label="选择软件">
-          <n-select
-            v-model:value="selectedSoftware"
-            :options="softwareOptions"
-            placeholder="请选择要下载的软件"
-          />
-        </n-form-item>
+  <page-content title="软件下载">
+    <n-space vertical>
+      <n-card>
+        <n-form>
+          <n-form-item label="选择软件">
+            <n-select
+              v-model:value="selectedSoftware"
+              :options="softwareOptions"
+              placeholder="请选择要下载的软件"
+            />
+          </n-form-item>
 
-        <n-el v-if="currentSoftware && currentSoftware.versions">
           <n-form-item label="选择版本">
             <n-select
               v-model:value="selectedVersion"
@@ -34,41 +34,37 @@
               placeholder="请选择架构"
             />
           </n-form-item>
-        </n-el>
-      </n-space>
-    </n-card>
+        </n-form>
+      </n-card>
 
-    <n-card
-      v-if="selectedSoftware"
-      title="软件介绍"
-      class="full-width-card info-card"
-    >
-      <n-space vertical size="medium">
-        <n-el v-if="currentSoftware">
-          <n-el tag="h3">{{ currentSoftware.label }}</n-el>
-          <n-el tag="p">{{ currentSoftware.description }}</n-el>
-          <n-space>
-            <n-tag
-              v-for="tag in currentSoftware.tags"
-              :key="tag.text"
-              :type="tag.type"
+      <n-card v-if="selectedSoftware">
+        <n-space vertical size="medium">
+          <n-el v-if="currentSoftware">
+            <n-el tag="h3">{{ currentSoftware.label }}</n-el>
+            <n-el tag="p">{{ currentSoftware.description }}</n-el>
+            <n-space>
+              <n-tag
+                v-for="tag in currentSoftware.tags"
+                :key="tag.text"
+                :type="tag.type"
+              >
+                {{ tag.text }}
+              </n-tag>
+            </n-space>
+            <n-divider />
+            <n-el tag="h4">下载方式</n-el>
+            <n-button
+              type="primary"
+              :disabled="!canDownload"
+              @click="handleDownload"
             >
-              {{ tag.text }}
-            </n-tag>
-          </n-space>
-          <n-divider />
-          <n-el tag="h4">下载方式</n-el>
-          <n-button
-            type="primary"
-            :disabled="!canDownload"
-            @click="handleDownload"
-          >
-            下载
-          </n-button>
-        </n-el>
-      </n-space>
-    </n-card>
-  </n-el>
+              下载
+            </n-button>
+          </n-el>
+        </n-space>
+      </n-card>
+    </n-space>
+  </page-content>
 </template>
 
 <script setup>
@@ -220,34 +216,3 @@ const handleDownload = () => {
   }
 };
 </script>
-
-<style scoped>
-.container {
-  padding: 20px;
-}
-
-.full-width-card {
-  width: 100%;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-}
-
-.info-card {
-  margin-top: 20px;
-}
-
-.info-card h3 {
-  margin: 0 0 8px 0;
-  color: #333;
-}
-
-.info-card h4 {
-  margin: 8px 0;
-  color: #333;
-}
-
-.info-card p {
-  margin: 0 0 8px 0;
-  color: #666;
-  line-height: 1.5;
-}
-</style>

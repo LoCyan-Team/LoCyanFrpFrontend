@@ -5,7 +5,7 @@
       "name": "nuxt-app",
       "dependencies": {
         "@bg-dev/nuxt-naiveui": "2.0.0",
-        "@cap.js/widget": "^0.1.30",
+        "@cap.js/widget": "^0.1.31",
         "@chongying-star/vue-vaptcha": "^1.0.0-beta.1",
         "@nuxt/eslint": "1.9.0",
         "@nuxtjs/mdc": "0.18.0",
@@ -109,7 +109,7 @@
 
     "@bg-dev/nuxt-naiveui": ["@bg-dev/nuxt-naiveui@2.0.0", "", { "dependencies": { "@ant-design/colors": "^7.2.1", "@iconify/vue": "^5.0.0", "@nuxt/kit": "^4.1.2", "defu": "^6.1.4", "js-cookie": "^3.0.5", "naive-ui": "^2.43.1" } }, "sha512-DbBiQ9GUMbywjBbtI2Al+irNrsEOtuo9msjTIpY88R9njrDhadEI492Cv8iJ2j5Cw3l5ieRfF1svo6YCwVRflQ=="],
 
-    "@cap.js/widget": ["@cap.js/widget@0.1.30", "", {}, "sha512-qvDSzMal7LL/wGMtSAitvOa2tu9Zw4xeceOnSk9Csfw6Odk+UdGwRnsyt0ZzocDPrP7gPrV0fnAU4eNmHmXDKg=="],
+    "@cap.js/widget": ["@cap.js/widget@0.1.31", "", {}, "sha512-v4CJP1ts0W1l/fX6JS9ZmycEWJTeZliTZ6WmaXvPwMB40RGtQ6a73C2+1XLGh9FPAdzeiNNFpSHCrWH5os5sAQ=="],
 
     "@chongying-star/vaptcha-typescript": ["@chongying-star/vaptcha-typescript@1.1.0", "", {}, "sha512-/2ntB+MhK4WsMvVN6OB7laRXC/qJ5QTrZZPzxc7Hg6B1uoBXDv2LckVkJ/xmzTWJyhrDyiDNqy0mdncO7YR9NQ=="],
 

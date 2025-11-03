@@ -39,7 +39,7 @@
     "nuxt": "^4.2.0",
     "nuxt-umami": "3.2.1",
     "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.5.0",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "prettier": "^3.6.2",
     "unplugin-auto-import": "^20.2.0",
     "unplugin-vue-components": "^30.0.0",

@@ -27,7 +27,7 @@
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "api": "./app/api",
-    "dayjs": "^1.11.18",
+    "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "eslint": "^9.39.0",
     "eslint-config-prettier": "^10.1.8",

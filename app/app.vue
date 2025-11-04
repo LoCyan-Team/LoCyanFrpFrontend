@@ -6,7 +6,4 @@
   </nuxt-layout>
 </template>
 
-<script setup lang="ts">
-// 全局样式导入
-import "~/assets/css/style.css";
-</script>
+<script setup lang="ts"></script>

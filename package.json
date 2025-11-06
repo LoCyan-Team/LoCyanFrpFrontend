@@ -21,8 +21,8 @@
   },
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",
-    "@cap.js/widget": "^0.1.30",
-    "@nuxt/eslint": "1.9.0",
+    "@cap.js/widget": "^0.1.31",
+    "@nuxt/eslint": "1.10.0",
     "@nuxtjs/mdc": "0.18.0",
     "@pinia/nuxt": "^0.11.2",
     "@vicons/carbon": "^0.13.0",
@@ -32,7 +32,7 @@
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "api": "./app/api",
-    "dayjs": "^1.11.18",
+    "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "git-rev-sync": "https://github.com/wkl007/git-rev-sync-js.git",
     "highcharts-vue": "^2.0.1",
@@ -41,7 +41,7 @@
     "nuxt": "^4.2.0",
     "nuxt-umami": "3.2.1",
     "pinia": "^3.0.3",
-    "pinia-plugin-persistedstate": "^4.5.0",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.5.22",
     "vue-router": "^4.6.3"
   }

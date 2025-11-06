@@ -223,9 +223,10 @@ async function handleResetPassword() {
   align-items: center;
   padding-block: 0.5rem;
 }
+
 @media screen and (max-width: 500px) {
   .reset-box {
-    margin-inline: 0 5rem;
+    margin-inline: 0.5rem;
   }
 }
 </style>

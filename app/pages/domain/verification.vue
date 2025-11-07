@@ -242,7 +242,10 @@
 import { useMainStore } from "@/store/main";
 
 import { GetDomains, type GetDomainsResponse } from "@/api/src/api/domains.get";
-import { GetVerifications } from "@/api/src/api/domain/verifications.get";
+import {
+  GetVerifications,
+  type GetVerificationsResponse,
+} from "@/api/src/api/domain/verifications.get";
 import {
   PutDns as PutDnsVerification,
   type PutDnsResponse as PutDnsVerificationResponse,
@@ -418,7 +421,7 @@ async function getDomains() {
 }
 async function getVerifications() {
   loading.value.list.verification = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetVerificationsResponse>(
     new GetVerifications({
       user_id: mainStore.userId!,
       page: verificationPage.value.current,

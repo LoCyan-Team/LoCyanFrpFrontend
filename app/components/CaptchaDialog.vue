@@ -24,7 +24,7 @@ const env = {
 };
 
 if (import.meta.client) {
-  window.CAP_CUSTOM_WASM_URL = `${env.endpoint}/assets/cap_wasm.js`
+  window.CAP_CUSTOM_WASM_URL = `${env.endpoint}/assets/cap_wasm.js`;
 }
 
 const emit = defineEmits<{

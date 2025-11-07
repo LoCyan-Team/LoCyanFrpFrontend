@@ -7,7 +7,7 @@ export default defineNuxtRouteMiddleware((to) => {
     if (to.meta.redirectLoggedIn === true && useLoggedIn()) {
       pageStore.setSidebarMode("loggedIn");
       // 如果有 redirect 参数，则重定向到指定页面，否则默认跳转到 /dashboard
-      const redirect = to.query.redirect as string || '/dashboard';
+      const redirect = (to.query.redirect as string) || "/dashboard";
       return navigateTo(redirect);
     }
     pageStore.setSidebarMode("guest");

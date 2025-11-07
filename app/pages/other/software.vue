@@ -1,218 +1,291 @@
 <template>
   <page-content title="软件下载">
     <n-space vertical>
-      <n-card>
-        <n-form>
-          <n-form-item label="选择软件">
+      <n-spin :show="loading.software">
+        <n-card title="软件">
+          <n-space vertical>
             <n-select
               v-model:value="selectedSoftware"
               :options="softwareOptions"
               placeholder="请选择要下载的软件"
+              @update:value="
+                () => {
+                  getAssets();
+                }
+              "
             />
-          </n-form-item>
-
-          <n-form-item label="选择版本">
-            <n-select
-              v-model:value="selectedVersion"
-              :options="versionOptions"
-              placeholder="请选择版本"
-            />
-          </n-form-item>
-
-          <n-form-item label="选择系统">
-            <n-select
-              v-model:value="selectedSystem"
-              :options="systemOptions"
-              placeholder="请选择系统"
-            />
-          </n-form-item>
-
-          <n-form-item label="选择架构">
-            <n-select
-              v-model:value="selectedArch"
-              :options="filteredArchOptions"
-              placeholder="请选择架构"
-            />
-          </n-form-item>
-        </n-form>
-      </n-card>
-
-      <n-card v-if="selectedSoftware">
-        <n-space vertical size="medium">
-          <n-el v-if="currentSoftware">
-            <n-el tag="h3">{{ currentSoftware.label }}</n-el>
-            <n-el tag="p">{{ currentSoftware.description }}</n-el>
             <n-space>
               <n-tag
-                v-for="tag in currentSoftware.tags"
-                :key="tag.text"
-                :type="tag.type"
+                v-for="tag in findSoftwareById(selectedSoftware)?.tags"
+                :key="tag.content"
+                :type="covertTagType(tag.type)"
               >
-                {{ tag.text }}
+                {{ tag.content }}
               </n-tag>
             </n-space>
+            <MDC
+              :value="
+                findSoftwareById(selectedSoftware)?.description ?? '没有介绍'
+              "
+            />
+            <n-pagination
+              v-model:page="softwarePage.current"
+              v-model:page-size="softwarePage.size"
+              :page-count="softwarePage.count"
+              :on-update:page="
+                (pageSel) => {
+                  softwarePage.current = pageSel;
+                  getSoftwareList();
+                }
+              "
+              :on-update:page-size="
+                (pageSizeSel) => {
+                  softwarePage.size = pageSizeSel;
+                  getSoftwareList();
+                }
+              "
+              show-size-picker
+              :page-sizes="[10, 25, 50, 100]"
+            />
+          </n-space>
+        </n-card>
+      </n-spin>
+
+      <n-spin :show="loading.assets">
+        <n-card title="资源">
+          <n-space vertical>
+            <n-select
+              v-model:value="selectedAsset"
+              :options="assetsOptions"
+              placeholder="请选择要下载的资源"
+            />
+            <n-pagination
+              v-model:page="assetPage.current"
+              v-model:page-size="assetPage.size"
+              :page-count="assetPage.count"
+              :on-update:page="
+                (pageSel) => {
+                  assetPage.current = pageSel;
+                  getAssets();
+                }
+              "
+              :on-update:page-size="
+                (pageSizeSel) => {
+                  assetPage.size = pageSizeSel;
+                  getAssets();
+                }
+              "
+              show-size-picker
+              :page-sizes="[10, 25, 50, 100]"
+            />
+            <n-h3>
+              {{ findAssetByTag(selectedAsset)?.name }}
+              <n-tag :bordered="false">{{
+                findAssetByTag(selectedAsset)?.tag
+              }}</n-tag>
+            </n-h3>
+            <MDC
+              :value="findAssetByTag(selectedAsset)?.descriptio ?? '没有介绍'"
+            />
             <n-divider />
-            <n-el tag="h4">下载方式</n-el>
             <n-button
               type="primary"
-              :disabled="!canDownload"
-              @click="handleDownload"
+              @click="
+                navigateTo(findAssetByTag(selectedAsset)?.downloadUrl, {
+                  external: true,
+                  open: {
+                    target: '_blank',
+                  },
+                })
+              "
             >
               下载
             </n-button>
-          </n-el>
-        </n-space>
-      </n-card>
+          </n-space>
+        </n-card>
+      </n-spin>
     </n-space>
   </page-content>
 </template>
 
-<script setup>
-const selectedSoftware = ref("frpc");
-const selectedVersion = ref("");
-const selectedSystem = ref("");
-const selectedArch = ref("");
+<script setup lang="ts">
+import type { SelectOption } from "naive-ui";
 
-// 软件配置数据，后期可从 API 获取
-const softwareConfig = {
-  frpc: {
-    label: "纯净版客户端 (FRPC)",
-    description:
-      "官方原版 FRP 客户端，体积小巧，功能完整。适合有一定技术基础的用户使用。",
-    tags: [
-      { type: "info", text: "开源" },
-      { type: "success", text: "免费" },
-    ],
-    versions: [
-      { label: "v0.52.3", value: "v0.52.3" },
-      { label: "v0.52.2", value: "v0.52.2" },
-      { label: "v0.52.1", value: "v0.52.1" },
-      { label: "v0.52.0", value: "v0.52.0" },
-    ],
-    systems: [
-      { label: "Windows", value: "windows" },
-      { label: "Linux", value: "linux" },
-      { label: "macOS", value: "darwin" },
-    ],
-    architectures: {
-      windows: [
-        { label: "x64", value: "windows_amd64" },
-        { label: "x86", value: "windows_386" },
-      ],
-      linux: [
-        { label: "x64", value: "linux_amd64" },
-        { label: "ARM64", value: "linux_arm64" },
-      ],
-      darwin: [
-        { label: "x64", value: "darwin_amd64" },
-        { label: "ARM64", value: "darwin_arm64" },
-      ],
-    },
-    downloadUrl: (version, arch) =>
-      `https://github.com/fatedier/frp/releases/download/${version}/frp_${version.substring(1)}_${arch}.tar.gz`,
-  },
-  "full-client": {
-    label: "完整版客户端",
-    description:
-      "集成图形界面的 FRP 客户端，操作简单，适合新手用户。包含隧道管理、日志查看等功能。",
-    tags: [
-      { type: "primary", text: "图形界面" },
-      { type: "success", text: "易用" },
-    ],
-    downloadUrl: () => "#",
-  },
-  server: {
-    label: "服务端",
-    description: "FRP 服务端程序，用于部署在具有公网 IP 的服务器上。",
-    tags: [{ type: "warning", text: "需要服务器" }],
-    downloadUrl: () => "#",
-  },
-};
+import {
+  GetSoftware,
+  type GetSoftwareResponse,
+} from "@/api/src/api/software.get";
+import {
+  GetAssets,
+  type GetAssetsResponse,
+} from "@/api/src/api/software/assets.get";
 
-const softwareOptions = computed(() => {
-  return Object.keys(softwareConfig).map((key) => ({
-    label: softwareConfig[key].label,
-    value: key,
-  }));
+const client = useApiClient();
+const message = useMessage();
+
+const loading = ref<{
+  software: boolean;
+  assets: boolean;
+}>({
+  software: true,
+  assets: true,
 });
 
-const currentSoftware = computed(() => {
-  return selectedSoftware.value ? softwareConfig[selectedSoftware.value] : null;
-});
+const selectedSoftware = ref<SelectOption | null>(null);
+const selectedAsset = ref<SelectOption | null>(null);
 
-const versionOptions = computed(() => {
-  return currentSoftware.value?.versions || [];
-});
+interface Software {
+  id: number;
+  name: string;
+  description: string | null;
+  tags: { type: string; content: string }[];
+}
 
-const systemOptions = computed(() => {
-  return currentSoftware.value?.systems || [];
-});
+interface Asset {
+  tag: string;
+  name: string;
+  fileName: string;
+  description: string | null;
+  downloadUrl: string;
+  createdTime: string;
+  updatedTime: string;
+}
 
-const filteredArchOptions = computed(() => {
-  if (!currentSoftware.value?.architectures || !selectedSystem.value) return [];
-  return currentSoftware.value.architectures[selectedSystem.value] || [];
-});
+let softwareList: Software[] = [];
+const softwareOptions = ref<SelectOption[]>([]);
 
-const canDownload = computed(() => {
-  if (!selectedSoftware.value) return false;
-  if (selectedSoftware.value === "frpc") {
-    return selectedVersion.value && selectedSystem.value && selectedArch.value;
-  }
-  return true;
-});
+let softwareAssets: Asset[] = [];
+const assetsOptions = ref<SelectOption[]>([]);
 
-// 初始化默认值
-const initDefaults = () => {
-  if (currentSoftware.value) {
-    if (currentSoftware.value.versions?.length > 0) {
-      selectedVersion.value = currentSoftware.value.versions[0].value;
-    }
-    if (currentSoftware.value.systems?.length > 0) {
-      selectedSystem.value = currentSoftware.value.systems[0].value;
-    }
-  }
-};
-
-watch(selectedSoftware, () => {
-  selectedVersion.value = "";
-  selectedSystem.value = "";
-  selectedArch.value = "";
-  nextTick(() => {
-    initDefaults();
+const softwarePage = ref<{
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
+  }),
+  assetPage = ref<{
+    current: number;
+    size: number;
+    count: number;
+  }>({
+    current: 1,
+    size: 10,
+    count: 1,
   });
-});
 
-watch(selectedSystem, (newSystem) => {
-  if (currentSoftware.value?.architectures?.[newSystem]) {
-    const options = currentSoftware.value.architectures[newSystem];
-    selectedArch.value = options.length > 0 ? options[0].value : "";
+async function getSoftwareList() {
+  loading.value.software = true;
+  const rs = await client.execute<GetSoftwareResponse>(
+    new GetSoftware({
+      page: softwarePage.value.current,
+      size: softwarePage.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    const list: Software[] = [];
+    rs.data.list.forEach((item) => {
+      list.push(<Software>{
+        id: item.id,
+        name: item.name,
+        description: item.description,
+        tags: item.tags.map((tag) => {
+          return {
+            type: tag.type,
+            content: tag.content,
+          };
+        }),
+      });
+    });
+    softwareList = list;
+    await buildSoftwareOptions();
+    if (softwareOptions.value.length > 0) {
+      selectedSoftware.value = softwareOptions.value[0].value;
+    }
+    await getAssets();
   } else {
-    selectedArch.value = "";
+    message.error(rs.message);
   }
-});
+  loading.value.software = false;
+}
+
+async function getAssets() {
+  loading.value.assets = true;
+  const rs = await client.execute<GetAssetsResponse>(
+    new GetAssets({
+      id: selectedSoftware.value!.id,
+      page: assetPage.value.current,
+      size: assetPage.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    const list: Asset[] = [];
+    rs.data.list.forEach((item) => {
+      list.push(<Asset>{
+        tag: item.tag,
+        name: item.name,
+        fileName: item.file_name,
+        description: item.description,
+        downloadUrl: item.download_url,
+        createdTime: item.created_time,
+        updatedTime: item.updated_time,
+      });
+    });
+    softwareAssets = list;
+    await buildAssetsOptions();
+    if (assetsOptions.value.length > 0) {
+      selectedAsset.value = assetsOptions.value[0].value;
+    }
+  } else {
+    message.error(rs.message);
+  }
+  loading.value.assets = false;
+}
+
+async function buildSoftwareOptions() {
+  softwareOptions.value = softwareList.map((item) => {
+    return {
+      label: item.name,
+      value: item.id,
+    };
+  });
+}
+
+async function buildAssetsOptions() {
+  assetsOptions.value = softwareAssets.map((item) => {
+    return {
+      label: item.name,
+      value: item.tag,
+    };
+  });
+}
+
+function findSoftwareById(id: number): Software | undefined {
+  return softwareList.find((item) => item.id === id);
+}
+
+function findAssetByTag(tag: string): Asset | undefined {
+  return softwareAssets.find((item) => item.tag === tag);
+}
+
+function covertTagType(type: string): string | null {
+  switch (type) {
+    case "INFO":
+      return "info";
+    case "SUCCESS":
+      return "success";
+    case "WARNING":
+      return "warning";
+    case "ERROR":
+      return "error";
+    default:
+      return null;
+  }
+}
 
 onMounted(() => {
-  initDefaults();
+  getSoftwareList();
 });
-
-const handleDownload = () => {
-  const software = currentSoftware.value;
-  if (!software) return;
-
-  let downloadUrl = "";
-  if (selectedSoftware.value === "frpc") {
-    downloadUrl = software.downloadUrl(
-      selectedVersion.value,
-      selectedArch.value,
-    );
-  } else {
-    downloadUrl = software.downloadUrl();
-  }
-
-  if (downloadUrl && downloadUrl !== "#") {
-    window.open(downloadUrl, "_blank");
-  } else {
-    console.log("下载:", selectedSoftware.value);
-  }
-};
 </script>

@@ -11,7 +11,8 @@ export interface GetSoftwareResponse {
   list: {
     id: number;
     name: string;
-    tags: { type: string, name: string }[]
+    description: string | null;
+    tags: { type: string, content: string }[]
   }[];
   pagination: {
     count: number;

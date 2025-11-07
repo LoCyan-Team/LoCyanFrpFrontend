@@ -103,12 +103,6 @@ export default defineNuxtConfig({
       title: "仪表盘",
       titleTemplate: "乐青映射 - LoCyanFrp | %s",
       meta: [{ name: "color-scheme", content: "dark light" }],
-      script: [
-        {
-          src: "https://v-cn.vaptcha.com/v3.js",
-          async: true,
-        },
-      ],
     },
   },
   devServer: {

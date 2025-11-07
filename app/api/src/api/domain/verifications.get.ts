@@ -6,3 +6,14 @@ export class GetVerifications extends API {
     super("/domain/verifications", Method.GET, params, {});
   }
 }
+
+export interface GetVerificationsResponse {
+  list: {
+    domain: string
+    record_type: string
+    record_data: string
+  }[]
+  pagination: {
+    count: number;
+  }
+}

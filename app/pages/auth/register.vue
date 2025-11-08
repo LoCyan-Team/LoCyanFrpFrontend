@@ -93,7 +93,7 @@
 </template>
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
-import FormValidator from '@/utils/formValidator'
+import FormValidator from "@/utils/formValidator";
 
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";

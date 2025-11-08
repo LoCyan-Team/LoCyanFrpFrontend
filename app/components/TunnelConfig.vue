@@ -138,7 +138,7 @@
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
-import FormValidator from "@/utils/formValidator"
+import FormValidator from "@/utils/formValidator";
 
 import { GetPort, type GetPortResponse } from "@/api/src/api/node/port.get";
 

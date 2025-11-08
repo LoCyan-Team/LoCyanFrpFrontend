@@ -4,154 +4,149 @@
       <n-alert type="info" title="使用须知">
         配置文件启动适用于纯净版客户端的手动配置。如您对此并不了解，我们更推荐您使用启动器或一键启动命令启动。
       </n-alert>
-      <n-spin :show="isTunnelsEmpty" :rotate="false">
-        <template #icon>
-          <n-empty style="white-space: nowrap" />
-        </template>
-        <n-spin :show="loading">
-          <n-card title="请选择">
-            <n-form>
-              <n-form-item label="选择格式" path="format">
-                <n-select
-                  v-model:value="formatSelected"
-                  :options="formatOptions"
-                  @update:value="
-                    () => {
-                      switch (selectedMode) {
-                        case 'tunnel':
-                          getTunnelConfig(Mode.TUNNEL);
-                          break;
-                        case 'node':
-                          getTunnelConfig(Mode.NODE);
-                          break;
-                      }
-                    }
-                  "
-                />
-              </n-form-item>
-              <n-tabs
-                v-model:value="selectedMode"
-                type="line"
-                animated
-                :on-update:value="
-                  (value) => {
-                    selectedMode = value;
-                    switch (value) {
+      <n-spin :show="loading">
+        <n-card title="请选择">
+          <n-form>
+            <n-form-item label="选择格式" path="format">
+              <n-select
+                v-model:value="formatSelected"
+                :options="formatOptions"
+                @update:value="
+                  () => {
+                    switch (selectedMode) {
                       case 'tunnel':
-                        tunnelPage.current = 1;
                         getTunnelConfig(Mode.TUNNEL);
                         break;
                       case 'node':
-                        nodePage.current = 1;
                         getTunnelConfig(Mode.NODE);
                         break;
                     }
                   }
                 "
-              >
-                <n-tab-pane name="tunnel" tab="按隧道">
-                  <n-empty v-if="tunnelOptions.length === 0" />
-                  <n-form-item v-else label="选择隧道" path="tunnelConfig">
-                    <n-space vertical style="width: 100%">
-                      <n-select
-                        v-model:value="tunnelSelected"
-                        :options="tunnelOptions"
-                        @update:value="() => getTunnelConfig(Mode.TUNNEL)"
-                      />
-                      <n-space
-                        v-if="tunnelOptions.length !== 0"
-                        justify="center"
-                        style="width: 100%"
-                      >
-                        <n-pagination
-                          v-model:page="tunnelPage.current"
-                          v-model:page-size="tunnelPage.size"
-                          :page-count="tunnelPage.count"
-                          :on-update:page="
-                            (pageSel) => {
-                              tunnelPage.current = pageSel;
-                              getTunnelConfig(Mode.TUNNEL);
-
-                              getTunnelConfig(Mode.NODE);
-                            }
-                          "
-                          :on-update:page-size="
-                            (pageSizeSel) => {
-                              tunnelPage.size = pageSizeSel;
-                              getTunnelConfig(Mode.TUNNEL);
-                            }
-                          "
-                          show-size-picker
-                          :page-sizes="[10, 25, 50, 100]"
-                        />
-                      </n-space>
-                    </n-space>
-                  </n-form-item>
-                </n-tab-pane>
-                <n-tab-pane name="node" tab="按节点">
-                  <n-empty v-if="nodeOptions.length === 0" />
-                  <n-form-item v-else label="选择节点" path="nodeConfig">
-                    <n-space vertical style="width: 100%">
-                      <n-select
-                        v-model:value="nodeSelected"
-                        :options="nodeOptions"
-                        @update:value="() => getTunnelConfig(Mode.NODE)"
-                      />
-                      <n-space
-                        v-if="nodeOptions.length !== 0"
-                        justify="center"
-                        style="width: 100%"
-                      >
-                        <n-pagination
-                          v-model:page="nodePage.current"
-                          v-model:page-size="nodePage.size"
-                          :page-count="nodePage.count"
-                          :on-update:page="
-                            (pageSel) => {
-                              nodePage.current = pageSel;
-                              getTunnelConfig(Mode.TUNNEL);
-
-                              getTunnelConfig(Mode.NODE);
-                            }
-                          "
-                          :on-update:page-size="
-                            (pageSizeSel) => {
-                              nodePage.size = pageSizeSel;
-                              getTunnelConfig(Mode.TUNNEL);
-                            }
-                          "
-                          show-size-picker
-                          :page-sizes="[10, 25, 50, 100]"
-                        />
-                      </n-space>
-                    </n-space>
-                  </n-form-item>
-                </n-tab-pane>
-              </n-tabs>
-            </n-form>
-          </n-card>
-        </n-spin>
-
-        <n-spin :show="loading">
-          <n-card title="配置文件">
-            <template #header-extra>
-              <n-button
-                type="success"
-                secondary
-                @click="$copyToClipboard(content)"
-              >
-                复制全部内容
-              </n-button>
-            </template>
-            <n-scrollbar x-scrollable>
-              <n-code
-                :code="content"
-                :language="formatSelected.toLowerCase()"
-                show-line-numbers
               />
-            </n-scrollbar>
-          </n-card>
-        </n-spin>
+            </n-form-item>
+            <n-tabs
+              v-model:value="selectedMode"
+              type="line"
+              animated
+              :on-update:value="
+                (value) => {
+                  selectedMode = value;
+                  switch (value) {
+                    case 'tunnel':
+                      tunnelPage.current = 1;
+                      getTunnelConfig(Mode.TUNNEL);
+                      break;
+                    case 'node':
+                      nodePage.current = 1;
+                      getTunnelConfig(Mode.NODE);
+                      break;
+                  }
+                }
+              "
+            >
+              <n-tab-pane name="tunnel" tab="按隧道">
+                <n-empty v-if="tunnelOptions.length === 0" />
+                <n-form-item v-else label="选择隧道" path="tunnelConfig">
+                  <n-space vertical style="width: 100%">
+                    <n-select
+                      v-model:value="tunnelSelected"
+                      :options="tunnelOptions"
+                      @update:value="() => getTunnelConfig(Mode.TUNNEL)"
+                    />
+                    <n-space
+                      v-if="tunnelOptions.length !== 0"
+                      justify="center"
+                      style="width: 100%"
+                    >
+                      <n-pagination
+                        v-model:page="tunnelPage.current"
+                        v-model:page-size="tunnelPage.size"
+                        :page-count="tunnelPage.count"
+                        :on-update:page="
+                          (pageSel) => {
+                            tunnelPage.current = pageSel;
+                            getTunnelConfig(Mode.TUNNEL);
+
+                            getTunnelConfig(Mode.NODE);
+                          }
+                        "
+                        :on-update:page-size="
+                          (pageSizeSel) => {
+                            tunnelPage.size = pageSizeSel;
+                            getTunnelConfig(Mode.TUNNEL);
+                          }
+                        "
+                        show-size-picker
+                        :page-sizes="[10, 25, 50, 100]"
+                      />
+                    </n-space>
+                  </n-space>
+                </n-form-item>
+              </n-tab-pane>
+              <n-tab-pane name="node" tab="按节点">
+                <n-empty v-if="nodeOptions.length === 0" />
+                <n-form-item v-else label="选择节点" path="nodeConfig">
+                  <n-space vertical style="width: 100%">
+                    <n-select
+                      v-model:value="nodeSelected"
+                      :options="nodeOptions"
+                      @update:value="() => getTunnelConfig(Mode.NODE)"
+                    />
+                    <n-space
+                      v-if="nodeOptions.length !== 0"
+                      justify="center"
+                      style="width: 100%"
+                    >
+                      <n-pagination
+                        v-model:page="nodePage.current"
+                        v-model:page-size="nodePage.size"
+                        :page-count="nodePage.count"
+                        :on-update:page="
+                          (pageSel) => {
+                            nodePage.current = pageSel;
+                            getTunnelConfig(Mode.TUNNEL);
+
+                            getTunnelConfig(Mode.NODE);
+                          }
+                        "
+                        :on-update:page-size="
+                          (pageSizeSel) => {
+                            nodePage.size = pageSizeSel;
+                            getTunnelConfig(Mode.TUNNEL);
+                          }
+                        "
+                        show-size-picker
+                        :page-sizes="[10, 25, 50, 100]"
+                      />
+                    </n-space>
+                  </n-space>
+                </n-form-item>
+              </n-tab-pane>
+            </n-tabs>
+          </n-form>
+        </n-card>
+      </n-spin>
+
+      <n-spin :show="loading">
+        <n-card title="配置文件">
+          <template #header-extra>
+            <n-button
+              type="success"
+              secondary
+              @click="$copyToClipboard(content)"
+            >
+              复制全部内容
+            </n-button>
+          </template>
+          <n-scrollbar x-scrollable>
+            <n-code
+              :code="content"
+              :language="formatSelected.toLowerCase()"
+              show-line-numbers
+            />
+          </n-scrollbar>
+        </n-card>
       </n-spin>
     </n-space>
   </page-content>
@@ -180,8 +175,7 @@ const client = useApiClient();
 
 const message = useMessage();
 
-const loading = ref(true),
-  isTunnelsEmpty = ref(false);
+const loading = ref(true);
 
 const content = ref("什么也没有呀~");
 
@@ -330,7 +324,6 @@ onMounted(async () => {
     await getTunnelConfig(Mode.TUNNEL);
   } else {
     loading.value = false;
-    isTunnelsEmpty.value = true;
   }
 });
 </script>

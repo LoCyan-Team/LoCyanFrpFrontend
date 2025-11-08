@@ -93,6 +93,8 @@
 </template>
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
+import FormValidator from '@/utils/formValidator'
+
 import { PostRegister } from "@/api/src/api/auth/register.post";
 import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
@@ -148,12 +150,7 @@ const formRules = {
   verifyCode: [
     {
       required: true,
-      validator: (_rule: FormItemRule, value: number | null) => {
-        if (value === null || value === undefined) {
-          return new Error("请输入验证码");
-        }
-        return true;
-      },
+      validator: (_, val) => FormValidator.number(val, "请输入验证码"),
       trigger: ["input", "blur"],
     },
   ] as FormItemRule[],

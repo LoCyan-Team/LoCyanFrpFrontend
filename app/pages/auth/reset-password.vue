@@ -90,6 +90,7 @@ import {
 } from "@/api/src/api/email/password.get";
 import { PutPassword } from "@/api/src/api/user/password.put";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
+import FormValidator from "~/utils/formValidator";
 
 definePageMeta({
   needLogin: false,
@@ -122,12 +123,7 @@ const formRules = {
   verifyCode: [
     {
       required: true,
-      validator: (_rule: FormItemRule, value: number | null) => {
-        if (value === null || value === undefined) {
-          return new Error("请输入验证码");
-        }
-        return true;
-      },
+      validator: (_, val) => FormValidator.number(val, "请输入验证码"),
       trigger: ["input", "blur"],
     },
   ] as FormItemRule[],

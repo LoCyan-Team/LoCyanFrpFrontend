@@ -138,6 +138,7 @@
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
+import FormValidator from "@/utils/formValidator"
 
 import { GetPort, type GetPortResponse } from "@/api/src/api/node/port.get";
 
@@ -271,7 +272,7 @@ const formRules = computed(() => ({
   localPort: [
     {
       required: true,
-      message: "请输入内网端口",
+      validator: (_, val) => FormValidator.number(val, "请输入内网端口"),
       trigger: ["input", "blur"],
     },
     {
@@ -286,7 +287,7 @@ const formRules = computed(() => ({
     ? ([
         {
           required: true,
-          message: "请输入远程端口",
+          validator: (_, val) => FormValidator.number(val, "请输入远程端口"),
           trigger: ["input", "blur"],
         },
         {

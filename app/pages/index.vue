@@ -7,9 +7,11 @@ definePageMeta({
   needLogin: false,
 });
 
-if (useLoggedIn()) {
-  navigateTo("/dashboard");
-} else {
-  navigateTo("/auth/login");
+if (import.meta.client) {
+  if (useLoggedIn()) {
+    navigateTo("/dashboard");
+  } else {
+    navigateTo("/auth/login");
+  }
 }
 </script>

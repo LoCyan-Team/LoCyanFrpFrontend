@@ -3,6 +3,11 @@ import { usePageStore } from "~/store/page";
 export default defineNuxtRouteMiddleware((to) => {
   const pageStore = usePageStore();
 
+  // 在SSG期间跳过登录检查
+  if (import.meta.server) {
+    return;
+  }
+
   if (to.meta.needLogin === false) {
     if (to.meta.redirectLoggedIn === true && useLoggedIn()) {
       pageStore.setSidebarMode("loggedIn");

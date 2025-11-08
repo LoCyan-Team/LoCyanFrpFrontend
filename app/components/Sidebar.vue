@@ -258,7 +258,7 @@ const route = useRoute();
 
 function handleUpdateValue(_: unknown, item: MenuOption) {
   computeActiveKey(menuOptions.value, item.path as string);
-  navigateTo(item.path as string);
+  if (item.path) navigateTo(item.path as string);
 }
 
 function computeActiveKey(menuOptions: MenuOption[], path: string) {

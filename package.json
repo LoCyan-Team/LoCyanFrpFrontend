@@ -38,7 +38,7 @@
     "highcharts-vue": "^2.0.1",
     "highlight.js": "^11.11.1",
     "naive-ui": "^2.43.1",
-    "nuxt": "^4.2.0",
+    "nuxt": "^4.2.1",
     "nuxt-umami": "3.2.1",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",

@@ -186,7 +186,7 @@ async function doAuthorize() {
   });
   let rs;
   switch (params.mode) {
-    case "CALLBACK": {
+    case "callback": {
       rs = await client.execute<PostAuthorizeCallbackResponse>(
         new PostAuthorize({
           user_id: mainStore.userId!,
@@ -228,7 +228,7 @@ async function doAuthorize() {
       loading.value.accept = false;
       break;
     }
-    case "CODE": {
+    case "code": {
       rs = await client.execute<PostAuthorizeCodeResponse>(
         new PostAuthorize({
           user_id: mainStore.userId!,
@@ -261,16 +261,16 @@ onMounted(async () => {
     status.value = Status.ERROR;
   } else {
     params = {
-      appId: Number(route.query.app_id as string),
-      redirectUrl: route.query.redirect_url as string | null,
+      appId: Number(route.query.client_id as string),
+      redirectUrl: route.query.redirect_uri as string | null,
       scopes: route.query.scopes as string,
       mode: route.query.mode as string,
     };
 
     switch (params.mode) {
-      case "CODE":
+      case "code":
         break;
-      case "CALLBACK":
+      case "callback":
         if (!route.query.redirect_url) {
           status.value = Status.ERROR;
           loading.value.page = false;

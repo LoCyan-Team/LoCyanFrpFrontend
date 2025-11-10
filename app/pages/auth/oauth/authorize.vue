@@ -104,7 +104,7 @@ const notification = useNotification();
 const route = useRoute();
 
 let params: {
-  appId: number | null
+  appId: number | null;
   redirectUrl: string | null;
   scopes: string | null;
   mode: string | null;
@@ -260,7 +260,9 @@ async function doAuthorize() {
 
 onMounted(async () => {
   params = {
-    appId: route.query.client_id ? Number(route.query.client_id as string) : null,
+    appId: route.query.client_id
+      ? Number(route.query.client_id as string)
+      : null,
     redirectUrl: route.query.redirect_uri as string | null,
     scopes: route.query.scopes as string,
     mode: route.query.mode as string,

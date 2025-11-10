@@ -61,8 +61,8 @@
                   </client-only>
                 </n-button>
               </template>
-              <n-el v-if="data.thirdParty.bind.qq">已绑定</n-el>
-              <n-el v-else>未绑定</n-el>
+              <n-el v-if="data.thirdParty.bind.qq">已绑定，点击解绑</n-el>
+              <n-el v-else>未绑定，点击绑定</n-el>
             </n-tooltip>
           </n-spin>
         </n-el>
@@ -215,10 +215,19 @@ import { useUserStore } from "@/store/user";
 
 import Qq from "@vicons/fa/Qq";
 
-import { GetThirdParty as GetThirdPartyBind } from "@/api/src/api/user/third-party.get";
-import { GetBind as GetQqBind } from "@/api/src/api/user/third-party/qq/bind.get";
+import {
+  GetThirdParty as GetThirdPartyBind,
+  type GetThirdPartyResponse as GetThirdPartyBindResponse,
+} from "@/api/src/api/user/third-party.get";
+import {
+  GetBind as GetQqBind,
+  type GetBindResponse as GetQqBindResponse,
+} from "@/api/src/api/user/third-party/qq/bind.get";
 import { DeleteBind as DeleteQqBind } from "@/api/src/api/user/third-party/qq/bind.delete";
-import { PostToken as PostResetFrpToken } from "@/api/src/api/user/frp/token.post";
+import {
+  PostToken as PostResetFrpToken,
+  type PostTokenResponse as PostResetFrpTokenResponse,
+} from "@/api/src/api/user/frp/token.post";
 import { DeleteAll as DeleteAllToken } from "@/api/src/api/user/token/all.delete";
 import { PutUsername } from "@/api/src/api/user/username.put";
 import { PutPassword } from "@/api/src/api/user/password.put";
@@ -304,7 +313,7 @@ async function handleThirdPartyButton(type: ThirdParty) {
     case ThirdParty.QQ:
       {
         if (!data.value.thirdParty.bind.qq) {
-          const rs = await client.execute(
+          const rs = await client.execute<GetQqBindResponse>(
             new GetQqBind({
               user_id: mainStore.userId!,
             }),
@@ -332,13 +341,15 @@ async function handleThirdPartyButton(type: ThirdParty) {
 
 async function handleResetFrpToken() {
   loading.value.resetFrpToken = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostResetFrpTokenResponse>(
     new PostResetFrpToken({
       user_id: mainStore.userId!,
     }),
   );
   if (rs.status === 200) {
-    userStore.frpToken = rs.data.frp_token;
+    userStore.$patch({
+      frpToken: rs.data.frp_token,
+    });
     dialog.success({
       title: "重置成功",
       content: "已重置访问密钥，如您有自定义配置文件，需手动更新。",
@@ -431,7 +442,7 @@ async function handleUpdateEmail() {
 }
 
 async function fetchThirdPartyData() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetThirdPartyBindResponse>(
     new GetThirdPartyBind({
       user_id: mainStore.userId!,
     }),

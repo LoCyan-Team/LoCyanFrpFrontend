@@ -6,3 +6,7 @@ export class PostToken extends API {
     super("/user/frp/token", Method.POST, params, {});
   }
 }
+
+export interface PostTokenResponse {
+  frp_token: string;
+}

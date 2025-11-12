@@ -41,7 +41,7 @@
                   >
                     <template #trigger>
                       <n-tag type="info" bordered>
-                        {{ findPermission(perm)?.node }}
+                        {{ findPermission(perm)?.node ?? "未知权限" }}
                       </n-tag>
                     </template>
                     {{ findPermission(perm)?.description ?? "没有说明" }}
@@ -115,9 +115,9 @@
                       style="width: 100%"
                     >
                       <n-pagination
-                        v-model:page="findAppSessionPage(auth.appId)?.current"
-                        v-model:page-size="findAppSessionPage(auth.appId)?.size"
-                        :page-count="findAppSessionPage(auth.appId)?.count"
+                        v-model:page="findAppSessionPage(auth.appId)!.current"
+                        v-model:page-size="findAppSessionPage(auth.appId)!.size"
+                        :page-count="findAppSessionPage(auth.appId)!.count"
                         :on-update:page="
                           (pageSel) => {
                             updateAppSessionPage(auth.appId, {

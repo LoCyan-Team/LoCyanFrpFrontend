@@ -347,25 +347,36 @@ async function handleRandomRemotePort() {
   loading.value.randomPort = false;
 }
 
-async function handleSubmit() {
+function handleSubmit() {
   if (!tunnelFormRef.value) return;
+  tunnelFormRef.value
+    .validate()
+    .then(() => {
+      let data = {
+        name: form.value.name!,
+        type: form.value.type,
+        localIp: form.value.localIp,
+        localPort: form.value.localPort!,
+        remotePort: hasOption.remotePort.includes(form.value.type)
+          ? form.value.remotePort
+          : null,
+        useEncryption: form.value.useEncryption,
+        useCompression: form.value.useCompression,
+        domain: hasOption.domain.includes(form.value.type)
+          ? form.value.domain
+          : null,
+        locations: hasOption.locations.includes(form.value.type)
+          ? form.value.locations
+          : null,
+        secretKey: hasOption.secretKey.includes(form.value.type)
+          ? form.value.secretKey
+          : null,
+      };
 
-  try {
-    await tunnelFormRef.value.validate();
-    emit("submit", {
-      name: form.value.name!,
-      type: form.value.type,
-      localIp: form.value.localIp,
-      localPort: form.value.localPort!,
-      remotePort: form.value.remotePort,
-      useEncryption: form.value.useEncryption,
-      useCompression: form.value.useCompression,
-      domain: form.value.domain,
-      locations: form.value.locations,
-      secretKey: form.value.secretKey,
+      emit("submit", data);
+    })
+    .catch(() => {
+      message.error("请检查表单输入");
     });
-  } catch {
-    message.error("请检查表单输入");
-  }
 }
 </script>

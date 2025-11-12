@@ -62,7 +62,16 @@
         <n-text>{{ appData.description ?? "无介绍信息" }}</n-text>
         <n-divider />
         <n-text>授权成功，一次性代码为:</n-text>
-        <n-code :code="result.code" @click="$copyToClipboard(result.code)" />
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-code
+              :code="result.code"
+              @click="$copyToClipboard(result.code)"
+              word-wrap
+            />
+          </template>
+          点击复制
+        </n-tooltip>
       </n-card>
       <n-card v-else title="发生错误">
         <n-text>{{ error }}</n-text>

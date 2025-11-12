@@ -172,8 +172,16 @@ const loginForm = ref<{
 });
 
 async function handleLoginButton() {
-  loading.value.login = true;
-  captchaRef?.value?.solve();
+  if (!loginFormRef.value) return;
+  loginFormRef.value
+    .validate()
+    .then(async () => {
+      loading.value.login = true;
+      captchaRef?.value?.solve();
+    })
+    .catch(() => {
+      message.error("请检查输入内容是否正确完整");
+    });
 }
 
 async function handleLogin(captchaToken: string) {

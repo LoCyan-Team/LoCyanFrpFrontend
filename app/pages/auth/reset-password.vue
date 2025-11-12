@@ -188,24 +188,32 @@ async function handleEmailCodeSend(captchaToken: string) {
   loading.value.emailCode = false;
 }
 
-async function handleResetPassword() {
-  loading.value.reset = true;
-  const rs = await client.execute(
-    new PutPassword({
-      user_id: data.userId!,
-      new_password: resetPasswordForm.value.password!,
-      verify_code: resetPasswordForm.value.verifyCode!,
-    }),
-  );
-  if (rs.status === 200) {
-    notification.success({
-      title: "重置密码成功",
-      content: "重置密码成功，已为您导航至登录。",
-      duration: 2500,
+function handleResetPassword() {
+  if (!resetPasswordFormRef.value) return;
+  resetPasswordFormRef.value
+    .validate()
+    .then(async () => {
+      loading.value.reset = true;
+      const rs = await client.execute(
+        new PutPassword({
+          user_id: data.userId!,
+          new_password: resetPasswordForm.value.password!,
+          verify_code: resetPasswordForm.value.verifyCode!,
+        }),
+      );
+      if (rs.status === 200) {
+        notification.success({
+          title: "重置密码成功",
+          content: "重置密码成功，已为您导航至登录。",
+          duration: 2500,
+        });
+        navigateTo("/auth/login");
+      } else message.error(rs.message);
+      loading.value.reset = false;
+    })
+    .catch(() => {
+      message.error("请检查输入内容是否正确完整");
     });
-    navigateTo("/auth/login");
-  } else message.error(rs.message);
-  loading.value.reset = false;
 }
 </script>
 

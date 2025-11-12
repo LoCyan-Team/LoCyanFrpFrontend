@@ -229,24 +229,30 @@ async function handleEmailCodeSend(captchaToken: string) {
 }
 
 async function handleRegister() {
-  loading.value.register = true;
-  const rs = await client.execute(
-    new PostRegister({
-      username: registerForm.value.username!,
-      password: registerForm.value.password!,
-      email: registerForm.value.email!,
-      verify_code: registerForm.value.verifyCode!,
-    }),
-  );
-  if (rs.status === 200) {
-    notification.success({
-      title: "注册成功",
-      content: "注册成功，已为您导航至登录。",
-      duration: 2500,
-    });
-    navigateTo("/auth/login");
-  } else message.error(rs.message);
-  loading.value.register = false;
+  if (!registerFormRef.value) return;
+  registerFormRef.value
+    .validate()
+    .then(async () => {
+      loading.value.register = true;
+      const rs = await client.execute(
+        new PostRegister({
+          username: registerForm.value.username!,
+          password: registerForm.value.password!,
+          email: registerForm.value.email!,
+          verify_code: registerForm.value.verifyCode!,
+        }),
+      );
+      if (rs.status === 200) {
+        notification.success({
+          title: "注册成功",
+          content: "注册成功，已为您导航至登录。",
+          duration: 2500,
+        });
+        navigateTo("/auth/login");
+      } else message.error(rs.message);
+      loading.value.register = false;
+    })
+    .catch(() => {});
 }
 </script>
 

@@ -352,7 +352,7 @@ function handleSubmit() {
   tunnelFormRef.value
     .validate()
     .then(() => {
-      let data = {
+      emit("submit", {
         name: form.value.name!,
         type: form.value.type,
         localIp: form.value.localIp,
@@ -371,12 +371,10 @@ function handleSubmit() {
         secretKey: hasOption.secretKey.includes(form.value.type)
           ? form.value.secretKey
           : null,
-      };
-
-      emit("submit", data);
+      });
     })
     .catch(() => {
-      message.error("请检查表单输入");
+      message.error("请检查输入内容是否正确完整");
     });
 }
 </script>

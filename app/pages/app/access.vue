@@ -41,10 +41,10 @@
                   >
                     <template #trigger>
                       <n-tag type="info" bordered>
-                        {{ findPermission(perm).node }}
+                        {{ findPermission(perm)?.node }}
                       </n-tag>
                     </template>
-                    {{ findPermission(perm).description ?? "没有说明" }}
+                    {{ findPermission(perm)?.description ?? "没有说明" }}
                   </n-tooltip>
                 </n-space>
               </n-tab-pane>
@@ -115,9 +115,9 @@
                       style="width: 100%"
                     >
                       <n-pagination
-                        v-model:page="findAppSessionPage(auth.appId).current"
-                        v-model:page-size="findAppSessionPage(auth.appId).size"
-                        :page-count="findAppSessionPage(auth.appId).count"
+                        v-model:page="findAppSessionPage(auth.appId)?.current"
+                        v-model:page-size="findAppSessionPage(auth.appId)?.size"
+                        :page-count="findAppSessionPage(auth.appId)?.count"
                         :on-update:page="
                           (pageSel) => {
                             updateAppSessionPage(auth.appId, {
@@ -149,6 +149,16 @@
                 >
                   <template #trigger>
                     <n-button type="error"> 撤销授权 </n-button>
+                  </template>
+                  确定要撤销授权吗？撤销后您需要重新授权。
+                </n-popconfirm>
+                <n-popconfirm
+                  @positive-click="handleRevokeSessionAuthorize(auth.appId)"
+                >
+                  <template #trigger>
+                    <n-button type="error" secondary>
+                      撤销全部会话授权
+                    </n-button>
                   </template>
                   确定要撤销授权吗？撤销后您需要重新授权。
                 </n-popconfirm>
@@ -278,7 +288,7 @@ function updateAppSessionPage(
     count?: number;
   },
 ) {
-  const old = findAppSessionPage(appId);
+  const old = findAppSessionPage(appId)!;
   const newArr = sessionPages.value.filter((page) => page.appId !== appId);
   newArr.push({
     appId: appId,
@@ -303,7 +313,7 @@ async function handleRevokeAppAuthorize(appId: number) {
   } else message.error(rs.message);
 }
 
-async function handleRevokeSessionAuthorize(appId: number, sessionId: string) {
+async function handleRevokeSessionAuthorize(appId: number, sessionId?: string) {
   const rs = await client.execute(
     new DeleteSession({
       user_id: mainStore.userId!,

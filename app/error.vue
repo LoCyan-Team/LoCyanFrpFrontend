@@ -1,5 +1,5 @@
 <template>
-  <NuxtLayout>
+  <nuxt-layout>
     <n-el v-if="error.statusCode === 404">
       <n-el class="flex-center outbox">
         <n-empty description="这里什么也找不到啊 QwQ" />
@@ -33,12 +33,12 @@
         </n-space>
       </n-el>
     </n-el>
-  </NuxtLayout>
+  </nuxt-layout>
 </template>
 
 <script setup lang="ts">
 import type { NuxtError } from "#app";
-
+  
 defineProps({
   // eslint-disable-next-line vue/require-default-prop
   error: Object as () => NuxtError,

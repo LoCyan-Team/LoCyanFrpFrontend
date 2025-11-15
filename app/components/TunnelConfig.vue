@@ -243,7 +243,7 @@ const formRules = computed(() => ({
       trigger: ["input", "blur"],
     },
     {
-      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      pattern: FormValidator.regex.tunnel.name,
       message:
         "隧道名称长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符",
       trigger: ["input", "blur"],
@@ -263,8 +263,7 @@ const formRules = computed(() => ({
       trigger: ["input", "blur"],
     },
     {
-      pattern:
-        /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+      pattern: FormValidator.regex.tunnel.ip,
       message: "请输入有效的IP地址",
       trigger: ["input", "blur"],
     },
@@ -307,8 +306,7 @@ const formRules = computed(() => ({
           trigger: ["input", "blur"],
         },
         {
-          pattern:
-            /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+          pattern: FormValidator.regex.tunnel.domain,
           message: "请输入有效的域名格式",
           trigger: ["input", "blur"],
         },
@@ -349,32 +347,27 @@ async function handleRandomRemotePort() {
 
 function handleSubmit() {
   if (!tunnelFormRef.value) return;
-  tunnelFormRef.value
-    .validate()
-    .then(() => {
-      emit("submit", {
-        name: form.value.name!,
-        type: form.value.type,
-        localIp: form.value.localIp,
-        localPort: form.value.localPort!,
-        remotePort: hasOption.remotePort.includes(form.value.type)
-          ? form.value.remotePort
-          : null,
-        useEncryption: form.value.useEncryption,
-        useCompression: form.value.useCompression,
-        domain: hasOption.domain.includes(form.value.type)
-          ? form.value.domain
-          : null,
-        locations: hasOption.locations.includes(form.value.type)
-          ? form.value.locations
-          : null,
-        secretKey: hasOption.secretKey.includes(form.value.type)
-          ? form.value.secretKey
-          : null,
-      });
-    })
-    .catch(() => {
-      message.error("请检查输入内容是否正确完整");
+  tunnelFormRef.value.validate().then(() => {
+    emit("submit", {
+      name: form.value.name!,
+      type: form.value.type,
+      localIp: form.value.localIp,
+      localPort: form.value.localPort!,
+      remotePort: hasOption.remotePort.includes(form.value.type)
+        ? form.value.remotePort
+        : null,
+      useEncryption: form.value.useEncryption,
+      useCompression: form.value.useCompression,
+      domain: hasOption.domain.includes(form.value.type)
+        ? form.value.domain
+        : null,
+      locations: hasOption.locations.includes(form.value.type)
+        ? form.value.locations
+        : null,
+      secretKey: hasOption.secretKey.includes(form.value.type)
+        ? form.value.secretKey
+        : null,
     });
+  });
 }
 </script>

@@ -38,7 +38,7 @@
 
 <script setup lang="ts">
 import type { NuxtError } from "#app";
-  
+
 defineProps({
   // eslint-disable-next-line vue/require-default-prop
   error: Object as () => NuxtError,

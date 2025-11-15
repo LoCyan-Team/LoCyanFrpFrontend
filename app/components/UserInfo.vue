@@ -130,7 +130,11 @@
             <n-alert type="info" title="注意">
               修改后，账户登录信息也会随之改变。
             </n-alert>
-            <n-form :model="updatePasswordForm">
+            <n-form
+              ref="updatePasswordFormRef"
+              :model="updatePasswordForm"
+              :rules="updatePasswordRules"
+            >
               <n-form-item label="原密码" path="oldPassword">
                 <n-input
                   v-model:value="updatePasswordForm.oldPassword"
@@ -170,7 +174,11 @@
             <n-alert type="info" title="注意">
               修改后，账户登录信息也会随之改变。
             </n-alert>
-            <n-form :model="updateEmailForm">
+            <n-form
+              ref="updateEmailFormRef"
+              :model="updateEmailForm"
+              :rules="updateEmailRules"
+            >
               <n-form-item label="新邮箱" path="email">
                 <n-input
                   v-model:value="updateEmailForm.email"
@@ -210,6 +218,7 @@
 </template>
 
 <script setup lang="ts">
+import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
@@ -219,6 +228,7 @@ import {
   GetThirdParty as GetThirdPartyBind,
   type GetThirdPartyResponse as GetThirdPartyBindResponse,
 } from "@/api/src/api/user/third-party.get";
+
 import {
   GetBind as GetQqBind,
   type GetBindResponse as GetQqBindResponse,
@@ -233,6 +243,7 @@ import { PutUsername } from "@/api/src/api/user/username.put";
 import { PutPassword } from "@/api/src/api/user/password.put";
 import { GetEmail as GetUpdateEmailCode } from "@/api/src/api/email/email.get";
 import { PutEmail } from "@/api/src/api/user/email.put";
+import FormValidator from "@/utils/formValidator";
 
 const emit = defineEmits<{
   (e: "logout"): void;
@@ -303,6 +314,65 @@ const updateUsernameForm = ref<{
     email: null,
     verifyCode: null,
   });
+
+const updatePasswordFormRef = ref<FormInst | null>(null);
+const updateEmailFormRef = ref<FormInst | null>(null);
+
+const updatePasswordRules = {
+  oldPassword: [
+    {
+      required: true,
+      message: "请输入原密码",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  newPassword: [
+    {
+      required: true,
+      message: "请输入新密码",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  confirmPassword: [
+    {
+      required: true,
+      message: "请确认新密码",
+      trigger: ["input", "blur"],
+    },
+    {
+      validator: (_: unknown, value: string) => {
+        if (value !== updatePasswordForm.value.newPassword) {
+          return new Error("两次输入的密码不一致");
+        }
+        return true;
+      },
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+};
+
+const updateEmailRules = {
+  email: [
+    {
+      required: true,
+      message: "请输入邮箱地址",
+      trigger: ["input", "blur"],
+    },
+    {
+      pattern: FormValidator.regex.email,
+      message: "请输入有效的邮箱地址",
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+  verifyCode: [
+    {
+      required: true,
+      validator: (_: unknown, value: number) =>
+        FormValidator.number(value, "请输入验证码"),
+      trigger: ["input", "blur"],
+    },
+  ] as FormItemRule[],
+};
 
 enum ThirdParty {
   QQ,
@@ -389,21 +459,24 @@ async function handleUpdateUsername() {
 }
 
 async function handleUpdatePassword() {
-  loading.value.updatePassword = true;
-  const rs = await client.execute(
-    new PutPassword({
-      user_id: mainStore.userId!,
-      old_password: updatePasswordForm.value.oldPassword!,
-      new_password: updatePasswordForm.value.newPassword!,
-    }),
-  );
-  if (rs.status === 200) {
-    dialog.success({
-      title: "更新成功",
-      content: "已更新账户密码。",
-    });
-  } else message.error(rs.message);
-  loading.value.updatePassword = false;
+  if (!updatePasswordFormRef.value) return;
+  updatePasswordFormRef.value.validate().then(async () => {
+    loading.value.updatePassword = true;
+    const rs = await client.execute(
+      new PutPassword({
+        user_id: mainStore.userId!,
+        old_password: updatePasswordForm.value.oldPassword!,
+        new_password: updatePasswordForm.value.newPassword!,
+      }),
+    );
+    if (rs.status === 200) {
+      dialog.success({
+        title: "更新成功",
+        content: "已更新账户密码。",
+      });
+    } else message.error(rs.message);
+    loading.value.updatePassword = false;
+  });
 }
 
 async function handleGetUpdateEmailCodeSend() {
@@ -425,20 +498,23 @@ async function handleGetUpdateEmailCodeSend() {
 }
 
 async function handleUpdateEmail() {
-  loading.value.updateEmail.submit = true;
-  const rs = await client.execute(
-    new PutEmail({
-      user_id: mainStore.userId!,
-      verify_code: updateEmailForm.value.verifyCode!,
-    }),
-  );
-  if (rs.status === 200) {
-    dialog.success({
-      title: "更新成功",
-      content: "已更新账户邮箱。",
-    });
-  } else message.error(rs.message);
-  loading.value.updateEmail.submit = false;
+  if (!updateEmailFormRef.value) return;
+  updateEmailFormRef.value.validate().then(async () => {
+    loading.value.updateEmail.submit = true;
+    const rs = await client.execute(
+      new PutEmail({
+        user_id: mainStore.userId!,
+        verify_code: updateEmailForm.value.verifyCode!,
+      }),
+    );
+    if (rs.status === 200) {
+      dialog.success({
+        title: "更新成功",
+        content: "已更新账户邮箱。",
+      });
+    } else message.error(rs.message);
+    loading.value.updateEmail.submit = false;
+  });
 }
 
 async function fetchThirdPartyData() {

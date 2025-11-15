@@ -128,7 +128,7 @@ const formRules = {
       trigger: ["input", "blur"],
     },
     {
-      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      pattern: FormValidator.regex.username,
       message:
         "用户名长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符",
       trigger: ["input", "blur"],
@@ -141,8 +141,7 @@ const formRules = {
       trigger: ["input", "blur"],
     },
     {
-      pattern:
-        /^[a-zA-Z0-9_.-]+@[a-zA-Z0-9-]+(\.[a-zA-Z0-9-]+)*\.[a-zA-Z0-9]{2,6}$/,
+      pattern: FormValidator.regex.email,
       message: "请输入有效的邮箱地址",
       trigger: ["input", "blur"],
     },
@@ -158,11 +157,6 @@ const formRules = {
     {
       required: true,
       message: "请输入密码",
-      trigger: ["input", "blur"],
-    },
-    {
-      min: 6,
-      message: "密码长度至少6位",
       trigger: ["input", "blur"],
     },
   ] as FormItemRule[],
@@ -230,29 +224,26 @@ async function handleEmailCodeSend(captchaToken: string) {
 
 async function handleRegister() {
   if (!registerFormRef.value) return;
-  registerFormRef.value
-    .validate()
-    .then(async () => {
-      loading.value.register = true;
-      const rs = await client.execute(
-        new PostRegister({
-          username: registerForm.value.username!,
-          password: registerForm.value.password!,
-          email: registerForm.value.email!,
-          verify_code: registerForm.value.verifyCode!,
-        }),
-      );
-      if (rs.status === 200) {
-        notification.success({
-          title: "注册成功",
-          content: "注册成功，已为您导航至登录。",
-          duration: 2500,
-        });
-        navigateTo("/auth/login");
-      } else message.error(rs.message);
-      loading.value.register = false;
-    })
-    .catch(() => {});
+  registerFormRef.value.validate().then(async () => {
+    loading.value.register = true;
+    const rs = await client.execute(
+      new PostRegister({
+        username: registerForm.value.username!,
+        password: registerForm.value.password!,
+        email: registerForm.value.email!,
+        verify_code: registerForm.value.verifyCode!,
+      }),
+    );
+    if (rs.status === 200) {
+      notification.success({
+        title: "注册成功",
+        content: "注册成功，已为您导航至登录。",
+        duration: 2500,
+      });
+      navigateTo("/auth/login");
+    } else message.error(rs.message);
+    loading.value.register = false;
+  });
 }
 </script>
 

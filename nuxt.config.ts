@@ -24,11 +24,6 @@ export default defineNuxtConfig({
   compatibilityDate: "2025-10-16",
   devtools: { enabled: true },
   // ssr: false,
-  nitro: {
-    experimental: {
-      wasm: true,
-    },
-  },
   modules: [
     "@nuxt/eslint",
     "nuxt-umami",

@@ -57,18 +57,18 @@
         </n-el>
       </n-form>
     </n-card>
-    <br />
-    <n-spin :show="loading.passkey" style="width: 100%">
-      <n-button
-        type="success"
-        secondary
-        style="width: 100%"
-        @click="handlePasskeyLogin"
-      >
-        通行密钥登录
-      </n-button>
-    </n-spin>
-    <br />
+    <n-el style="margin-block: 1rem; width: 100%;">
+      <n-spin :show="loading.passkey" style="width: 100%">
+        <n-button
+          type="success"
+          secondary
+          style="width: 100%"
+          @click="handlePasskeyLogin"
+        >
+          通行密钥登录
+        </n-button>
+      </n-spin>
+    </n-el>
     <n-card title="第三方登录">
       <n-space>
         <n-spin :show="loading.threeSide">

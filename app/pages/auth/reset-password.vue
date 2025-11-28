@@ -90,6 +90,7 @@ import {
 } from "@/api/src/api/email/password.get";
 import { PutPassword } from "@/api/src/api/user/password.put";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
+import FormValidator from "~/utils/formValidator";
 
 definePageMeta({
   needLogin: false,
@@ -122,12 +123,7 @@ const formRules = {
   verifyCode: [
     {
       required: true,
-      validator: (_rule: FormItemRule, value: number | null) => {
-        if (value === null || value === undefined) {
-          return new Error("请输入验证码");
-        }
-        return true;
-      },
+      validator: (_, val) => FormValidator.number(val, "请输入验证码"),
       trigger: ["input", "blur"],
     },
   ] as FormItemRule[],
@@ -192,24 +188,27 @@ async function handleEmailCodeSend(captchaToken: string) {
   loading.value.emailCode = false;
 }
 
-async function handleResetPassword() {
-  loading.value.reset = true;
-  const rs = await client.execute(
-    new PutPassword({
-      user_id: data.userId!,
-      new_password: resetPasswordForm.value.password!,
-      verify_code: resetPasswordForm.value.verifyCode!,
-    }),
-  );
-  if (rs.status === 200) {
-    notification.success({
-      title: "重置密码成功",
-      content: "重置密码成功，已为您导航至登录。",
-      duration: 2500,
-    });
-    navigateTo("/auth/login");
-  } else message.error(rs.message);
-  loading.value.reset = false;
+function handleResetPassword() {
+  if (!resetPasswordFormRef.value) return;
+  resetPasswordFormRef.value.validate().then(async () => {
+    loading.value.reset = true;
+    const rs = await client.execute(
+      new PutPassword({
+        user_id: data.userId!,
+        new_password: resetPasswordForm.value.password!,
+        verify_code: resetPasswordForm.value.verifyCode!,
+      }),
+    );
+    if (rs.status === 200) {
+      notification.success({
+        title: "重置密码成功",
+        content: "重置密码成功，已为您导航至登录。",
+        duration: 2500,
+      });
+      navigateTo("/auth/login");
+    } else message.error(rs.message);
+    loading.value.reset = false;
+  });
 }
 </script>
 

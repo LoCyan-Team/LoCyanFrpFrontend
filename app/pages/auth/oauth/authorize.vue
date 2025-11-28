@@ -3,7 +3,7 @@
     <n-h1>应用授权</n-h1>
     <n-spin style="width: 100%; max-width: 500px" :show="loading.page">
       <n-card
-        v-if="status === (Status.VALID || Status.WORKING)"
+        v-if="status === Status.WORKING || status === Status.VALID"
         :title="appData.name"
       >
         <n-text>{{ appData.description ?? "无介绍信息" }}</n-text>
@@ -62,10 +62,19 @@
         <n-text>{{ appData.description ?? "无介绍信息" }}</n-text>
         <n-divider />
         <n-text>授权成功，一次性代码为:</n-text>
-        <n-code :code="result.code" @click="$copyToClipboard(result.code)" />
+        <n-tooltip trigger="hover">
+          <template #trigger>
+            <n-code
+              :code="result.code"
+              @click="$copyToClipboard(result.code)"
+              word-wrap
+            />
+          </template>
+          点击复制
+        </n-tooltip>
       </n-card>
       <n-card v-else title="发生错误">
-        <n-text>无效请求，请检查 URL 参数</n-text>
+        <n-text>{{ error }}</n-text>
       </n-card>
     </n-spin>
   </n-el>
@@ -104,10 +113,10 @@ const notification = useNotification();
 const route = useRoute();
 
 let params: {
-  appId: number;
+  appId: number | null;
   redirectUrl: string | null;
-  scopes: string;
-  mode: string;
+  scopes: string | null;
+  mode: string | null;
 } = {
   appId: 0,
   redirectUrl: null,
@@ -124,6 +133,8 @@ const loading = ref<{
   accept: false,
   deny: false,
 });
+
+const error = ref("");
 
 const appData = ref<{
   name: string;
@@ -186,11 +197,11 @@ async function doAuthorize() {
   });
   let rs;
   switch (params.mode) {
-    case "CALLBACK": {
+    case "callback": {
       rs = await client.execute<PostAuthorizeCallbackResponse>(
         new PostAuthorize({
           user_id: mainStore.userId!,
-          app_id: params.appId,
+          app_id: params.appId!,
           redirect_url: params.redirectUrl!,
           scope_ids: permissionIds,
           mode: "CALLBACK",
@@ -228,11 +239,11 @@ async function doAuthorize() {
       loading.value.accept = false;
       break;
     }
-    case "CODE": {
+    case "code": {
       rs = await client.execute<PostAuthorizeCodeResponse>(
         new PostAuthorize({
           user_id: mainStore.userId!,
-          app_id: params.appId,
+          app_id: params.appId!,
           scope_ids: permissionIds,
           mode: "CODE",
         }),
@@ -257,27 +268,34 @@ async function doAuthorize() {
 }
 
 onMounted(async () => {
-  if (!route.query.app_id || !route.query.mode || !route.query.scopes) {
+  params = {
+    appId: route.query.client_id
+      ? Number(route.query.client_id as string)
+      : null,
+    redirectUrl: route.query.redirect_uri as string | null,
+    scopes: route.query.scopes as string,
+    mode: route.query.mode as string,
+  };
+
+  if (!params.appId || !params.scopes || !params.mode) {
+    error.value = "传入参数不完整或无效";
     status.value = Status.ERROR;
   } else {
-    params = {
-      appId: Number(route.query.app_id as string),
-      redirectUrl: route.query.redirect_url as string | null,
-      scopes: route.query.scopes as string,
-      mode: route.query.mode as string,
-    };
-
     switch (params.mode) {
-      case "CODE":
+      case "code":
+        // code 模式检查
         break;
-      case "CALLBACK":
-        if (!route.query.redirect_url) {
+      case "callback":
+        // callback 模式检查
+        if (!params.redirectUrl) {
+          error.value = "传入参数不完整或无效";
           status.value = Status.ERROR;
           loading.value.page = false;
           return;
         }
         break;
       default:
+        error.value = "未知授权模式";
         status.value = Status.ERROR;
         loading.value.page = false;
         return;
@@ -286,7 +304,7 @@ onMounted(async () => {
     const reqApp = await client.execute<GetAppResponse>(
       new GetApp({
         user_id: mainStore.userId!,
-        app_id: params.appId,
+        app_id: params.appId!,
       }),
     );
     if (reqApp.status === 200) {
@@ -297,6 +315,7 @@ onMounted(async () => {
       };
     } else {
       message.error(reqApp.message);
+      error.value = "请求应用数据失败";
       status.value = Status.ERROR;
       loading.value.page = false;
       return;
@@ -321,7 +340,7 @@ onMounted(async () => {
       return;
     }
 
-    const permissions = params.scopes.split(",");
+    const permissions = params.scopes!.split(",");
     permissionList.forEach((permission) => {
       if (permissions.includes(permission.node))
         data.value.permissionRequested.push(permission);

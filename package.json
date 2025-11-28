@@ -23,7 +23,7 @@
     "@bg-dev/nuxt-naiveui": "2.0.0",
     "@cap.js/widget": "^0.1.31",
     "@nuxt/eslint": "1.10.0",
-    "@nuxtjs/mdc": "0.18.0",
+    "@nuxtjs/mdc": "0.18.4",
     "@pinia/nuxt": "^0.11.3",
     "@vicons/carbon": "^0.13.0",
     "@vicons/fa": "^0.13.0",
@@ -37,12 +37,12 @@
     "git-rev-sync": "https://github.com/wkl007/git-rev-sync-js.git",
     "highcharts-vue": "^2.0.1",
     "highlight.js": "^11.11.1",
-    "naive-ui": "^2.43.1",
-    "nuxt": "^4.2.0",
+    "naive-ui": "^2.43.2",
+    "nuxt": "^4.2.1",
     "nuxt-umami": "3.2.1",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
-    "vue": "^3.5.23",
+    "vue": "^3.5.25",
     "vue-router": "^4.6.3"
   }
 }

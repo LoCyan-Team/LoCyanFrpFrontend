@@ -157,6 +157,8 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
+import type { Response } from "@/api/src/type/response";
+
 import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
 import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
 import {
@@ -224,7 +226,7 @@ enum Mode {
 
 async function getTunnelConfig(mode: Mode) {
   loading.value = true;
-  let rs;
+  let rs: Response<GetConfigResponse>;
   switch (mode) {
     case Mode.TUNNEL:
       {
@@ -232,7 +234,7 @@ async function getTunnelConfig(mode: Mode) {
           loading.value = false;
           return;
         }
-        rs = await client.execute(
+        rs = await client.execute<GetConfigResponse>(
           new GetConfig({
             user_id: mainStore.userId!,
             tunnel_id: tunnelSelected.value,
@@ -286,7 +288,7 @@ async function getTunnels() {
       tunnelOptions.value.sort((a, b) => {
         return (a.value as number) - (b.value as number);
       });
-      tunnelSelected.value = tunnelOptions.value[0].value as number;
+      tunnelSelected.value = tunnelOptions.value[0]?.value as number;
     }
   } else message.error(rs.message);
 }
@@ -311,13 +313,17 @@ async function getNodes() {
     nodeOptions.value.sort((a, b) => {
       return (a.label as string).localeCompare(b.label as string);
     });
-    nodeSelected.value = nodeOptions.value[0].value as number;
+    nodeSelected.value = nodeOptions.value[0]?.value as number;
   } else message.error(rs.message);
 }
 
 onMounted(async () => {
   await getTunnels();
-  await getNodes();
-  await getTunnelConfig(Mode.TUNNEL);
+  if (tunnelOptions.value.length !== 0) {
+    await getNodes();
+    await getTunnelConfig(Mode.TUNNEL);
+  } else {
+    loading.value = false;
+  }
 });
 </script>

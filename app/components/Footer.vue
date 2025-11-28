@@ -42,11 +42,13 @@
           target="_blank"
           href="https://github.com/LoCyan-Team/LoCyanFrpFrontend"
         >
-          <n-icon
-            :size="20"
-            :component="GitAlt"
-            style="transform: translateY(5px)"
-          />
+          <client-only>
+            <n-icon
+              :size="20"
+              :component="GitAlt"
+              style="transform: translateY(5px)"
+            />
+          </client-only>
           {{ env.git.branch }} - {{ env.git.commitHash }}
         </n-a>
       </n-space>

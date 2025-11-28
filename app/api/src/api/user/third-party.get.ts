@@ -6,3 +6,7 @@ export class GetThirdParty extends API {
     super("/user/third-party", Method.GET, params, {});
   }
 }
+
+export interface GetThirdPartyResponse {
+  qq: boolean;
+}

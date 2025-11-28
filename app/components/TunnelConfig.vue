@@ -138,6 +138,7 @@
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
+import FormValidator from "@/utils/formValidator";
 
 import { GetPort, type GetPortResponse } from "@/api/src/api/node/port.get";
 
@@ -242,7 +243,7 @@ const formRules = computed(() => ({
       trigger: ["input", "blur"],
     },
     {
-      pattern: /^(?=.{1,24}$)[\w\u4e00-\u9fa5\u3040-\u309f\u30a0-\u30ff-]+$/,
+      pattern: FormValidator.regex.tunnel.name,
       message:
         "隧道名称长度1-24位，只能包含字母、数字、下划线、中文、日文、韩文和连字符",
       trigger: ["input", "blur"],
@@ -262,8 +263,7 @@ const formRules = computed(() => ({
       trigger: ["input", "blur"],
     },
     {
-      pattern:
-        /^((25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)$/,
+      pattern: FormValidator.regex.tunnel.ip,
       message: "请输入有效的IP地址",
       trigger: ["input", "blur"],
     },
@@ -271,7 +271,7 @@ const formRules = computed(() => ({
   localPort: [
     {
       required: true,
-      message: "请输入内网端口",
+      validator: (_, val) => FormValidator.number(val, "请输入内网端口"),
       trigger: ["input", "blur"],
     },
     {
@@ -286,7 +286,7 @@ const formRules = computed(() => ({
     ? ([
         {
           required: true,
-          message: "请输入远程端口",
+          validator: (_, val) => FormValidator.number(val, "请输入远程端口"),
           trigger: ["input", "blur"],
         },
         {
@@ -306,8 +306,7 @@ const formRules = computed(() => ({
           trigger: ["input", "blur"],
         },
         {
-          pattern:
-            /^[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(\.[a-zA-Z0-9]([a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$/,
+          pattern: FormValidator.regex.tunnel.domain,
           message: "请输入有效的域名格式",
           trigger: ["input", "blur"],
         },
@@ -346,25 +345,29 @@ async function handleRandomRemotePort() {
   loading.value.randomPort = false;
 }
 
-async function handleSubmit() {
+function handleSubmit() {
   if (!tunnelFormRef.value) return;
-
-  try {
-    await tunnelFormRef.value.validate();
+  tunnelFormRef.value.validate().then(() => {
     emit("submit", {
       name: form.value.name!,
       type: form.value.type,
       localIp: form.value.localIp,
       localPort: form.value.localPort!,
-      remotePort: form.value.remotePort,
+      remotePort: hasOption.remotePort.includes(form.value.type)
+        ? form.value.remotePort
+        : null,
       useEncryption: form.value.useEncryption,
       useCompression: form.value.useCompression,
-      domain: form.value.domain,
-      locations: form.value.locations,
-      secretKey: form.value.secretKey,
+      domain: hasOption.domain.includes(form.value.type)
+        ? form.value.domain
+        : null,
+      locations: hasOption.locations.includes(form.value.type)
+        ? form.value.locations
+        : null,
+      secretKey: hasOption.secretKey.includes(form.value.type)
+        ? form.value.secretKey
+        : null,
     });
-  } catch {
-    message.error("请检查表单输入");
-  }
+  });
 }
 </script>

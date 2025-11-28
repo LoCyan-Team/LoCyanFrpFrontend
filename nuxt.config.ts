@@ -2,20 +2,6 @@ import AutoImport from "unplugin-auto-import/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
 
-import git from "git-rev-sync";
-
-let GIT_COMMIT_HASH = "unknown";
-let GIT_BRANCH = "unknown";
-let GIT_LAST_COMMIT_DATE = new Date().toISOString();
-
-try {
-  GIT_COMMIT_HASH = git.short();
-  GIT_BRANCH = git.branch();
-  GIT_LAST_COMMIT_DATE = git.date().toISOString();
-} catch {
-  console.warn("Not a Git repository.");
-}
-
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
   future: {
@@ -32,17 +18,13 @@ export default defineNuxtConfig({
     "dayjs-nuxt",
     "@nuxtjs/mdc",
     "@bg-dev/nuxt-naiveui",
+    "nuxt-build-info",
   ],
   runtimeConfig: {
     public: {
       devMode: process.env.NODE_ENV === "development",
       capJsEndpoint: "",
       capJsSiteKey: "",
-      git: {
-        branch: GIT_BRANCH,
-        commitHash: GIT_COMMIT_HASH,
-        lastCommitDate: GIT_LAST_COMMIT_DATE,
-      },
     },
   },
   vue: {

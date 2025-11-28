@@ -57,7 +57,7 @@
         </n-el>
       </n-form>
     </n-card>
-    <n-el style="margin-block: 1rem; width: 100%;">
+    <n-el style="margin-block: 1rem; width: 100%">
       <n-spin :show="loading.passkey" style="width: 100%">
         <n-button
           type="success"

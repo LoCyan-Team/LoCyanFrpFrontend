@@ -49,7 +49,7 @@
               style="transform: translateY(5px)"
             />
           </client-only>
-          {{ env.git.branch }} - {{ env.git.commitHash }}
+          {{ buildInfo.branch }} - {{ buildInfo.shortCommit }}
         </n-a>
       </n-space>
       <n-text>基于 GPL-3.0 协议分发</n-text>
@@ -62,9 +62,7 @@ import GitAlt from "@vicons/fa/GitAlt";
 
 const currentYear = new Date().getFullYear();
 
-const runtimeConfig = useRuntimeConfig();
-
-const env = { git: runtimeConfig.public.git };
+const buildInfo = useBuildInfo();
 </script>
 
 <style scoped>

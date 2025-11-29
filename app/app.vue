@@ -1,10 +1,10 @@
 <template>
   <nuxt-route-announcer />
   <nuxt-layout>
-    <client-only>
-      <nuxt-page class="content" />
+    <client-only class="content">
+      <nuxt-page />
       <template #fallback>
-        <n-el class="content loading-container">
+        <n-el class="loading-container">
           <n-space vertical size="large">
             <div class="section">
               <n-skeleton

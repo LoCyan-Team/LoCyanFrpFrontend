@@ -47,9 +47,12 @@
 
       <n-card v-if="batchSelected.length > 0" embedded>
         <n-space>
-          <n-button type="error" secondary @click="handleDelete()">
-            删除
-          </n-button>
+          <n-popconfirm @positive-click="handleBatchDelete">
+            <template #trigger>
+              <n-button type="error" secondary> 删除 </n-button>
+            </template>
+            确定要删除这些域名吗？此操作无法撤销。
+          </n-popconfirm>
         </n-space>
       </n-card>
 
@@ -97,7 +100,12 @@
                   <n-td>{{ domain.icp }}</n-td>
                   <n-td>{{ domain.natureName }} - {{ domain.unitName }}</n-td>
                   <n-td>
-                    <n-button type="error" secondary> 删除 </n-button>
+                    <n-popconfirm @positive-click="handleDelete(domain.id)">
+                      <template #trigger>
+                        <n-button type="error" secondary> 删除 </n-button>
+                      </template>
+                      确定要删除此域名吗？此操作无法撤销。
+                    </n-popconfirm>
                   </n-td>
                 </n-tr>
               </n-tbody>
@@ -139,8 +147,8 @@
         <n-spin :show="loading.miitCaptcha">
           <n-space vertical>
             <miit-captcha-marker
-              :small-image-src="miit.image.smallBase64"
-              :big-image-src="miit.image.bigBase64"
+              :small-image-src="miit.image.smallBase64!"
+              :big-image-src="miit.image.bigBase64!"
               :max-markers="4"
               @update:markers="handleMiitImageMarkerUpdate"
             />
@@ -166,8 +174,14 @@ import type { SelectOption } from "naive-ui";
 
 import { GetDomains } from "api/src/api/domains.get";
 import { GetIcp as GetIcpDomains } from "api/src/api/domain/icp.get";
-import { GetImage as GetMiitCaptchaImage } from "api/src/api/domain/icp/miit/image.get";
-import { PostSign as PostMiitCaptchaSign } from "api/src/api/domain/icp/miit/sign.post";
+import {
+  GetImage as GetMiitCaptchaImage,
+  type GetImageResponse as GetMiitCaptchaImageResponse,
+} from "api/src/api/domain/icp/miit/image.get";
+import {
+  PostSign as PostMiitCaptchaSign,
+  type PostSignResponse as PostMiitCaptchaSignResponse,
+} from "api/src/api/domain/icp/miit/sign.post";
 import { PutIcp } from "api/src/api/domain/icp.put";
 
 const mainStore = useMainStore();
@@ -281,7 +295,7 @@ const batchSelected = ref<number[]>([]);
 async function handleSubmit() {
   loading.value.submit = true;
   loading.value.miitCaptcha = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetMiitCaptchaImageResponse>(
     new GetMiitCaptchaImage({
       user_id: mainStore.userId!,
       domain_id: formData.value.domainId!,
@@ -315,7 +329,7 @@ async function handleMiitImageMarkerUpdate(point: object) {
 
 async function getMiitCaptchaSign() {
   loading.value.miitCaptcha = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostMiitCaptchaSignResponse>(
     new PostMiitCaptchaSign({
       user_id: mainStore.userId!,
       client_uid: miit.value.clientUid!,
@@ -352,6 +366,10 @@ async function handleAdd() {
 }
 
 function handleDelete(domainId?: number) {
+  // TODO
+}
+
+function handleBatchDelete() {
   // TODO
 }
 

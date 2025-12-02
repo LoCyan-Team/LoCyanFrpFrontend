@@ -13,3 +13,7 @@ export class PostSign extends API {
     super("/domain/icp/miit/sign", Method.POST, params, {});
   }
 }
+
+export interface PostSignResponse {
+  sign: string;
+}

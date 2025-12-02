@@ -26,7 +26,7 @@
                   <n-button
                     type="error"
                     secondary
-                    @click="handleDeleteDomain()"
+                    @click="handleBatchDeleteDomain"
                   >
                     删除
                   </n-button>
@@ -361,6 +361,10 @@ async function handleSubmitDomain() {
 }
 
 function handleDeleteDomain(domainId?: number) {
+  // TODO
+}
+
+function handleBatchDeleteDomain() {
   // TODO
 }
 

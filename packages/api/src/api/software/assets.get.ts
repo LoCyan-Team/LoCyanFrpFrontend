@@ -13,7 +13,10 @@ export interface GetAssetsResponse {
     name: string;
     file_name: string;
     description: string | null;
-    download_url: string;
+    download_urls: {
+      name: string;
+      url: string;
+    }[];
     created_time: string;
     updated_time: string;
   }[];

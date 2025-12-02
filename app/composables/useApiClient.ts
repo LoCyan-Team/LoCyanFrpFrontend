@@ -3,8 +3,8 @@ import { Response } from "@/api/src/type/response";
 import { Method } from "@/api/src/type/method";
 import type { API } from "@/api/src/type/api";
 import { FetchError, type FetchOptions } from "ofetch";
+import type { NitroFetchOptions } from "nitropack/types";
 
-// ApiUrlConfig 接口保持不变
 export interface ApiUrlConfig {
   v2: {
     main: string;
@@ -16,7 +16,6 @@ export interface ApiUrlConfig {
   };
 }
 
-// DefaultApiUrlConfig 配置保持不变
 export class DefaultApiUrlConfig implements ApiUrlConfig {
   v2 = {
     main: "https://api.locyanfrp.cn/v2",
@@ -29,7 +28,6 @@ export class DefaultApiUrlConfig implements ApiUrlConfig {
   };
 }
 
-// 定义后端返回的标准 JSON 数据结构
 interface RawResponse<T> {
   status: number;
   message: string;
@@ -39,8 +37,9 @@ interface RawResponse<T> {
 export class Client {
   private readonly token: string | undefined;
   private readonly urlConfig: ApiUrlConfig;
+
   // 使用标志位记录当前是否处于备份节点模式
-  private useBackup: boolean = false;
+  private useBackup = false;
 
   constructor(
     token?: string,
@@ -59,7 +58,6 @@ export class Client {
 
   /**
    * 执行 API 请求
-   * 包含自动重试逻辑：如果主节点失败且未切换过，会自动切换到备份节点重试
    */
   public async execute<T extends object>(api: API): Promise<Response<T>> {
     try {
@@ -73,12 +71,17 @@ export class Client {
         // 只有当没有 response (即网络连接失败) 或者需要针对特定状态码重试时才切换
         // 这里保留原逻辑：!error.response 意味着通常是网络不通
         if (!error.response) {
-          console.warn(`Primary API unreachable. Switching to backup: ${this.urlConfig.v3.backup}`);
+          console.warn(
+            `Primary API unreachable. Switching to backup: ${this.urlConfig.v3.backup}`,
+          );
           this.useBackup = true; // 切换状态（粘性）
 
           try {
             // 使用新地址重试
-            const retryResult = await this.performFetch<T>(api, this.currentBaseURL);
+            const retryResult = await this.performFetch<T>(
+              api,
+              this.currentBaseURL,
+            );
             return this.buildResponse(retryResult);
           } catch (retryError) {
             // 重试也失败，返回重试的错误
@@ -86,7 +89,7 @@ export class Client {
           }
         }
       }
-      
+
       // 其他情况直接返回错误
       return this.buildResponse(error);
     }
@@ -94,16 +97,18 @@ export class Client {
 
   /**
    * 内部核心请求方法
-   * 处理 Headers 构建、参数分类 (Params vs Body)
+   * 处理 Headers 构建、参数分类
    */
-  private async performFetch<T>(api: API, baseURL: string): Promise<RawResponse<T>> {
+  private async performFetch<T>(
+    api: API,
+    baseURL: string,
+  ): Promise<RawResponse<T>> {
     const opts: FetchOptions = {
       method: api.method,
       baseURL: baseURL,
       headers: { ...api.headers },
     };
 
-    // 1. 添加 Authorization Header
     if (this.token) {
       opts.headers = {
         ...opts.headers,
@@ -111,31 +116,24 @@ export class Client {
       };
     }
 
-    // 2. 处理参数：使用 switch-case 清晰区分 Params 和 Body
     if (api.params) {
       switch (api.method) {
-        case Method.GET:
-        case Method.DELETE:
-          // GET/DELETE: 参数放入 URL 查询字符串
-          opts.params = api.params;
-          break;
-
         case Method.POST:
         case Method.PUT:
         case Method.PATCH:
-          // POST/PUT/PATCH: 参数转为 x-www-form-urlencoded 放入 Body
-          // ofetch 自动检测 URLSearchParams 并设置 Content-Type
           opts.body = this.normalizeParams(api.params);
           break;
-          
         default:
-          // 其他方法如 OPTIONS, HEAD 默认不处理参数，或根据需求扩展
+          opts.query = api.params;
           break;
       }
     }
 
     // 发起请求，期望返回 RawResponse<T> 结构
-    return await $fetch<RawResponse<T>>(api.endpoint, opts);
+    return await $fetch<RawResponse<T>>(
+      api.endpoint,
+      opts as NitroFetchOptions<any>,
+    );
   }
 
   /**
@@ -163,11 +161,11 @@ export class Client {
 
     if (response instanceof FetchError) {
       // 处理 HTTP 错误或解析错误
-      status = response.response?.status || -1;
+      status = response.response?.status ?? -1;
       // 尝试读取服务端返回的错误信息
       const errorData = response.data as RawResponse<T> | undefined;
-      message = errorData?.message || response.message;
-      data = errorData?.data || null;
+      message = errorData?.message ?? response.message;
+      data = errorData?.data ?? null;
     } else if (response instanceof Error) {
       // 处理代码执行异常
       status = -1;
@@ -176,8 +174,8 @@ export class Client {
     } else {
       // 处理成功响应
       const rawResponse = response as RawResponse<T>;
-      status = rawResponse.status ?? 200;
-      message = rawResponse.message ?? "Success";
+      status = rawResponse.status;
+      message = rawResponse.message;
       data = rawResponse.data;
     }
 
@@ -192,7 +190,7 @@ export class Client {
  * Nuxt Composable
  */
 export function useApiClient(
-  options: { auth?: boolean } = { auth: true }
+  options: { auth?: boolean } = { auth: true },
 ): Client {
   const mainStore = useMainStore();
 

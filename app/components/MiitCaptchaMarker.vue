@@ -1,6 +1,7 @@
 <template>
   <n-el class="image-marker">
-    <img :src="'data:image/jpeg;base64,' + smallImageSrc" />
+    <img :src="'data:image/jpeg;base64,' + smallImageSrc" alt="Small Preview" />
+
     <div ref="container" class="image-container">
       <img
         ref="image"
@@ -24,48 +25,61 @@
   </n-el>
 </template>
 
-<script setup>
-const emit = defineEmits(["update:markers"]);
+<script setup lang="ts">
+// 定义标记点的接口
+interface Marker {
+  x: number;
+  y: number;
+}
 
-const props = defineProps({
-  smallImageSrc: {
-    type: String,
-    required: true,
-  },
-  bigImageSrc: {
-    type: String,
-    required: true,
-  },
-  maxMarkers: {
-    type: Number,
-    default: 4,
-  },
+// 定义 Props 接口
+interface Props {
+  smallImageSrc: string;
+  bigImageSrc: string;
+  maxMarkers?: number;
+}
+
+const props = withDefaults(defineProps<Props>(), {
+  maxMarkers: 4,
 });
 
-const container = ref(null);
-const image = ref(null);
-const markers = ref([]);
+const emit = defineEmits<{
+  (e: "update:markers", markers: Marker[]): void;
+}>();
 
-const markerColors = ["#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"]; // 改为蓝色系
+// Refs 类型定义
+const container = ref<HTMLDivElement | null>(null);
+const image = ref<HTMLImageElement | null>(null);
+const markers = ref<Marker[]>([]);
 
-// 添加图片变化监听
+const markerColors: string[] = ["#3b82f6", "#60a5fa", "#93c5fd", "#bfdbfe"];
+
+// 监听大图变化，重置标记
 watch(
   () => props.bigImageSrc,
   () => {
-    markers.value = []; // 清空所有标记点
+    markers.value = [];
   },
 );
 
-const handleImageClick = (event) => {
+const handleImageClick = (event: MouseEvent) => {
+  // 确保图片元素存在
+  if (!image.value) return;
+
   const rect = image.value.getBoundingClientRect();
+
   const scaleX = image.value.naturalWidth / rect.width;
   const scaleY = image.value.naturalHeight / rect.height;
 
   const x = Math.round((event.clientX - rect.left) * scaleX);
   const y = Math.round((event.clientY - rect.top) * scaleY);
 
-  markers.value.push({ x, y });
-  if (markers.value.length === 4) {
+  if (markers.value.length < props.maxMarkers) {
+    markers.value.push({ x, y });
+  }
+
+  // 当达到指定数量时触发更新
+  if (markers.value.length === props.maxMarkers) {
     emit("update:markers", markers.value);
   }
 };
@@ -103,5 +117,6 @@ const handleImageClick = (event) => {
   font-weight: bold;
   font-size: 12px;
   border: 2px solid white;
+  user-select: none;
 }
 </style>

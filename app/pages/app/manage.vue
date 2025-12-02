@@ -156,7 +156,7 @@ async function handleEdit(
     const index = apps.value.findIndex((item) => item.id === appId);
     if (index !== -1) {
       apps.value[index] = {
-        ...apps.value[index],
+        id: apps.value[index].id,
         name: app.name,
         description: app.description,
         redirectUrl: app.redirectUrl,

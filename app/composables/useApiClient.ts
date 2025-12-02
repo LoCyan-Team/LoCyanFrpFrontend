@@ -132,7 +132,7 @@ export class Client {
     // 发起请求，期望返回 RawResponse<T> 结构
     return await $fetch<RawResponse<T>>(
       api.endpoint,
-      opts as NitroFetchOptions<any>,
+      opts as NitroFetchOptions<unknown>,
     );
   }
 

@@ -94,18 +94,15 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import {
-  PostLogin,
-  type PostLoginResponse,
-} from "@/api/src/api/auth/login.post";
+import { PostLogin, type PostLoginResponse } from "api/src/api/auth/login.post";
 import {
   PostLogin as PostWebauthnLogin,
   type PostLoginResponse as PostWebauthnLoginResponse,
-} from "@/api/src/api/auth/webauthn/login.post";
+} from "api/src/api/auth/webauthn/login.post";
 import {
   GetLogin as GetQqLogin,
   type GetLoginResponse as GetQqLoginResponse,
-} from "@/api/src/api/auth/third-party/qq/login.get";
+} from "api/src/api/auth/third-party/qq/login.get";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({

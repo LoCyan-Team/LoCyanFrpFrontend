@@ -95,8 +95,8 @@
 import type { FormInst, FormItemRule } from "naive-ui";
 import FormValidator from "@/utils/formValidator";
 
-import { PostRegister } from "@/api/src/api/auth/register.post";
-import { GetRegister as GetEmailCode } from "@/api/src/api/email/register.get";
+import { PostRegister } from "api/src/api/auth/register.post";
+import { GetRegister as GetEmailCode } from "api/src/api/email/register.get";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
 
 definePageMeta({

@@ -18,7 +18,7 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { PutApp, type PutAppResponse } from "@/api/src/api/app.put";
+import { PutApp, type PutAppResponse } from "api/src/api/app.put";
 
 const mainStore = useMainStore();
 const client = useApiClient();

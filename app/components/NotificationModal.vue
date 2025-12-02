@@ -114,12 +114,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetSystem } from "@/api/src/api/site/notification/system.get";
-import { GetUser } from "@/api/src/api/site/notification/user.get";
-import { PutRead as PutSystemRead } from "@/api/src/api/site/notification/system/read.put";
-import { PutBatch as PutSystemReadBatch } from "@/api/src/api/site/notification/system/read/batch.put";
-import { PutRead as PutUserRead } from "@/api/src/api/site/notification/user/read.put";
-import { PutBatch as PutUserReadBatch } from "@/api/src/api/site/notification/user/read/batch.put";
+import { GetSystem } from "api/src/api/site/notification/system.get";
+import { GetUser } from "api/src/api/site/notification/user.get";
+import { PutRead as PutSystemRead } from "api/src/api/site/notification/system/read.put";
+import { PutBatch as PutSystemReadBatch } from "api/src/api/site/notification/system/read/batch.put";
+import { PutRead as PutUserRead } from "api/src/api/site/notification/user/read.put";
+import { PutBatch as PutUserReadBatch } from "api/src/api/site/notification/user/read/batch.put";
 
 const dayjs = useDayjs();
 

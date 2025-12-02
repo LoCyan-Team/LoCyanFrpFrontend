@@ -632,11 +632,11 @@ import type { SelectOption } from "naive-ui";
 import Error from "@vicons/carbon/Error";
 import Search from "@vicons/ionicons5/Search";
 
-import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
-import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
-import { DeleteTunnel } from "@/api/src/api/tunnel.delete";
-import { DeleteBatch as DeleteTunnelBatch } from "@/api/src/api/tunnel/batch.delete";
-import { PatchTunnel } from "@/api/src/api/tunnel.patch";
+import { GetTunnels, type GetTunnelsResponse } from "api/src/api/tunnels.get";
+import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
+import { DeleteTunnel } from "api/src/api/tunnel.delete";
+import { DeleteBatch as DeleteTunnelBatch } from "api/src/api/tunnel/batch.delete";
+import { PatchTunnel } from "api/src/api/tunnel.patch";
 
 useHead({
   title: "隧道管理",

@@ -157,14 +157,14 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import type { Response } from "@/api/src/type/response";
+import type { Response } from "api/src/type/response";
 
-import { GetTunnels, type GetTunnelsResponse } from "@/api/src/api/tunnels.get";
-import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
+import { GetTunnels, type GetTunnelsResponse } from "api/src/api/tunnels.get";
+import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
 import {
   GetConfig,
   type GetConfigResponse,
-} from "@/api/src/api/tunnel/config.get";
+} from "api/src/api/tunnel/config.get";
 
 useHead({
   title: "配置文件",

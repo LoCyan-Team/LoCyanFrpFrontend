@@ -6,12 +6,10 @@
     "format": "prettier -w ."
   },
   "devDependencies": {
-    "@types/bun": "latest"
+    "@types/bun": "latest",
+    "prettier": "^3.6.2"
   },
   "peerDependencies": {
     "typescript": "^5.8.3"
-  },
-  "dependencies": {
-    "prettier": "^3.6.2"
   }
 }

@@ -12,7 +12,7 @@ export interface GetSoftwareResponse {
     id: number;
     name: string;
     description: string | null;
-    tags: { type: string, content: string }[]
+    tags: { type: string; content: string }[];
   }[];
   pagination: {
     count: number;

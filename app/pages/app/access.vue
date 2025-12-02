@@ -202,17 +202,17 @@ import { useMainStore } from "@/store/main";
 import {
   GetAuthorizations,
   type GetAuthorizationsResponse,
-} from "@/api/src/api/auth/oauth/authorizations.get";
+} from "api/src/api/auth/oauth/authorizations.get";
 import {
   GetPermissions,
   type GetPermissionsResponse,
-} from "@/api/src/api/auth/oauth/permissions.get";
+} from "api/src/api/auth/oauth/permissions.get";
 import {
   GetSessions,
   type GetSessionsResponse,
-} from "@/api/src/api/auth/oauth/authorization/sessions.get";
-import { DeleteSession } from "@/api/src/api/auth/oauth/authorization/session.delete";
-import { DeleteApp as DeleteAppAuthorization } from "@/api/src/api/auth/oauth/authorization/app.delete";
+} from "api/src/api/auth/oauth/authorization/sessions.get";
+import { DeleteSession } from "api/src/api/auth/oauth/authorization/session.delete";
+import { DeleteApp as DeleteAppAuthorization } from "api/src/api/auth/oauth/authorization/app.delete";
 
 const dayjs = useDayjs();
 

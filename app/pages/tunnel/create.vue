@@ -73,8 +73,8 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetNodes, type GetNodesResponse } from "@/api/src/api/nodes.get";
-import { PutTunnel } from "@/api/src/api/tunnel.put";
+import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
+import { PutTunnel } from "api/src/api/tunnel.put";
 
 useHead({
   title: "创建隧道",

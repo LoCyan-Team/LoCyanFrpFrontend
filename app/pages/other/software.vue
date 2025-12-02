@@ -114,11 +114,11 @@ import type { SelectOption } from "naive-ui";
 import {
   GetSoftware,
   type GetSoftwareResponse,
-} from "@/api/src/api/software.get";
+} from "api/src/api/software.get";
 import {
   GetAssets,
   type GetAssetsResponse,
-} from "@/api/src/api/software/assets.get";
+} from "api/src/api/software/assets.get";
 
 const client = useApiClient();
 const message = useMessage();

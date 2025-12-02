@@ -65,7 +65,7 @@ import LogOutOutline from "@vicons/ionicons5/LogOutOutline";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { DeleteToken } from "@/api/src/api/user/token.delete";
+import { DeleteToken } from "api/src/api/user/token.delete";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

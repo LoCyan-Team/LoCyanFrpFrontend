@@ -20,4 +20,3 @@ export interface PostAuthorizeCallbackResponse {
 export interface PostAuthorizeCodeResponse {
   code: string;
 }
-

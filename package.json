@@ -32,7 +32,7 @@
     "@vicons/ionicons4": "^0.13.0",
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
-    "api": "./app/api",
+    "api": "./packages/api",
     "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "highcharts-vue": "^2.0.1",

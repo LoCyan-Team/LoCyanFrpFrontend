@@ -62,7 +62,7 @@ import { useMainStore } from "@/store/main";
 import {
   GetComments,
   type GetCommentsResponse,
-} from "@/api/src/api/donation/comments.get";
+} from "api/src/api/donation/comments.get";
 
 useHead({
   title: "留言",

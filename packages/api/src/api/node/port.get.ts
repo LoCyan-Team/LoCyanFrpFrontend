@@ -10,4 +10,3 @@ export class GetPort extends API {
 export interface GetPortResponse {
   port: number;
 }
-

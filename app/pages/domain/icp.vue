@@ -164,11 +164,11 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import { GetDomains } from "@/api/src/api/domains.get";
-import { GetIcp as GetIcpDomains } from "@/api/src/api/domain/icp.get";
-import { GetImage as GetMiitCaptchaImage } from "@/api/src/api/domain/icp/miit/image.get";
-import { PostSign as PostMiitCaptchaSign } from "@/api/src/api/domain/icp/miit/sign.post";
-import { PutIcp } from "@/api/src/api/domain/icp.put";
+import { GetDomains } from "api/src/api/domains.get";
+import { GetIcp as GetIcpDomains } from "api/src/api/domain/icp.get";
+import { GetImage as GetMiitCaptchaImage } from "api/src/api/domain/icp/miit/image.get";
+import { PostSign as PostMiitCaptchaSign } from "api/src/api/domain/icp/miit/sign.post";
+import { PutIcp } from "api/src/api/domain/icp.put";
 
 const mainStore = useMainStore();
 const client = useApiClient();

@@ -6,7 +6,7 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { GetUser } from "@/api/src/api/user.get";
+import { GetUser } from "api/src/api/user.get";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

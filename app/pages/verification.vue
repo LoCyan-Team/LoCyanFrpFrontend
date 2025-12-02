@@ -243,13 +243,13 @@ import { useMainStore } from "@/store/main";
 
 import FileDownloadDoneOutlined from "@vicons/material/FileDownloadDoneOutlined";
 
-import { GetVerification as GetStatus } from "@/api/src/api/verification.get";
-import { PostPayment as PostBuyAccreditation } from "@/api/src/api/verification/real-person/payment.post";
-import { PostGiven as PostGivenAccreditation } from "@/api/src/api/verification/real-person/given.post";
-import { PostRealPerson } from "@/api/src/api/verification/real-person.post";
-import { GetRealPerson } from "@/api/src/api/verification/real-person.get";
-import { DeleteRealPerson } from "@/api/src/api/verification/real-person.delete";
-import { PostRealName } from "@/api/src/api/verification/real-name.post";
+import { GetVerification as GetStatus } from "api/src/api/verification.get";
+import { PostPayment as PostBuyAccreditation } from "api/src/api/verification/real-person/payment.post";
+import { PostGiven as PostGivenAccreditation } from "api/src/api/verification/real-person/given.post";
+import { PostRealPerson } from "api/src/api/verification/real-person.post";
+import { GetRealPerson } from "api/src/api/verification/real-person.get";
+import { DeleteRealPerson } from "api/src/api/verification/real-person.delete";
+import { PostRealName } from "api/src/api/verification/real-name.post";
 
 useHead({
   title: "身份认证",

@@ -9,11 +9,11 @@ export class GetVerifications extends API {
 
 export interface GetVerificationsResponse {
   list: {
-    domain: string
-    record_type: string
-    record_data: string
-  }[]
+    domain: string;
+    record_type: string;
+    record_data: string;
+  }[];
   pagination: {
     count: number;
-  }
+  };
 }

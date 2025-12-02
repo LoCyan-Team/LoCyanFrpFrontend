@@ -1,7 +1,7 @@
 import { useMainStore } from "~/store/main";
-import { Response } from "@/api/src/type/response";
-import { Method } from "@/api/src/type/method";
-import type { API } from "@/api/src/type/api";
+import { Response } from "api/src/type/response";
+import { Method } from "api/src/type/method";
+import type { API } from "api/src/type/api";
 import { FetchError, type FetchOptions } from "ofetch";
 import type { NitroFetchOptions } from "nitropack/types";
 

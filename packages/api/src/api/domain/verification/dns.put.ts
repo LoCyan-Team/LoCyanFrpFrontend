@@ -8,6 +8,6 @@ export class PutDns extends API {
 }
 
 export interface PutDnsResponse {
-  record_type: string
-  record_data: string
+  record_type: string;
+  record_data: string;
 }

@@ -227,22 +227,22 @@ import Qq from "@vicons/fa/Qq";
 import {
   GetThirdParty as GetThirdPartyBind,
   type GetThirdPartyResponse as GetThirdPartyBindResponse,
-} from "@/api/src/api/user/third-party.get";
+} from "api/src/api/user/third-party.get";
 
 import {
   GetBind as GetQqBind,
   type GetBindResponse as GetQqBindResponse,
-} from "@/api/src/api/user/third-party/qq/bind.get";
-import { DeleteBind as DeleteQqBind } from "@/api/src/api/user/third-party/qq/bind.delete";
+} from "api/src/api/user/third-party/qq/bind.get";
+import { DeleteBind as DeleteQqBind } from "api/src/api/user/third-party/qq/bind.delete";
 import {
   PostToken as PostResetFrpToken,
   type PostTokenResponse as PostResetFrpTokenResponse,
-} from "@/api/src/api/user/frp/token.post";
-import { DeleteAll as DeleteAllToken } from "@/api/src/api/user/token/all.delete";
-import { PutUsername } from "@/api/src/api/user/username.put";
-import { PutPassword } from "@/api/src/api/user/password.put";
-import { GetEmail as GetUpdateEmailCode } from "@/api/src/api/email/email.get";
-import { PutEmail } from "@/api/src/api/user/email.put";
+} from "api/src/api/user/frp/token.post";
+import { DeleteAll as DeleteAllToken } from "api/src/api/user/token/all.delete";
+import { PutUsername } from "api/src/api/user/username.put";
+import { PutPassword } from "api/src/api/user/password.put";
+import { GetEmail as GetUpdateEmailCode } from "api/src/api/email/email.get";
+import { PutEmail } from "api/src/api/user/email.put";
 import FormValidator from "@/utils/formValidator";
 
 const emit = defineEmits<{

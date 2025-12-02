@@ -88,12 +88,12 @@ import {
   PostAuthorize,
   type PostAuthorizeCallbackResponse,
   type PostAuthorizeCodeResponse,
-} from "@/api/src/api/auth/oauth/authorize.post";
+} from "api/src/api/auth/oauth/authorize.post";
 import {
   GetPermissions,
   type GetPermissionsResponse,
-} from "@/api/src/api/auth/oauth/permissions.get";
-import { GetApp, type GetAppResponse } from "@/api/src/api/app.get";
+} from "api/src/api/auth/oauth/permissions.get";
+import { GetApp, type GetAppResponse } from "api/src/api/app.get";
 
 definePageMeta({
   sidebar: false,

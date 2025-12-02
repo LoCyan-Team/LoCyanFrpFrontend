@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetRealPerson } from "@/api/src/api/verification/real-person.get";
+import { GetRealPerson } from "api/src/api/verification/real-person.get";
 
 definePageMeta({
   sidebar: false,

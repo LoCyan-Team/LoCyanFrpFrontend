@@ -2,14 +2,14 @@ import { API } from "../../type/api";
 import { Method } from "../../type/method";
 
 export class GetAssets extends API {
-  constructor(params: { id: number ; page: number; size: number }) {
+  constructor(params: { id: number; page: number; size: number }) {
     super("/software/assets", Method.GET, params, {});
   }
 }
 
 export interface GetAssetsResponse {
   list: {
-    tag: string
+    tag: string;
     name: string;
     file_name: string;
     description: string | null;

@@ -8,12 +8,12 @@ export class GetDomains extends API {
 }
 
 export interface GetDomainsResponse {
-  "list": {
-      "id": number,
-      "domain": string,
-      "icp_id": number | null
-    }[],
-  "pagination": {
-    "count": number
-  }
+  list: {
+    id: number;
+    domain: string;
+    icp_id: number | null;
+  }[];
+  pagination: {
+    count: number;
+  };
 }

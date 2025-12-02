@@ -179,20 +179,20 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { PutComment } from "@/api/src/api/donation/comment.put";
+import { PutComment } from "api/src/api/donation/comment.put";
 import {
   GetDonations,
   type GetDonationsResponse,
-} from "@/api/src/api/donations.get";
+} from "api/src/api/donations.get";
 import {
   PostDonation,
   type PostDonationResponse,
-} from "@/api/src/api/donation.post";
+} from "api/src/api/donation.post";
 import {
   PostPayment as PostDonationPayment,
   type PostPaymentResponse as PostDonationPaymentResponse,
-} from "@/api/src/api/donation/payment.post";
-import { DeleteDonation } from "@/api/src/api/donation.delete";
+} from "api/src/api/donation/payment.post";
+import { DeleteDonation } from "api/src/api/donation.delete";
 
 useHead({
   title: "捐赠",

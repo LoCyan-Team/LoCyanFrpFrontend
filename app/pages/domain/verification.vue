@@ -241,16 +241,16 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetDomains, type GetDomainsResponse } from "@/api/src/api/domains.get";
+import { GetDomains, type GetDomainsResponse } from "api/src/api/domains.get";
 import {
   GetVerifications,
   type GetVerificationsResponse,
-} from "@/api/src/api/domain/verifications.get";
+} from "api/src/api/domain/verifications.get";
 import {
   PutDns as PutDnsVerification,
   type PutDnsResponse as PutDnsVerificationResponse,
-} from "@/api/src/api/domain/verification/dns.put";
-import { PostDns as PostDnsVerification } from "@/api/src/api/domain/verification/dns.post";
+} from "api/src/api/domain/verification/dns.put";
+import { PostDns as PostDnsVerification } from "api/src/api/domain/verification/dns.post";
 
 const mainStore = useMainStore();
 const client = useApiClient();

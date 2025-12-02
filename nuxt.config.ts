@@ -30,7 +30,7 @@ export default defineNuxtConfig({
   vue: {
     compilerOptions: {
       isCustomElement: (tag) => {
-        const customElements = ["cap-widget", "highcharts"];
+        const customElements = ["cap-widget"];
 
         return customElements.includes(tag);
       },

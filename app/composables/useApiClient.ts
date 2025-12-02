@@ -4,7 +4,7 @@ import { Method } from "@/api/src/type/method";
 import type { API } from "@/api/src/type/api";
 import { FetchError, type FetchOptions } from "ofetch";
 
-// ApiUrlConfig
+// ApiUrlConfig 接口保持不变
 export interface ApiUrlConfig {
   v2: {
     main: string;
@@ -16,7 +16,7 @@ export interface ApiUrlConfig {
   };
 }
 
-// DefaultApiUrlConfig
+// DefaultApiUrlConfig 配置保持不变
 export class DefaultApiUrlConfig implements ApiUrlConfig {
   v2 = {
     main: "https://api.locyanfrp.cn/v2",
@@ -29,6 +29,7 @@ export class DefaultApiUrlConfig implements ApiUrlConfig {
   };
 }
 
+// 定义后端返回的标准 JSON 数据结构
 interface RawResponse<T> {
   status: number;
   message: string;
@@ -37,8 +38,9 @@ interface RawResponse<T> {
 
 export class Client {
   private readonly token: string | undefined;
-  private urlConfig: ApiUrlConfig;
-  private currentBaseURL: string;
+  private readonly urlConfig: ApiUrlConfig;
+  // 使用标志位记录当前是否处于备份节点模式
+  private useBackup: boolean = false;
 
   constructor(
     token?: string,
@@ -46,106 +48,140 @@ export class Client {
   ) {
     this.token = token;
     this.urlConfig = apiUrlConfig;
-    this.currentBaseURL = apiUrlConfig.v3.main;
+  }
+
+  /**
+   * 获取当前的 Base URL (基于当前的主/备状态)
+   */
+  private get currentBaseURL(): string {
+    return this.useBackup ? this.urlConfig.v3.backup : this.urlConfig.v3.main;
   }
 
   /**
    * 执行 API 请求
-   * @param api API 请求配置
-   * @returns 包含响应数据的 Promise
+   * 包含自动重试逻辑：如果主节点失败且未切换过，会自动切换到备份节点重试
    */
   public async execute<T extends object>(api: API): Promise<Response<T>> {
-    const requestConfig: FetchOptions = {
-      method: api.method,
-      headers: {
-        ...api.headers,
-      },
-      // server: false,
-    };
-
-    // 添加 Authorization header
-    if (this.token) {
-      (requestConfig.headers as Record<string, string>).Authorization =
-        `Bearer ${this.token}`;
-    }
-
-    switch (api.method) {
-      case Method.GET:
-      case Method.DELETE:
-        if (api.params) {
-          requestConfig.params = api.params;
-        }
-        break;
-      case Method.POST:
-      case Method.PUT:
-      case Method.PATCH:
-        if (api.params) {
-          (requestConfig.headers as Record<string, string>)["Content-Type"] =
-            "application/x-www-form-urlencoded";
-          requestConfig.body = this.toUrlEncoded(api.params);
-        }
-        break;
-    }
-
-    let result;
-
     try {
-      result = await $fetch<T>(api.endpoint, {
-        ...requestConfig,
-        baseURL: this.currentBaseURL,
-      } as never);
+      // 1. 首次尝试
+      const result = await this.performFetch<T>(api, this.currentBaseURL);
       return this.buildResponse(result);
-    } catch (error: unknown) {
-      // 捕获 FetchError
-      if (error instanceof FetchError) {
-        if (!error.response && this.currentBaseURL === this.urlConfig.v3.main) {
-          this.currentBaseURL = this.urlConfig.v3.backup;
+    } catch (error) {
+      // 2. 故障转移逻辑
+      // 如果是 FetchError (网络/HTTP错误)，且当前还在使用主节点，则尝试切换
+      if (error instanceof FetchError && !this.useBackup) {
+        // 只有当没有 response (即网络连接失败) 或者需要针对特定状态码重试时才切换
+        // 这里保留原逻辑：!error.response 意味着通常是网络不通
+        if (!error.response) {
+          console.warn(`Primary API unreachable. Switching to backup: ${this.urlConfig.v3.backup}`);
+          this.useBackup = true; // 切换状态（粘性）
 
           try {
-            result = await $fetch<T>(api.endpoint, {
-              ...requestConfig,
-              baseURL: this.currentBaseURL,
-            } as never);
-            return this.buildResponse(result);
-          } catch (retryError: unknown) {
+            // 使用新地址重试
+            const retryResult = await this.performFetch<T>(api, this.currentBaseURL);
+            return this.buildResponse(retryResult);
+          } catch (retryError) {
+            // 重试也失败，返回重试的错误
             return this.buildResponse(retryError);
           }
-        } else return this.buildResponse(error);
-      } else return this.buildResponse(error);
+        }
+      }
+      
+      // 其他情况直接返回错误
+      return this.buildResponse(error);
     }
   }
 
-  private toUrlEncoded(data: Record<string, unknown>): string {
-    const params = new URLSearchParams();
-    for (const key in data) {
-      if (Object.prototype.hasOwnProperty.call(data, key)) {
-        params.append(key, data[key] as string);
+  /**
+   * 内部核心请求方法
+   * 处理 Headers 构建、参数分类 (Params vs Body)
+   */
+  private async performFetch<T>(api: API, baseURL: string): Promise<RawResponse<T>> {
+    const opts: FetchOptions = {
+      method: api.method,
+      baseURL: baseURL,
+      headers: { ...api.headers },
+    };
+
+    // 1. 添加 Authorization Header
+    if (this.token) {
+      opts.headers = {
+        ...opts.headers,
+        Authorization: `Bearer ${this.token}`,
+      };
+    }
+
+    // 2. 处理参数：使用 switch-case 清晰区分 Params 和 Body
+    if (api.params) {
+      switch (api.method) {
+        case Method.GET:
+        case Method.DELETE:
+          // GET/DELETE: 参数放入 URL 查询字符串
+          opts.params = api.params;
+          break;
+
+        case Method.POST:
+        case Method.PUT:
+        case Method.PATCH:
+          // POST/PUT/PATCH: 参数转为 x-www-form-urlencoded 放入 Body
+          // ofetch 自动检测 URLSearchParams 并设置 Content-Type
+          opts.body = this.normalizeParams(api.params);
+          break;
+          
+        default:
+          // 其他方法如 OPTIONS, HEAD 默认不处理参数，或根据需求扩展
+          break;
       }
     }
-    return params.toString();
+
+    // 发起请求，期望返回 RawResponse<T> 结构
+    return await $fetch<RawResponse<T>>(api.endpoint, opts);
   }
 
+  /**
+   * 将参数对象规范化为 URLSearchParams
+   * 过滤掉 undefined/null 值，并安全转换为字符串
+   */
+  private normalizeParams(params: Record<string, unknown>): URLSearchParams {
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    }
+    return searchParams;
+  }
+
+  /**
+   * 统一响应构建方法
+   * 处理正常响应、FetchError 和其他 Error
+   */
   private buildResponse<T extends object>(response: unknown): Response<T> {
     let status: number;
     let message: string;
     let data: T | null;
 
     if (response instanceof FetchError) {
-      // 如果是 FetchError，rawResult 是 FetchError 对象
+      // 处理 HTTP 错误或解析错误
       status = response.response?.status || 500;
-      message = response.response?._data?.message || response.message;
-      data = response.response?._data?.data;
+      // 尝试读取服务端返回的错误信息
+      const errorData = response.data as RawResponse<T> | undefined;
+      message = errorData?.message || response.message;
+      data = errorData?.data || null;
     } else if (response instanceof Error) {
-      // 如果是其他 Error 对象
+      // 处理代码执行异常
       status = -1;
       message = response.message;
       data = null;
     } else {
+      // 处理成功响应
       const rawResponse = response as RawResponse<T>;
-      status = rawResponse.status;
-      message = rawResponse.message;
+      status = rawResponse.status ?? 200;
+      message = rawResponse.message ?? "Success";
       data = rawResponse.data;
     }
+
+    // 确保返回的 data 不为 null/undefined，保持原有行为
     const finalData: T = data ?? ({} as T);
 
     return new Response(status, message, finalData);
@@ -153,31 +189,21 @@ export class Client {
 }
 
 /**
- * 用于在 Nuxt 应用中获取 API 客户端实例的 Composable
- * @param options 配置选项，例如是否需要认证
- * @returns Client 实例
- * @throws Error 如果需要认证但 token 为空
+ * Nuxt Composable
  */
 export function useApiClient(
-  options: {
-    auth?: boolean;
-  } = {
-    auth: true,
-  },
+  options: { auth?: boolean } = { auth: true }
 ): Client {
   const mainStore = useMainStore();
 
-  let api: Client;
   if (options.auth) {
-    if (mainStore.token === null || mainStore.token === undefined) {
+    if (!mainStore.token) {
       throw new Error(
         "Authentication token required, but token is null or undefined.",
       );
     }
-    api = new Client(mainStore.token);
-  } else {
-    api = new Client();
+    return new Client(mainStore.token);
   }
 
-  return api;
+  return new Client();
 }

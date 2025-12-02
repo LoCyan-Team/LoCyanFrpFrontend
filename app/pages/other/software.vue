@@ -5,7 +5,7 @@
         <n-card title="软件">
           <n-space vertical>
             <n-select
-              v-model:value="selectedSoftware"
+              v-model:value="selectedSoftwareId"
               :options="softwareOptions"
               placeholder="请选择要下载的软件"
               @update:value="
@@ -16,7 +16,7 @@
             />
             <n-space>
               <n-tag
-                v-for="tag in findSoftwareById(selectedSoftware)?.tags"
+                v-for="tag in findSoftwareById(selectedSoftwareId)?.tags"
                 :key="tag.content"
                 :type="covertTagType(tag.type)"
               >
@@ -25,7 +25,7 @@
             </n-space>
             <MDC
               :value="
-                findSoftwareById(selectedSoftware)?.description ?? '没有介绍'
+                findSoftwareById(selectedSoftwareId)?.description ?? '没有介绍'
               "
             />
             <n-pagination
@@ -55,7 +55,7 @@
         <n-card title="资源">
           <n-space vertical>
             <n-select
-              v-model:value="selectedAsset"
+              v-model:value="selectedAssetTag"
               :options="assetsOptions"
               placeholder="请选择要下载的资源"
             />
@@ -79,24 +79,30 @@
               :page-sizes="[10, 25, 50, 100]"
             />
             <n-h3>
-              {{ findAssetByTag(selectedAsset)?.name }}
+              {{ findAssetByTag(selectedAssetTag)?.name }}
               <n-tag :bordered="false">{{
-                findAssetByTag(selectedAsset)?.tag
+                findAssetByTag(selectedAssetTag)?.tag
               }}</n-tag>
             </n-h3>
             <MDC
-              :value="findAssetByTag(selectedAsset)?.descriptio ?? '没有介绍'"
+              :value="
+                findAssetByTag(selectedAssetTag)?.description ?? '没有介绍'
+              "
             />
             <n-divider />
             <n-button
               type="primary"
               @click="
-                navigateTo(findAssetByTag(selectedAsset)?.downloadUrl, {
-                  external: true,
-                  open: {
-                    target: '_blank',
+                // TODO: 让用户选择下载的资源的源
+                navigateTo(
+                  findAssetByTag(selectedAssetTag)?.downloadUrls[0]?.url,
+                  {
+                    external: true,
+                    open: {
+                      target: '_blank',
+                    },
                   },
-                })
+                )
               "
             >
               下载
@@ -131,8 +137,8 @@ const loading = ref<{
   assets: true,
 });
 
-const selectedSoftware = ref<SelectOption | null>(null);
-const selectedAsset = ref<SelectOption | null>(null);
+const selectedSoftwareId = ref<number | null>(null);
+const selectedAssetTag = ref<string | null>(null);
 
 interface Software {
   id: number;
@@ -146,7 +152,7 @@ interface Asset {
   name: string;
   fileName: string;
   description: string | null;
-  downloadUrl: string;
+  downloadUrls: { name: string; url: string }[];
   createdTime: string;
   updatedTime: string;
 }
@@ -202,7 +208,9 @@ async function getSoftwareList() {
     softwareList = list;
     await buildSoftwareOptions();
     if (softwareOptions.value.length > 0) {
-      selectedSoftware.value = softwareOptions.value[0].value;
+      selectedSoftwareId.value = softwareOptions.value[0]?.value as
+        | number
+        | null;
     }
     await getAssets();
   } else {
@@ -215,7 +223,7 @@ async function getAssets() {
   loading.value.assets = true;
   const rs = await client.execute<GetAssetsResponse>(
     new GetAssets({
-      id: selectedSoftware.value!.id,
+      id: selectedSoftwareId.value!,
       page: assetPage.value.current,
       size: assetPage.value.size,
     }),
@@ -228,7 +236,7 @@ async function getAssets() {
         name: item.name,
         fileName: item.file_name,
         description: item.description,
-        downloadUrl: item.download_url,
+        downloadUrls: item.download_urls,
         createdTime: item.created_time,
         updatedTime: item.updated_time,
       });
@@ -236,7 +244,7 @@ async function getAssets() {
     softwareAssets = list;
     await buildAssetsOptions();
     if (assetsOptions.value.length > 0) {
-      selectedAsset.value = assetsOptions.value[0].value;
+      selectedAssetTag.value = assetsOptions.value[0]?.value as string | null;
     }
   } else {
     message.error(rs.message);
@@ -262,15 +270,17 @@ async function buildAssetsOptions() {
   });
 }
 
-function findSoftwareById(id: number): Software | undefined {
+function findSoftwareById(id: number | null): Software | undefined {
   return softwareList.find((item) => item.id === id);
 }
 
-function findAssetByTag(tag: string): Asset | undefined {
+function findAssetByTag(tag: string | null): Asset | undefined {
   return softwareAssets.find((item) => item.tag === tag);
 }
 
-function covertTagType(type: string): string | null {
+function covertTagType(
+  type: string,
+): "info" | "success" | "warning" | "error" | undefined {
   switch (type) {
     case "INFO":
       return "info";
@@ -281,7 +291,7 @@ function covertTagType(type: string): string | null {
     case "ERROR":
       return "error";
     default:
-      return null;
+      return undefined;
   }
 }
 

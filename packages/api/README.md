@@ -9,12 +9,9 @@ bun install
 调用:
 
 ```ts
-import { Client as ApiClient } from "src/client";
-import { Awesome } from "src/api/awesome";
-
-// token -> 在此处传入登录令牌
-const client = new ApiClient(token);
-client.init(); // 初始化客户端
+// 初始化客户端
+// 关于 API 客户端的使用请参考父模块中的定义
+const client = useApiClient();
 
 // 调用
 // T 为返回值的类型声明

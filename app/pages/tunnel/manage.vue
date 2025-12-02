@@ -807,21 +807,45 @@ const page = ref<{
 const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
 
-async function handleSearch() {
-  loading.value.page = true;
-  if (!searchKeyword.value || !searchKeyword.value.trim()) {
-    displayTunnels.value = [...tunnels.value];
-    loading.value.page = false;
-    return;
+function filterTunnelsByKeyword(
+  tunnelsList: Tunnel[],
+  keyword: string,
+): Tunnel[] {
+  if (!keyword || !keyword.trim()) {
+    return [...tunnelsList];
   }
 
-  const keyword = searchKeyword.value.trim().toLowerCase();
-  displayTunnels.value = tunnels.value.filter((tunnel) => {
-    const nameMatch = tunnel.name.toLowerCase().includes(keyword);
-    const idMatch = tunnel.id.toString() === keyword;
-    loading.value.page = false;
+  const searchTerm = keyword.trim().toLowerCase();
+  return tunnelsList.filter((tunnel) => {
+    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm);
+    const idMatch = tunnel.id.toString() === searchTerm;
     return nameMatch || idMatch;
   });
+}
+
+watch(
+  tunnels,
+  (newTunnels) => {
+    // 如果有搜索关键词，需要重新过滤
+    if (searchKeyword.value.trim() !== "")
+      displayTunnels.value = filterTunnelsByKeyword(
+        tunnels.value,
+        searchKeyword.value,
+      );
+    else {
+      displayTunnels.value = [...newTunnels];
+    }
+  },
+  { deep: true },
+);
+
+async function handleSearch() {
+  loading.value.page = true;
+  displayTunnels.value = filterTunnelsByKeyword(
+    tunnels.value,
+    searchKeyword.value,
+  );
+  loading.value.page = false;
 }
 
 async function handleBatchEdit() {

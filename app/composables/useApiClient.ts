@@ -163,7 +163,7 @@ export class Client {
 
     if (response instanceof FetchError) {
       // 处理 HTTP 错误或解析错误
-      status = response.response?.status || 500;
+      status = response.response?.status || -1;
       // 尝试读取服务端返回的错误信息
       const errorData = response.data as RawResponse<T> | undefined;
       message = errorData?.message || response.message;

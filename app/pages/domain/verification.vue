@@ -23,13 +23,19 @@
             <n-space vertical>
               <n-card v-if="domainBatchSelected.length > 0" embedded>
                 <n-space>
-                  <n-button
-                    type="error"
-                    secondary
-                    @click="handleBatchDeleteDomain"
-                  >
-                    删除
-                  </n-button>
+                  <n-popconfirm @positive-click="handleBatchDeleteDomain">
+                    <template #trigger>
+                      <n-button
+                        type="error"
+                        secondary
+                        :loading="loading.batch.delete"
+                        :disabled="loading.batch.delete"
+                      >
+                        删除
+                      </n-button>
+                    </template>
+                    确定要删除这些域名吗？此操作无法撤销。
+                  </n-popconfirm>
                 </n-space>
               </n-card>
               <n-empty v-if="domainData.length === 0" />
@@ -68,13 +74,25 @@
                       <n-td>{{ domain.id }}</n-td>
                       <n-td>{{ domain.domain }}</n-td>
                       <n-td>
-                        <n-button
-                          type="error"
-                          secondary
-                          @click="handleDeleteDomain(domain.id)"
+                        <n-popconfirm
+                          @positive-click="handleDeleteDomain(domain.id)"
                         >
-                          删除
-                        </n-button>
+                          <template #trigger>
+                            <n-button
+                              type="error"
+                              secondary
+                              :loading="
+                                loading.domain.delete.includes(domain.id)
+                              "
+                              :disabled="
+                                loading.domain.delete.includes(domain.id)
+                              "
+                            >
+                              删除
+                            </n-button>
+                          </template>
+                          确定要删除此域名吗？此操作无法撤销。
+                        </n-popconfirm>
                       </n-td>
                     </n-tr>
                   </n-tbody>
@@ -251,6 +269,8 @@ import {
   type PutDnsResponse as PutDnsVerificationResponse,
 } from "api/src/api/domain/verification/dns.put";
 import { PostDns as PostDnsVerification } from "api/src/api/domain/verification/dns.post";
+import { DeleteDomain } from "api/src/api/domain.delete";
+import { DeleteBatch as DeleteDomainBatch } from "api/src/api/domain/batch.delete";
 
 const mainStore = useMainStore();
 const client = useApiClient();
@@ -268,11 +288,23 @@ const loading = ref<{
     domain: boolean;
     verification: boolean;
   };
+  batch: {
+    delete: boolean;
+  };
+  domain: {
+    delete: number[];
+  };
 }>({
   submit: false,
   list: {
     domain: true,
     verification: true,
+  },
+  batch: {
+    delete: false,
+  },
+  domain: {
+    delete: [],
   },
 });
 
@@ -360,12 +392,38 @@ async function handleSubmitDomain() {
   loading.value.submit = false;
 }
 
-function handleDeleteDomain(domainId?: number) {
-  // TODO
+async function handleDeleteDomain(domainId: number) {
+  loading.value.domain.delete.push(domainId);
+  const rs = await client.execute(
+    new DeleteDomain({
+      user_id: mainStore.userId!,
+      domain_id: domainId,
+    }),
+  );
+  if (rs.status === 200) {
+    domainData.value = domainData.value.filter((it) => it.id !== domainId);
+  } else message.error(rs.message);
+  loading.value.domain.delete = loading.value.domain.delete.filter(
+    (id) => id !== domainId,
+  );
 }
 
-function handleBatchDeleteDomain() {
-  // TODO
+async function handleBatchDeleteDomain() {
+  loading.value.batch.delete = true;
+  const rs = await client.execute(
+    new DeleteDomainBatch({
+      user_id: mainStore.userId!,
+      domain_ids: domainBatchSelected.value,
+    }),
+  );
+  if (rs.status === 200) {
+    domainData.value = domainData.value.filter(
+      (it) => !domainBatchSelected.value.includes(it.id),
+    );
+  } else message.error(rs.message);
+  loading.value.batch.delete = false;
+  domainBatchSelected.value.length = 0;
+  domainBatchSelectState.value = false;
 }
 
 async function handleSubmitVerification(domain: string) {

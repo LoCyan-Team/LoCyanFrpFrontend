@@ -8,6 +8,7 @@
               <n-select
                 v-model:value="formData.domainId"
                 :options="domainOptions"
+                filterable
               />
             </n-form-item>
             <n-space vertical>
@@ -47,9 +48,16 @@
 
       <n-card v-if="batchSelected.length > 0" embedded>
         <n-space>
-          <n-popconfirm @positive-click="handleBatchDelete">
+          <n-popconfirm @positive-click="handleBatchDeleteIcp">
             <template #trigger>
-              <n-button type="error" secondary> 删除 </n-button>
+              <n-button
+                type="error"
+                secondary
+                :loading="loading.batch.delete"
+                :disabled="loading.batch.delete"
+              >
+                删除
+              </n-button>
             </template>
             确定要删除这些域名吗？此操作无法撤销。
           </n-popconfirm>
@@ -100,9 +108,16 @@
                   <n-td>{{ domain.icp }}</n-td>
                   <n-td>{{ domain.natureName }} - {{ domain.unitName }}</n-td>
                   <n-td>
-                    <n-popconfirm @positive-click="handleDelete(domain.id)">
+                    <n-popconfirm @positive-click="handleDeleteIcp(domain.id)">
                       <template #trigger>
-                        <n-button type="error" secondary> 删除 </n-button>
+                        <n-button
+                          type="error"
+                          secondary
+                          :loading="loading.icp.delete.includes(domain.id)"
+                          :disabled="loading.icp.delete.includes(domain.id)"
+                        >
+                          删除
+                        </n-button>
                       </template>
                       确定要删除此域名吗？此操作无法撤销。
                     </n-popconfirm>
@@ -172,7 +187,7 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import { GetDomains } from "api/src/api/domains.get";
+import { GetDomains, type GetDomainsResponse } from "api/src/api/domains.get";
 import { GetIcp as GetIcpDomains } from "api/src/api/domain/icp.get";
 import {
   GetImage as GetMiitCaptchaImage,
@@ -183,6 +198,8 @@ import {
   type PostSignResponse as PostMiitCaptchaSignResponse,
 } from "api/src/api/domain/icp/miit/sign.post";
 import { PutIcp } from "api/src/api/domain/icp.put";
+import { DeleteIcp } from "api/src/api/domain/icp.delete";
+import { DeleteBatch as DeleteIcpBatch } from "api/src/api/domain/icp/batch.delete";
 
 const mainStore = useMainStore();
 const client = useApiClient();
@@ -199,11 +216,23 @@ const loading = ref<{
   submit: boolean;
   list: boolean;
   miitCaptcha: boolean;
+  batch: {
+    delete: boolean;
+  };
+  icp: {
+    delete: number[];
+  };
 }>({
   submitSection: true,
   submit: false,
   list: true,
   miitCaptcha: false,
+  batch: {
+    delete: false,
+  },
+  icp: {
+    delete: [],
+  },
 });
 
 const formData = ref<{
@@ -365,12 +394,38 @@ async function handleAdd() {
   } else message.error(rs.message);
 }
 
-function handleDelete(domainId?: number) {
-  // TODO
+async function handleDeleteIcp(domainId: number) {
+  loading.value.icp.delete.push(domainId);
+  const rs = await client.execute(
+    new DeleteIcp({
+      user_id: mainStore.userId!,
+      domain_id: domainId!,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value = data.value.filter((it) => it.id !== domainId);
+  } else message.error(rs.message);
+  loading.value.icp.delete = loading.value.icp.delete.filter(
+    (id) => id !== domainId,
+  );
 }
 
-function handleBatchDelete() {
-  // TODO
+async function handleBatchDeleteIcp() {
+  loading.value.batch.delete = true;
+  const selected = batchSelected.value;
+
+  const rs = await client.execute(
+    new DeleteIcpBatch({
+      user_id: mainStore.userId!,
+      domain_ids: selected,
+    }),
+  );
+  if (rs.status === 200) {
+    data.value = data.value.filter((it) => !selected.includes(it.id));
+  } else message.error(rs.message);
+  loading.value.batch.delete = false;
+  batchSelected.value.length = 0;
+  batchSelectState.value = false;
 }
 
 function handleBatchSelect(domainId: number) {
@@ -388,7 +443,7 @@ function handleSelectAll(val: boolean) {
 
 async function getDomains() {
   loading.value.submitSection = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetDomainsResponse>(
     new GetDomains({
       user_id: mainStore.userId!,
       page: domainPage.value.current,

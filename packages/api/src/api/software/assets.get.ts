@@ -2,7 +2,7 @@ import { API } from "../../type/api";
 import { Method } from "../../type/method";
 
 export class GetAssets extends API {
-  constructor(params: { id: number; page: number; size: number }) {
+  constructor(params: { software_id: number; page: number; size: number }) {
     super("/software/assets", Method.GET, params, {});
   }
 }

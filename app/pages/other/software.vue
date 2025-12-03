@@ -223,7 +223,7 @@ async function getAssets() {
   loading.value.assets = true;
   const rs = await client.execute<GetAssetsResponse>(
     new GetAssets({
-      id: selectedSoftwareId.value!,
+      software_id: selectedSoftwareId.value!,
       page: assetPage.value.current,
       size: assetPage.value.size,
     }),

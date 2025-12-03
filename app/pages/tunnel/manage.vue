@@ -396,7 +396,7 @@
     >
       <n-space vertical>
         <n-scrollbar x-scrollable>
-          <n-table style="white-space: nowrap">
+          <n-table :single-line="false" style="white-space: nowrap">
             <thead>
               <tr>
                 <th>数据</th>
@@ -483,6 +483,49 @@
             </tbody>
           </n-table>
         </n-scrollbar>
+        <n-space
+          vertical
+          v-if="['HTTP', 'HTTPS'].includes(selectedTunnel.type)"
+        >
+          <n-alert type="info">
+            您需要在您的域名 DNS 提供商处添加 DNS
+            解析记录至节点服务器，才能访问您的服务。
+          </n-alert>
+          <n-scrollbar x-scrollable>
+            <n-table
+              :single-line="false"
+              size="small"
+              style="white-space: nowrap"
+            >
+              <thead>
+                <tr>
+                  <th>域名</th>
+                  <th>记录值</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <n-button
+                      text
+                      @click="$copyToClipboard(selectedTunnel.domain)"
+                    >
+                      <n-code :code="selectedTunnel.domain!" />
+                    </n-button>
+                  </td>
+                  <td>
+                    <n-button
+                      text
+                      @click="$copyToClipboard(selectedTunnel.node.host)"
+                    >
+                      <n-code :code="selectedTunnel.node.host!" />
+                    </n-button>
+                  </td>
+                </tr>
+              </tbody>
+            </n-table>
+          </n-scrollbar>
+        </n-space>
         <n-el>
           <n-text>连接地址: </n-text>
           <n-tooltip trigger="hover">

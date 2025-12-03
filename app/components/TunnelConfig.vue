@@ -88,7 +88,7 @@
               <n-dynamic-input
                 v-model:value="form.locations"
                 placeholder="请输入"
-                :min="1"
+                :min="0"
                 :max="10"
               />
             </n-form-item>

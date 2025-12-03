@@ -12,3 +12,10 @@ export class PutIcp extends API {
     super("/domain/icp", Method.PUT, params, {});
   }
 }
+
+export interface PutIcpResponse {
+  id: number;
+  icp: string;
+  unit_name: string;
+  nature_name: string;
+}

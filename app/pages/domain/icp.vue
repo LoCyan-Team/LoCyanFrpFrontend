@@ -87,7 +87,7 @@
                       <template #unchecked>全选</template>
                     </n-switch>
                   </n-th>
-                  <n-th>域名 ID</n-th>
+                  <n-th>记录 ID</n-th>
                   <n-th>域名</n-th>
                   <n-th>备案号</n-th>
                   <n-th>备案主体</n-th>
@@ -188,7 +188,10 @@ import { useMainStore } from "@/store/main";
 import type { SelectOption } from "naive-ui";
 
 import { GetDomains, type GetDomainsResponse } from "api/src/api/domains.get";
-import { GetIcp as GetIcpDomains } from "api/src/api/domain/icp.get";
+import {
+  GetIcp as GetIcpDomains,
+  type GetIcpResponse as GetIcpDomainsResponse,
+} from "api/src/api/domain/icp.get";
 import {
   GetImage as GetMiitCaptchaImage,
   type GetImageResponse as GetMiitCaptchaImageResponse,
@@ -197,7 +200,7 @@ import {
   PostSign as PostMiitCaptchaSign,
   type PostSignResponse as PostMiitCaptchaSignResponse,
 } from "api/src/api/domain/icp/miit/sign.post";
-import { PutIcp } from "api/src/api/domain/icp.put";
+import { PutIcp, type PutIcpResponse } from "api/src/api/domain/icp.put";
 import { DeleteIcp } from "api/src/api/domain/icp.delete";
 import { DeleteBatch as DeleteIcpBatch } from "api/src/api/domain/icp/batch.delete";
 
@@ -376,7 +379,7 @@ async function getMiitCaptchaSign() {
 }
 
 async function handleAdd() {
-  const rs = await client.execute(
+  const rs = await client.execute<PutIcpResponse>(
     new PutIcp({
       user_id: mainStore.userId!,
       domain_id: formData.value.domainId!,
@@ -387,6 +390,15 @@ async function handleAdd() {
   );
   if (rs.status === 200) {
     modal.value.miitCaptchaMarker.show = false;
+    data.value.push({
+      id: rs.data.id,
+      icp: rs.data.icp,
+      domain: domainOptions.value.find(
+        (it) => it.value === formData.value.domainId,
+      )!.label as string,
+      unitName: rs.data.unit_name,
+      natureName: rs.data.nature_name,
+    });
     dialog.success({
       title: "添加成功",
       content: "已成功校验 ICP 备案。",
@@ -394,19 +406,19 @@ async function handleAdd() {
   } else message.error(rs.message);
 }
 
-async function handleDeleteIcp(domainId: number) {
-  loading.value.icp.delete.push(domainId);
+async function handleDeleteIcp(icpId: number) {
+  loading.value.icp.delete.push(icpId);
   const rs = await client.execute(
     new DeleteIcp({
       user_id: mainStore.userId!,
-      domain_id: domainId!,
+      icp_id: icpId!,
     }),
   );
   if (rs.status === 200) {
-    data.value = data.value.filter((it) => it.id !== domainId);
+    data.value = data.value.filter((it) => it.id !== icpId);
   } else message.error(rs.message);
   loading.value.icp.delete = loading.value.icp.delete.filter(
-    (id) => id !== domainId,
+    (id) => id !== icpId,
   );
 }
 
@@ -417,7 +429,7 @@ async function handleBatchDeleteIcp() {
   const rs = await client.execute(
     new DeleteIcpBatch({
       user_id: mainStore.userId!,
-      domain_ids: selected,
+      icp_ids: selected,
     }),
   );
   if (rs.status === 200) {
@@ -465,7 +477,7 @@ async function getDomains() {
 
 async function getIcpDomains() {
   loading.value.list = true;
-  const rs = await client.execute(
+  const rs = await client.execute<GetIcpDomainsResponse>(
     new GetIcpDomains({
       user_id: mainStore.userId!,
       page: domainPage.value.current,

@@ -6,3 +6,16 @@ export class GetIcp extends API {
     super("/domain/icp", Method.GET, params, {});
   }
 }
+
+export interface GetIcpResponse {
+  list: {
+    id: number;
+    icp: string;
+    unit_name: string;
+    nature_name: string;
+    domain: string;
+  }[];
+  pagination: {
+    count: number;
+  };
+}

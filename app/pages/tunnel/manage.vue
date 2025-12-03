@@ -161,8 +161,12 @@
                             <template #trigger>
                               <n-button
                                 type="error"
-                                :loading="loading.tunnel.delete === tunnel.id"
-                                :disabled="loading.tunnel.delete === tunnel.id"
+                                :loading="
+                                  loading.tunnel.delete.includes(tunnel.id)
+                                "
+                                :disabled="
+                                  loading.tunnel.delete.includes(tunnel.id)
+                                "
                                 secondary
                               >
                                 删除
@@ -291,9 +295,11 @@
                               <template #trigger>
                                 <n-button
                                   type="error"
-                                  :loading="loading.tunnel.delete === tunnel.id"
+                                  :loading="
+                                    loading.tunnel.delete.includes(tunnel.id)
+                                  "
                                   :disabled="
-                                    loading.tunnel.delete === tunnel.id
+                                    loading.tunnel.delete.includes(tunnel.id)
                                   "
                                   secondary
                                 >
@@ -658,7 +664,7 @@ const loading = ref<{
   };
   tunnel: {
     editSubmit: boolean;
-    delete: number;
+    delete: number[];
     down: number;
   };
 }>({
@@ -669,7 +675,7 @@ const loading = ref<{
   },
   tunnel: {
     editSubmit: false,
-    delete: 0,
+    delete: [],
     down: 0,
   },
 });
@@ -925,7 +931,7 @@ async function handleSubmitModifyTunnel(
 }
 
 async function handleDeleteTunnel(tunnelId: number) {
-  loading.value.tunnel.delete = tunnelId;
+  loading.value.tunnel.delete.push(tunnelId);
   const rs = await client.execute(
     new DeleteTunnel({
       user_id: mainStore.userId!,
@@ -935,23 +941,30 @@ async function handleDeleteTunnel(tunnelId: number) {
   if (rs.status === 200) {
     tunnels.value = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
   } else message.error(rs.message);
-  loading.value.tunnel.delete = 0;
+  loading.value.tunnel.delete = loading.value.tunnel.delete.filter(
+    (id) => id !== tunnelId,
+  );
 }
 
 async function handleBatchDeleteTunnel() {
+  const selected = batchSelected.value;
+
   loading.value.batch.delete = true;
   const rs = await client.execute(
     new DeleteTunnelBatch({
       user_id: mainStore.userId!,
-      tunnel_ids: batchSelected.value,
+      tunnel_ids: selected,
     }),
   );
   if (rs.status === 200) {
     tunnels.value = tunnels.value.filter(
-      (tunnel) => !batchSelected.value.includes(tunnel.id),
+      (tunnel) => !selected.includes(tunnel.id),
     );
   } else message.error(rs.message);
   loading.value.batch.delete = false;
+
+  batchSelected.value.length = 0;
+  batchSelectState.value = false;
 }
 
 async function handleForceDownTunnel(tunnelId: number) {

@@ -2,12 +2,7 @@ import { API } from "../../type/api";
 import { Method } from "../../type/method";
 
 export class PutWebAuthn extends API {
-  constructor(params: {
-    user_id: number;
-    challenge_id: string;
-    client_data_json: string;
-    attestation_object: string;
-  }) {
+  constructor(params: { user_id: number; response_json: string }) {
     super("/user/webauthn", Method.PUT, params, {});
   }
 }

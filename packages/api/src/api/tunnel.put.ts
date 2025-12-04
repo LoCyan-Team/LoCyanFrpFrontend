@@ -15,6 +15,7 @@ export class PutTunnel extends API {
     secret_key?: string;
     domain?: string;
     locations?: string[];
+    proxy_protocol?: string;
   }) {
     super("/tunnel", Method.PUT, params, {});
   }

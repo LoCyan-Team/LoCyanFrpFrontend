@@ -16,6 +16,7 @@ export class PatchTunnel extends API {
     secret_key?: string;
     domain?: string;
     locations?: string[];
+    proxy_protocol?: string;
   }) {
     super("/tunnel", Method.PATCH, params, {});
   }

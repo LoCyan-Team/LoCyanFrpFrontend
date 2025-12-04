@@ -480,6 +480,12 @@
                   </n-tag>
                 </td>
               </tr>
+              <tr>
+                <td>Proxy Protocol</td>
+                <td>
+                  {{ selectedTunnel.proxyProtocol?.toLowerCase() || "禁用" }}
+                </td>
+              </tr>
             </tbody>
           </n-table>
         </n-scrollbar>
@@ -594,6 +600,7 @@
           useCompression: selectedTunnel.useCompression,
           domain: selectedTunnel.domain,
           locations: selectedTunnel.locations,
+          proxyProtocol: selectedTunnel.proxyProtocol,
         }"
         @submit="
           (tunnelData) =>
@@ -740,6 +747,8 @@ interface Node {
 
 const nodes = ref<Node[]>([]);
 
+type ProxyProtocolVersion = "V1" | "V2";
+
 interface Tunnel {
   id: number;
   name: string;
@@ -758,6 +767,7 @@ interface Tunnel {
   domain: string | null;
   locations: string[] | null;
   status: string;
+  proxyProtocol: ProxyProtocolVersion | null;
 }
 
 const tunnels = ref<Tunnel[]>([]);
@@ -779,6 +789,7 @@ const selectedTunnel = ref<Tunnel>({
     useCompression: false,
     domain: null,
     locations: null,
+    proxyProtocol: null,
     status: "",
   }),
   selectedNode = ref<Node>({
@@ -926,6 +937,7 @@ async function handleSubmitModifyTunnel(
     domain: string | null;
     locations: string[] | null;
     secretKey: string | null;
+    proxyProtocol: ProxyProtocolVersion | null;
   },
 ) {
   loading.value.tunnel.editSubmit = true;
@@ -966,6 +978,7 @@ async function handleSubmitModifyTunnel(
       useCompression: tunnel.useCompression,
       domain: tunnel.domain,
       locations: tunnel.locations,
+      proxyProtocol: tunnel.proxyProtocol,
       status: tunnelStatus,
     });
     tunnels.value = sortTunnelsById(arr);
@@ -1070,6 +1083,7 @@ async function getTunnels() {
         useCompression: it.use_compression,
         domain: it.domain,
         locations: it.locations,
+        proxyProtocol: it.proxy_protocol as ProxyProtocolVersion | null,
         status: it.status,
       });
     });

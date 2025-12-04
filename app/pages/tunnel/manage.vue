@@ -180,8 +180,8 @@
                             <template #trigger>
                               <n-button
                                 type="warning"
-                                :loading="loading.tunnel.down === tunnel.id"
-                                :disabled="loading.tunnel.down === tunnel.id"
+                                :loading="loading.tunnel.down.includes(tunnel.id)"
+                                :disabled="loading.tunnel.down.includes(tunnel.id)"
                                 secondary
                               >
                                 强制下线
@@ -314,8 +314,8 @@
                               <template #trigger>
                                 <n-button
                                   type="warning"
-                                  :loading="loading.tunnel.down === tunnel.id"
-                                  :disabled="loading.tunnel.down === tunnel.id"
+                                  :loading="loading.tunnel.down.includes(tunnel.id)"
+                                  :disabled="loading.tunnel.down.includes(tunnel.id)"
                                   secondary
                                 >
                                   强制下线
@@ -686,6 +686,11 @@ import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
 import { DeleteTunnel } from "api/src/api/tunnel.delete";
 import { DeleteBatch as DeleteTunnelBatch } from "api/src/api/tunnel/batch.delete";
 import { PatchTunnel } from "api/src/api/tunnel.patch";
+import { DeleteDown as ForceDownTunnel } from "api/src/api/tunnel/down.delete";
+import {
+  DeleteBatch as ForceDownTunnelBatch,
+  type DeleteBatchResponse as ForceDownTunnelBatchResponse,
+} from "api/src/api/tunnel/down/batch.delete";
 
 useHead({
   title: "隧道管理",
@@ -696,6 +701,7 @@ const userStore = useUserStore();
 const client = useApiClient();
 
 const message = useMessage();
+const dialog = useDialog();
 
 const viewMode = ref<string>("card");
 
@@ -708,7 +714,7 @@ const loading = ref<{
   tunnel: {
     editSubmit: boolean;
     delete: number[];
-    down: number;
+    down: number[];
   };
 }>({
   page: true,
@@ -719,7 +725,7 @@ const loading = ref<{
   tunnel: {
     editSubmit: false,
     delete: [],
-    down: 0,
+    down: [],
   },
 });
 
@@ -856,6 +862,11 @@ const page = ref<{
 const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
 
+/**
+ * 根据关键词搜索隧道列表
+ * @param tunnelsList 隧道列表
+ * @param keyword 搜索关键词
+ */
 function filterTunnelsByKeyword(
   tunnelsList: Tunnel[],
   keyword: string,
@@ -866,8 +877,8 @@ function filterTunnelsByKeyword(
 
   const searchTerm = keyword.trim().toLowerCase();
   return tunnelsList.filter((tunnel) => {
-    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm);
-    const idMatch = tunnel.id.toString() === searchTerm;
+    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm); // 名称包含关键词
+    const idMatch = tunnel.id.toString() === searchTerm; // ID与关键词相等
     return nameMatch || idMatch;
   });
 }
@@ -888,6 +899,9 @@ watch(
   { deep: true },
 );
 
+/**
+ * 处理搜索隧道
+ */
 async function handleSearch() {
   loading.value.page = true;
   displayTunnels.value = filterTunnelsByKeyword(
@@ -897,21 +911,38 @@ async function handleSearch() {
   loading.value.page = false;
 }
 
+/**
+ * 处理批量编辑隧道
+ */
 async function handleBatchEdit() {
   // TODO
 }
 
+/**
+ * 处理隧道详情弹窗
+ * @param tunnel 隧道信息
+ */
 async function handleInfoModal(tunnel: Tunnel) {
   selectedTunnel.value = tunnel;
   modal.value.info.show = true;
 }
 
+/**
+ * 处理修改隧道弹窗
+ * @param tunnel 隧道信息
+ */
 async function handleModifyTunnel(tunnel: Tunnel) {
   selectedTunnel.value = tunnel;
   selectedNode.value = findNode(tunnel.node.id);
   modal.value.edit.show = true;
 }
 
+/**
+ * 处理提交修改隧道
+ * @param tunnelId 隧道 ID
+ * @param tunnelStatus 隧道状态（仅内部传入）
+ * @param tunnel 隧道信息
+ */
 async function handleSubmitModifyTunnel(
   tunnelId: number,
   tunnelStatus: string,
@@ -973,6 +1004,10 @@ async function handleSubmitModifyTunnel(
   loading.value.tunnel.editSubmit = false;
 }
 
+/**
+ * 处理删除隧道
+ * @param tunnelId 隧道 ID
+ */
 async function handleDeleteTunnel(tunnelId: number) {
   loading.value.tunnel.delete.push(tunnelId);
   const rs = await client.execute(
@@ -989,6 +1024,9 @@ async function handleDeleteTunnel(tunnelId: number) {
   );
 }
 
+/**
+ * 处理批量删除隧道
+ */
 async function handleBatchDeleteTunnel() {
   const selected = batchSelected.value;
 
@@ -1010,22 +1048,75 @@ async function handleBatchDeleteTunnel() {
   batchSelectState.value = false;
 }
 
+/**
+ * 处理强制下线隧道
+ * @param tunnelId 隧道 ID
+ */
 async function handleForceDownTunnel(tunnelId: number) {
-  loading.value.tunnel.down = tunnelId;
-  // TODO
-  loading.value.tunnel.down = 0;
+  loading.value.tunnel.down.push(tunnelId);
+  const rs = await client.execute(
+    new ForceDownTunnel({
+      user_id: mainStore.userId!,
+      tunnel_id: tunnelId,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "操作成功",
+      content: "强制下线指令发送成功。",
+    });
+  } else message.error(rs.message);
+  loading.value.tunnel.down = loading.value.tunnel.down.filter(
+      (id) => id !== tunnelId,
+  );
 }
 
+/**
+ * 处理批量强制下线隧道
+ */
 async function handleBatchForceDownTunnel() {
   loading.value.batch.down = true;
-  // TODO
+  const selected = batchSelected.value;
+
+  const rs = await client.execute<ForceDownTunnelBatchResponse>(
+    new ForceDownTunnelBatch({
+      user_id: mainStore.userId!,
+      tunnel_ids: selected,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "操作成功",
+      content: `强制下线指令发送成功。成功下线 ${rs.data.succeed.length} 条隧道，${
+        rs.data.failed.length > 0
+          ? "失败隧道: " +
+            rs.data.failed
+              .map((failedId) => {
+                const tunnel = tunnels.value.find((t) => t.id === failedId);
+                return tunnel
+                  ? `${tunnel.name} (${failedId})`
+                  : `未知隧道 (${failedId})`;
+              })
+              .join(", ")
+          : ""
+      }。`,
+    });
+  } else message.error(rs.message);
   loading.value.batch.down = false;
 }
 
+/**
+ * 发起一键启动
+ * @param tunnelId 隧道 ID
+ */
 function handleClickToRun(tunnelId: number) {
   window.open(`locyanfrp://${userStore.frpToken}/${tunnelId}`);
 }
 
+/**
+ * 处理批量选择隧道
+ * @param tunnelId 隧道 ID
+ */
 function handleBatchSelect(tunnelId: number) {
   if (batchSelected.value.includes(tunnelId))
     batchSelected.value = batchSelected.value.filter((id) => id !== tunnelId);
@@ -1035,11 +1126,18 @@ function handleBatchSelect(tunnelId: number) {
     .every((id) => batchSelected.value.includes(id));
 }
 
+/**
+ * 处理全选隧道
+ * @param val 是否全选
+ */
 function handleSelectAll(val: boolean) {
   if (val) tunnels.value.forEach((it) => batchSelected.value.push(it.id));
   else batchSelected.value.length = 0;
 }
 
+/**
+ * 获取隧道列表
+ */
 async function getTunnels() {
   loading.value.page = true;
   const rs = await client.execute<GetTunnelsResponse>(
@@ -1079,6 +1177,9 @@ async function getTunnels() {
   loading.value.page = false;
 }
 
+/**
+ * 获取节点列表
+ */
 async function getNodes() {
   const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
@@ -1111,6 +1212,9 @@ async function getNodes() {
   } else message.error(rs.message);
 }
 
+/**
+ * 构建编辑节点选择选项
+ */
 async function buildEditNodeSelectOptions() {
   nodes.value.forEach((it) => {
     editNodeSelectOptions.value.push({
@@ -1125,7 +1229,11 @@ onMounted(async () => {
   // noinspection ES6MissingAwait
   getNodes();
 });
-
+/**
+ * 按排序 ID 隧道
+ * @param data 隧道列表
+ * @returns 排序后的隧道列表
+ */
 function sortTunnelsById(data: Tunnel[]): Tunnel[] {
   return data.sort((a, b) => {
     if (a.id < b.id) {
@@ -1137,12 +1245,22 @@ function sortTunnelsById(data: Tunnel[]): Tunnel[] {
     return 0;
   });
 }
+/**
+ * 按名称排序节点
+ * @param data 节点列表
+ * @returns 排序后的节点列表
+ */
 function sortNodesByName(data: Node[]): Node[] {
   return data.sort((a, b) => {
     return a.name.localeCompare(b.name);
   });
 }
 
+/**
+ * 计算连接地址
+ * @param tunnel 隧道
+ * @returns 连接地址
+ */
 function computeConnectAddr(tunnel: Tunnel): string {
   switch (tunnel.type) {
     case "HTTP":
@@ -1156,9 +1274,21 @@ function computeConnectAddr(tunnel: Tunnel): string {
       return `${tunnel.node.host}:${tunnel.remotePort}`;
   }
 }
+
+/**
+ * 计算启动命令
+ * @param tunnel 隧道
+ * @returns 启动命令
+ */
 function computeStartCommand(tunnel: Tunnel): string {
   return `./frpc -u ${userStore.frpToken} -p ${tunnel.id}`;
 }
+
+/**
+ * 查找节点
+ * @param nodeId 节点 ID
+ * @returns 节点
+ */
 function findNode(nodeId: number): Node {
   return nodes.value.find((node) => node.id === nodeId) as Node;
 }

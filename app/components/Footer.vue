@@ -10,7 +10,7 @@
         </n-text>
         <br />
         <n-text>
-          <n-a href="https://www.locyan.cn?utm_source=locyanfrp" target="_blank">
+          <n-a href="https://www.locyan.cn/?utm_source=locyanfrp" target="_blank">
             Hangzhou Yingyun Network Technology Co., Ltd</n-a
           >. All right reserved.
         </n-text>

@@ -138,6 +138,7 @@ async function handleCreate(tunnel: {
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
+  proxyProtocol: string | null;
 }) {
   loading.value.create = true;
   const rs = await client.execute(
@@ -154,6 +155,7 @@ async function handleCreate(tunnel: {
       domain: tunnel.domain ?? undefined,
       locations: tunnel.locations ?? undefined,
       secret_key: tunnel.secretKey ?? undefined,
+      proxy_protocol: tunnel.proxyProtocol ?? undefined,
     }),
   );
   if (rs.status === 200)

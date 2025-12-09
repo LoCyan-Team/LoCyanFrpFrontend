@@ -128,6 +128,20 @@
               <n-switch v-model:value="form.useCompression" />
             </n-form-item>
           </n-grid-item>
+          <!-- Proxy Protocol -->
+          <n-grid-item
+            v-if="hasOption.proxyProtocolVersion.includes(form.type)"
+            span="0:4 700:1"
+          >
+            <n-form-item label="Proxy Protocol" path="proxyProtocolVersion">
+              <n-select
+                :options="selectOptions.proxyProtocolVersion"
+                v-model:value="form.proxyProtocolVersion as string | null"
+                clearable
+                placeholder="禁用"
+              />
+            </n-form-item>
+          </n-grid-item>
         </n-grid>
         <n-button type="success" @click="handleSubmit">提交</n-button>
       </n-form>
@@ -149,6 +163,8 @@ const client = useApiClient();
 const message = useMessage();
 
 const tunnelFormRef = ref<FormInst | null>(null);
+
+type ProxyProtocolVersion = "V1" | "V2";
 
 const props = defineProps<{
   node: {
@@ -176,6 +192,7 @@ const props = defineProps<{
     domain?: string | null;
     locations?: string[] | null;
     secretKey?: string | null;
+    proxyProtocolVersion?: ProxyProtocolVersion;
   };
 }>();
 
@@ -193,6 +210,7 @@ const emit = defineEmits<{
       domain: string | null;
       locations: string[] | null;
       secretKey: string | null;
+      proxyProtocolVersion: ProxyProtocolVersion | null;
     },
   ): void;
 }>();
@@ -214,6 +232,7 @@ const form = ref<{
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
+  proxyProtocolVersion: ProxyProtocolVersion | null;
 }>({
   name: props.default?.name ?? null,
   type: props.default?.type ?? "TCP",
@@ -225,13 +244,28 @@ const form = ref<{
   domain: props.default?.domain ?? null,
   locations: props.default?.locations ?? null,
   secretKey: props.default?.secretKey ?? null,
+  proxyProtocolVersion: props.default?.proxyProtocolVersion ?? null,
 });
+
+const selectOptions = {
+  proxyProtocolVersion: [
+    {
+      label: "v1",
+      value: "V1",
+    },
+    {
+      label: "v2",
+      value: "V2",
+    },
+  ],
+};
 
 const hasOption = {
   remotePort: ["TCP", "UDP"],
   domain: ["HTTP", "HTTPS"],
   locations: ["HTTP", "HTTPS"],
   secretKey: ["XTCP", "STCP", "SUDP"],
+  proxyProtocolVersion: ["TCP", "UDP", "HTTP", "HTTPS"],
 };
 
 // 动态表单验证规则
@@ -366,6 +400,11 @@ function handleSubmit() {
         : null,
       secretKey: hasOption.secretKey.includes(form.value.type)
         ? form.value.secretKey
+        : null,
+      proxyProtocolVersion: hasOption.proxyProtocolVersion.includes(
+        form.value.type,
+      )
+        ? form.value.proxyProtocolVersion
         : null,
     });
   });

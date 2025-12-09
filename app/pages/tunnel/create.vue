@@ -86,6 +86,8 @@ const client = useApiClient();
 const message = useMessage();
 const dialog = useDialog();
 
+type ProxyProtocolVersion = "V1" | "V2";
+
 interface Node {
   id: number;
   name: string;
@@ -138,6 +140,7 @@ async function handleCreate(tunnel: {
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
+  proxyProtocolVersion: string | null;
 }) {
   loading.value.create = true;
   const rs = await client.execute(
@@ -154,6 +157,9 @@ async function handleCreate(tunnel: {
       domain: tunnel.domain ?? undefined,
       locations: tunnel.locations ?? undefined,
       secret_key: tunnel.secretKey ?? undefined,
+      proxy_protocol_version:
+        (tunnel.proxyProtocolVersion as ProxyProtocolVersion | null) ??
+        undefined,
     }),
   );
   if (rs.status === 200)

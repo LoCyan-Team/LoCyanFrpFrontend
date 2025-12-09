@@ -6,7 +6,7 @@
       "name": "nuxt-app",
       "dependencies": {
         "@bg-dev/nuxt-naiveui": "2.0.0",
-        "@cap.js/widget": "^0.1.31",
+        "@cap.js/widget": "^0.1.32",
         "@nuxt/eslint": "1.10.0",
         "@nuxtjs/mdc": "0.18.4",
         "@pinia/nuxt": "^0.11.3",
@@ -109,7 +109,7 @@
 
     "@bg-dev/nuxt-naiveui": ["@bg-dev/nuxt-naiveui@2.0.0", "", { "dependencies": { "@ant-design/colors": "^7.2.1", "@iconify/vue": "^5.0.0", "@nuxt/kit": "^4.1.2", "defu": "^6.1.4", "js-cookie": "^3.0.5", "naive-ui": "^2.43.1" } }, "sha512-DbBiQ9GUMbywjBbtI2Al+irNrsEOtuo9msjTIpY88R9njrDhadEI492Cv8iJ2j5Cw3l5ieRfF1svo6YCwVRflQ=="],
 
-    "@cap.js/widget": ["@cap.js/widget@0.1.31", "", {}, "sha512-v4CJP1ts0W1l/fX6JS9ZmycEWJTeZliTZ6WmaXvPwMB40RGtQ6a73C2+1XLGh9FPAdzeiNNFpSHCrWH5os5sAQ=="],
+    "@cap.js/widget": ["@cap.js/widget@0.1.32", "", {}, "sha512-20qTwJBoR8uGuQGVxiFfY8pupwEqNcq5+SCDXtgGE6AEkyww/HAvUbdwFP4/O46w0yW/xo9n3KNFcn6opGpFqw=="],
 
     "@clack/core": ["@clack/core@0.5.0", "", { "dependencies": { "picocolors": "^1.0.0", "sisteransi": "^1.0.5" } }, "sha512-p3y0FIOwaYRUPRcMO7+dlmLh8PSRcrjuTndsiA0WAFbWES0mLZlrjVoBRZ9DzkPFJZG6KGkJmoEAY0ZcVWTkow=="],
 

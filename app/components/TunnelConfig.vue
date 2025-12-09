@@ -130,13 +130,13 @@
           </n-grid-item>
           <!-- Proxy Protocol -->
           <n-grid-item
-            v-if="hasOption.proxyProtocol.includes(form.type)"
+            v-if="hasOption.proxyProtocolVersion.includes(form.type)"
             span="0:4 700:1"
           >
-            <n-form-item label="Proxy Protocol" path="proxyProtocol">
+            <n-form-item label="Proxy Protocol" path="proxyProtocolVersion">
               <n-select
-                :options="selectOptions.proxyProtocol"
-                v-model:value="form.proxyProtocol as string | null"
+                :options="selectOptions.proxyProtocolVersion"
+                v-model:value="form.proxyProtocolVersion as string | null"
                 clearable
                 placeholder="禁用"
               />
@@ -192,7 +192,7 @@ const props = defineProps<{
     domain?: string | null;
     locations?: string[] | null;
     secretKey?: string | null;
-    proxyProtocol?: ProxyProtocolVersion;
+    proxyProtocolVersion?: ProxyProtocolVersion;
   };
 }>();
 
@@ -210,7 +210,7 @@ const emit = defineEmits<{
       domain: string | null;
       locations: string[] | null;
       secretKey: string | null;
-      proxyProtocol: ProxyProtocolVersion | null;
+      proxyProtocolVersion: ProxyProtocolVersion | null;
     },
   ): void;
 }>();
@@ -232,7 +232,7 @@ const form = ref<{
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
-  proxyProtocol: ProxyProtocolVersion | null;
+  proxyProtocolVersion: ProxyProtocolVersion | null;
 }>({
   name: props.default?.name ?? null,
   type: props.default?.type ?? "TCP",
@@ -244,11 +244,11 @@ const form = ref<{
   domain: props.default?.domain ?? null,
   locations: props.default?.locations ?? null,
   secretKey: props.default?.secretKey ?? null,
-  proxyProtocol: props.default?.proxyProtocol ?? null,
+  proxyProtocolVersion: props.default?.proxyProtocolVersion ?? null,
 });
 
 const selectOptions = {
-  proxyProtocol: [
+  proxyProtocolVersion: [
     {
       label: "v1",
       value: "V1",
@@ -265,7 +265,7 @@ const hasOption = {
   domain: ["HTTP", "HTTPS"],
   locations: ["HTTP", "HTTPS"],
   secretKey: ["XTCP", "STCP", "SUDP"],
-  proxyProtocol: ["TCP", "UDP", "HTTP", "HTTPS"],
+  proxyProtocolVersion: ["TCP", "UDP", "HTTP", "HTTPS"],
 };
 
 // 动态表单验证规则
@@ -401,8 +401,10 @@ function handleSubmit() {
       secretKey: hasOption.secretKey.includes(form.value.type)
         ? form.value.secretKey
         : null,
-      proxyProtocol: hasOption.proxyProtocol.includes(form.value.type)
-        ? form.value.proxyProtocol
+      proxyProtocolVersion: hasOption.proxyProtocolVersion.includes(
+        form.value.type,
+      )
+        ? form.value.proxyProtocolVersion
         : null,
     });
   });

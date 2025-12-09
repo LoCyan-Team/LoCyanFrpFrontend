@@ -940,6 +940,7 @@ async function handleSubmitModifyTunnel(
       remote_port: tunnel.remotePort ?? undefined,
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
+      proxy_protocol_version: tunnel.proxyProtocolVersion ?? undefined,
       node_id: selectedNode.value.id,
       domain: tunnel.domain ?? undefined,
       locations: tunnel.locations ?? undefined,

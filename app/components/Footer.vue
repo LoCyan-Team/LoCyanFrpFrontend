@@ -4,13 +4,19 @@
       <n-thing>
         <n-text
           >© 2022-{{ currentYear }}
-          <n-a href="https://www.locyan.cn/?utm_source=locyanfrp" target="_blank">
+          <n-a
+            href="https://www.locyan.cn/?utm_source=locyanfrp"
+            target="_blank"
+          >
             杭州樱芸网络科技有限公司</n-a
           >。版权所有。
         </n-text>
         <br />
         <n-text>
-          <n-a href="https://www.locyan.cn/?utm_source=locyanfrp" target="_blank">
+          <n-a
+            href="https://www.locyan.cn/?utm_source=locyanfrp"
+            target="_blank"
+          >
             Hangzhou Yingyun Network Technology Co., Ltd</n-a
           >. All right reserved.
         </n-text>

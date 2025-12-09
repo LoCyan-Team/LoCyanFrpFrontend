@@ -180,8 +180,12 @@
                             <template #trigger>
                               <n-button
                                 type="warning"
-                                :loading="loading.tunnel.down.includes(tunnel.id)"
-                                :disabled="loading.tunnel.down.includes(tunnel.id)"
+                                :loading="
+                                  loading.tunnel.down.includes(tunnel.id)
+                                "
+                                :disabled="
+                                  loading.tunnel.down.includes(tunnel.id)
+                                "
                                 secondary
                               >
                                 强制下线
@@ -314,8 +318,12 @@
                               <template #trigger>
                                 <n-button
                                   type="warning"
-                                  :loading="loading.tunnel.down.includes(tunnel.id)"
-                                  :disabled="loading.tunnel.down.includes(tunnel.id)"
+                                  :loading="
+                                    loading.tunnel.down.includes(tunnel.id)
+                                  "
+                                  :disabled="
+                                    loading.tunnel.down.includes(tunnel.id)
+                                  "
                                   secondary
                                 >
                                   强制下线
@@ -600,9 +608,10 @@
           remotePort: selectedTunnel.remotePort,
           useEncryption: selectedTunnel.useEncryption,
           useCompression: selectedTunnel.useCompression,
+          proxyProtocolVersion:
+            selectedTunnel.proxyProtocolVersion as ProxyProtocolVersion | null,
           domain: selectedTunnel.domain,
           locations: selectedTunnel.locations,
-          proxyProtocolVersion: selectedTunnel.proxyProtocolVersion,
         }"
         @submit="
           (tunnelData) =>
@@ -967,10 +976,10 @@ async function handleSubmitModifyTunnel(
     remotePort: number | null;
     useEncryption: boolean;
     useCompression: boolean;
+    proxyProtocolVersion: ProxyProtocolVersion | null;
     domain: string | null;
     locations: string[] | null;
     secretKey: string | null;
-    proxyProtocolVersion: ProxyProtocolVersion | null;
   },
 ) {
   loading.value.tunnel.editSubmit = true;
@@ -1010,9 +1019,9 @@ async function handleSubmitModifyTunnel(
       remotePort: tunnel.remotePort,
       useEncryption: tunnel.useEncryption,
       useCompression: tunnel.useCompression,
+      proxyProtocolVersion: tunnel.proxyProtocolVersion,
       domain: tunnel.domain,
       locations: tunnel.locations,
-      proxyProtocolVersion: tunnel.proxyProtocolVersion,
       status: tunnelStatus,
     });
     tunnels.value = sortTunnelsById(arr);
@@ -1083,7 +1092,7 @@ async function handleForceDownTunnel(tunnelId: number) {
     });
   } else message.error(rs.message);
   loading.value.tunnel.down = loading.value.tunnel.down.filter(
-      (id) => id !== tunnelId,
+    (id) => id !== tunnelId,
   );
 }
 
@@ -1182,10 +1191,10 @@ async function getTunnels() {
         remotePort: it.remote_port,
         useEncryption: it.use_encryption,
         useCompression: it.use_compression,
-        domain: it.domain,
-        locations: it.locations,
         proxyProtocolVersion:
           it.proxy_protocol_version as ProxyProtocolVersion | null,
+        domain: it.domain,
+        locations: it.locations,
         status: it.status,
       });
     });

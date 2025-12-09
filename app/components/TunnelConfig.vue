@@ -189,10 +189,10 @@ const props = defineProps<{
     remotePort?: number | null;
     useEncryption?: boolean;
     useCompression?: boolean;
+    proxyProtocolVersion?: ProxyProtocolVersion;
     domain?: string | null;
     locations?: string[] | null;
     secretKey?: string | null;
-    proxyProtocolVersion?: ProxyProtocolVersion;
   };
 }>();
 
@@ -207,10 +207,10 @@ const emit = defineEmits<{
       remotePort: number | null;
       useEncryption: boolean;
       useCompression: boolean;
+      proxyProtocolVersion: ProxyProtocolVersion | null;
       domain: string | null;
       locations: string[] | null;
       secretKey: string | null;
-      proxyProtocolVersion: ProxyProtocolVersion | null;
     },
   ): void;
 }>();
@@ -229,10 +229,10 @@ const form = ref<{
   remotePort: number | null;
   useEncryption: boolean;
   useCompression: boolean;
+  proxyProtocolVersion: ProxyProtocolVersion | null;
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
-  proxyProtocolVersion: ProxyProtocolVersion | null;
 }>({
   name: props.default?.name ?? null,
   type: props.default?.type ?? "TCP",
@@ -241,10 +241,10 @@ const form = ref<{
   remotePort: props.default?.remotePort ?? null,
   useEncryption: props.default?.useEncryption ?? false,
   useCompression: props.default?.useEncryption ?? false,
+  proxyProtocolVersion: props.default?.proxyProtocolVersion ?? null,
   domain: props.default?.domain ?? null,
   locations: props.default?.locations ?? null,
   secretKey: props.default?.secretKey ?? null,
-  proxyProtocolVersion: props.default?.proxyProtocolVersion ?? null,
 });
 
 const selectOptions = {

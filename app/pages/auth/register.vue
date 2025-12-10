@@ -33,21 +33,28 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.emailCode = false;
               }
             "
             @callback="handleEmailCodeSend"
           />
-          <n-button
-            type="success"
-            secondary
-            :loading="loading.emailCode"
-            :disabled="loading.emailCode"
-            @click="handleEmailCodeSendButton"
-          >
-            获取验证码
-          </n-button>
+          <n-tooltip :show="loading.captcha.solving" trigger="manual">
+            <template #trigger>
+              <n-button
+                type="success"
+                secondary
+                :loading="loading.emailCode"
+                :disabled="loading.emailCode"
+                @click="handleEmailCodeSendButton"
+              >
+                获取验证码
+              </n-button>
+            </template>
+            <n-spin class="captcha-solving" :size="14" />
+            验证中...
+          </n-tooltip>
         </n-form-item>
         <n-form-item label="密码" path="password">
           <n-input
@@ -92,6 +99,8 @@
   </n-el>
 </template>
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import type { FormInst, FormItemRule } from "naive-ui";
 import FormValidator from "@/utils/formValidator";
 
@@ -181,9 +190,15 @@ const formRules = {
 const loading = ref<{
   register: boolean;
   emailCode: boolean;
+  captcha: {
+    solving: boolean;
+  };
 }>({
   register: false,
   emailCode: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const registerForm = ref<{
@@ -202,10 +217,12 @@ const registerForm = ref<{
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
+  loading.value.captcha.solving = true;
   captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute(
     new GetEmailCode({
       email: registerForm.value.email!,

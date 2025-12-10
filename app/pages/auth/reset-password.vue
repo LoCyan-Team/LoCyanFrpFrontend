@@ -31,21 +31,28 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.emailCode = false;
               }
             "
             @callback="handleEmailCodeSend"
           />
-          <n-button
-            type="success"
-            secondary
-            :loading="loading.emailCode"
-            :disabled="loading.emailCode"
-            @click="handleEmailCodeSendButton"
-          >
-            获取验证码
-          </n-button>
+          <n-tooltip :show="loading.captcha.solving" trigger="manual">
+            <template #trigger>
+              <n-button
+                type="success"
+                secondary
+                :loading="loading.emailCode"
+                :disabled="loading.emailCode"
+                @click="handleEmailCodeSendButton"
+              >
+                获取验证码
+              </n-button>
+            </template>
+            <n-spin class="captcha-solving" :size="14" />
+            验证中...
+          </n-tooltip>
         </n-form-item>
         <n-form-item label="新密码" path="password">
           <n-input
@@ -83,6 +90,8 @@
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import type { FormInst, FormItemRule } from "naive-ui";
 import {
   GetPassword as GetEmailCode,
@@ -144,9 +153,15 @@ const formRules = {
 const loading = ref<{
   reset: boolean;
   emailCode: boolean;
+  captcha: {
+    solving: boolean;
+  };
 }>({
   reset: false,
   emailCode: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const resetPasswordForm = ref<{
@@ -167,10 +182,12 @@ const data: {
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
+  loading.value.captcha.solving = true;
   captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute<GetEmailCodeResponse>(
     new GetEmailCode({
       user: resetPasswordForm.value.user!,

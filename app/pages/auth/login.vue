@@ -46,34 +46,35 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-tooltip :show="loading.captcha.solving" trigger="manual" placement="bottom">
+            <n-tooltip :show="loading.captcha.solving" trigger="manual">
               <template #trigger>
                 <n-button
-                    type="success"
-                    :loading="loading.login"
-                    :disabled="loading.login"
-                    @click="handleLoginButton"
+                  type="success"
+                  :loading="loading.login"
+                  :disabled="loading.login"
+                  @click="handleLoginButton"
                 >
                   登录
                 </n-button>
               </template>
-            验证中...
+              <n-spin class="captcha-solving" :size="14" />
+              验证中...
             </n-tooltip>
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <n-el style="margin-block: 1rem; width: 100%">
-      <n-spin :show="loading.passkey" style="width: 100%">
-        <n-button
-          type="success"
-          secondary
-          style="width: 100%"
-          @click="handlePasskeyLogin"
-        >
-          通行密钥登录
-        </n-button>
-      </n-spin>
+      <n-button
+        type="success"
+        secondary
+        style="width: 100%"
+        :loading="loading.passkey"
+        :disabled="loading.passkey"
+        @click="handlePasskeyLogin"
+      >
+        通行密钥登录
+      </n-button>
     </n-el>
     <n-card title="第三方登录">
       <n-space>
@@ -94,6 +95,8 @@
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import Qq from "@vicons/fa/Qq";
 import type { FormInst, FormItemRule } from "naive-ui";
 
@@ -162,7 +165,7 @@ const loading = ref<{
   passkey: boolean;
   captcha: {
     solving: boolean;
-  }
+  };
 }>({
   login: false,
   threeSide: false,
@@ -253,7 +256,7 @@ async function handlePasskeyLogin() {
     });
     navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
   } else message.error(rs.message);
-  loading.value.login = false;
+  loading.value.passkey = false;
 }
 
 async function handleThirdPartyLogin(type: ThirdParty) {

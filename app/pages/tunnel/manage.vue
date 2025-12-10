@@ -518,8 +518,8 @@
           </n-table>
         </n-scrollbar>
         <n-space
-          vertical
           v-if="['HTTP', 'HTTPS'].includes(selectedTunnel.type)"
+          vertical
         >
           <n-alert type="info">
             您需要在您的域名 DNS 提供商处添加 DNS

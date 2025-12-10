@@ -66,15 +66,17 @@
                         :on-update:page="
                           (pageSel) => {
                             tunnelPage.current = pageSel;
-                            getTunnelConfig(Mode.TUNNEL);
-
-                            getTunnelConfig(Mode.NODE);
+                            getTunnels().then(() =>
+                              getTunnelConfig(Mode.TUNNEL),
+                            );
                           }
                         "
                         :on-update:page-size="
                           (pageSizeSel) => {
                             tunnelPage.size = pageSizeSel;
-                            getTunnelConfig(Mode.TUNNEL);
+                            getTunnels().then(() =>
+                              getTunnelConfig(Mode.TUNNEL),
+                            );
                           }
                         "
                         show-size-picker
@@ -105,15 +107,13 @@
                         :on-update:page="
                           (pageSel) => {
                             nodePage.current = pageSel;
-                            getTunnelConfig(Mode.TUNNEL);
-
-                            getTunnelConfig(Mode.NODE);
+                            getNodes().then(() => getTunnelConfig(Mode.NODE));
                           }
                         "
                         :on-update:page-size="
                           (pageSizeSel) => {
                             nodePage.size = pageSizeSel;
-                            getTunnelConfig(Mode.TUNNEL);
+                            getNodes().then(() => getTunnelConfig(Mode.NODE));
                           }
                         "
                         show-size-picker

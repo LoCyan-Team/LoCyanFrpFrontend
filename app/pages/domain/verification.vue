@@ -1,6 +1,11 @@
 <template>
   <page-content title="所有权验证">
     <n-space vertical>
+      <n-alert type="info" title="域名解析提示">
+        在解析域名 DNS 可能存在缓存等因素，通常来说您的 DNS 记录会在 24
+        小时内由您的运营商同步，期间可能不能立即验证成功，请您耐心等待。
+        如果超过 24 小时未同步，请您咨询您的域名 DNS 提供商。
+      </n-alert>
       <n-card title="提交验证">
         <n-form :model="formData">
           <n-form-item label="域名" path="domain">
@@ -139,6 +144,7 @@
                   <n-thead>
                     <n-tr>
                       <n-th>域名</n-th>
+                      <n-th>主机名</n-th>
                       <n-th>DNS 记录类型</n-th>
                       <n-th>DNS 记录内容</n-th>
                       <n-th>操作</n-th>
@@ -150,6 +156,7 @@
                       :key="verification.domain"
                     >
                       <n-td>{{ verification.domain }}</n-td>
+                      <n-td>_lcf-verify.{{ verification.domain }}.</n-td>
                       <n-td>{{ verification.recordType }}</n-td>
                       <n-td>
                         <n-tooltip trigger="hover">

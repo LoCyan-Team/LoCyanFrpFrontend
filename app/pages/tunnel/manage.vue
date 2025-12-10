@@ -85,7 +85,25 @@
                       <n-icon :component="Error" />
                     </template>
                     <template #description>已封禁</template>
-                    <n-card :title="tunnel.name">
+                    <n-card>
+                      <template #header>
+                        <n-tooltip trigger="hover">
+                          <template #trigger>
+                            <n-el
+                              style="
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                flex: 1;
+                                padding-right: 0.5rem;
+                              "
+                            >
+                              {{ tunnel.name }}
+                            </n-el>
+                          </template>
+                          {{ tunnel.name }}
+                        </n-tooltip>
+                      </template>
                       <template #header-extra>
                         <n-space style="margin-right: 10px">
                           <n-tag type="success">

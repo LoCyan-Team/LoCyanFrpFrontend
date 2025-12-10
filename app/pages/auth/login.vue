@@ -28,6 +28,7 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.login = false;
               }
@@ -45,14 +46,19 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button
-              type="success"
-              :loading="loading.login"
-              :disabled="loading.login"
-              @click="handleLoginButton"
-            >
-              登录
-            </n-button>
+            <n-tooltip :show="loading.captcha.solving" trigger="manual" placement="bottom">
+              <template #trigger>
+                <n-button
+                    type="success"
+                    :loading="loading.login"
+                    :disabled="loading.login"
+                    @click="handleLoginButton"
+                >
+                  登录
+                </n-button>
+              </template>
+            验证中...
+            </n-tooltip>
           </n-space>
         </n-el>
       </n-form>
@@ -154,10 +160,16 @@ const loading = ref<{
   login: boolean;
   threeSide: boolean;
   passkey: boolean;
+  captcha: {
+    solving: boolean;
+  }
 }>({
   login: false,
   threeSide: false,
   passkey: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const loginForm = ref<{
@@ -172,11 +184,13 @@ async function handleLoginButton() {
   if (!loginFormRef.value) return;
   loginFormRef.value.validate().then(async () => {
     loading.value.login = true;
+    loading.value.captcha.solving = true;
     captchaRef?.value?.solve();
   });
 }
 
 async function handleLogin(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,

@@ -247,7 +247,10 @@ async function getSystemNotifications() {
     systemPage.value.count = rs.data.pagination.count;
     rs.data.list
       .slice()
-      .sort((a, b) => dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf())
+      .sort(
+        (a, b) =>
+          dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf(),
+      )
       .forEach((it) => {
         systemNotificationData.value.push({
           id: it.id,
@@ -272,7 +275,10 @@ async function getUserNotifications() {
     userPage.value.count = rs.data.pagination.count;
     rs.data.list
       .slice()
-      .sort((a, b) => dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf())
+      .sort(
+        (a, b) =>
+          dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf(),
+      )
       .forEach((it) => {
         userNotificationData.value.push({
           id: it.id,

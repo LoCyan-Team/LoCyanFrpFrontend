@@ -268,6 +268,7 @@ async function getTunnelConfig(mode: Mode) {
 }
 
 async function getTunnels() {
+  loading.value = true;
   const rs = await client.execute<GetTunnelsResponse>(
     new GetTunnels({
       user_id: mainStore.userId!,
@@ -294,6 +295,7 @@ async function getTunnels() {
 }
 
 async function getNodes() {
+  loading.value = true;
   const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,

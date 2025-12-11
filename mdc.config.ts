@@ -1,25 +1,25 @@
 export const naiveUIMap = {
-  h1: "NH1",
-  h2: "NH2",
-  h3: "NH3",
-  h4: "NH4",
-  h5: "NH5",
-  h6: "NH6",
+  h1: "n-h1",
+  h2: "n-h2",
+  h3: "n-h3",
+  h4: "n-h4",
+  h5: "n-h5",
+  h6: "n-h6",
 
-  p: "NP",
+  p: "n-p",
   a: "ProseA",
   strong: "ProseStrong",
-  em: "NText",
+  em: "n-text",
 
-  blockquote: "NBlockquote",
-  hr: "NDivider",
+  blockquote: "n-blockquote",
+  hr: "n-divider",
 
-  ul: "NUl",
-  ol: "NOl",
-  li: "NLi",
+  ul: "n-ul",
+  ol: "n-ol",
+  li: "n-li",
 
-  img: "NImage",
-  table: "NTable",
+  img: "n-image",
+  table: "n-table",
 
   code: "ProseCode"
 };

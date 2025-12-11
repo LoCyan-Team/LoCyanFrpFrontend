@@ -1025,27 +1025,29 @@ async function handleSubmitModifyTunnel(
   if (rs.status === 200) {
     modal.value.edit.show = false;
     const arr = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
-    arr.push({
-      id: tunnelId,
-      name: tunnel.name,
-      type: tunnel.type,
-      node: {
-        id: selectedNode.value.id,
-        name: selectedNode.value.name,
-        host: selectedNode.value.host,
-        ip: selectedNode.value.ip,
-      },
-      localIp: tunnel.localIp,
-      localPort: tunnel.localPort,
-      remotePort: tunnel.remotePort,
-      useEncryption: tunnel.useEncryption,
-      useCompression: tunnel.useCompression,
-      proxyProtocolVersion: tunnel.proxyProtocolVersion,
-      domain: tunnel.domain,
-      locations: tunnel.locations,
-      status: tunnelStatus,
-    });
-    tunnels.value = sortTunnelsById(arr);
+    arr
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .push({
+        id: tunnelId,
+        name: tunnel.name,
+        type: tunnel.type,
+        node: {
+          id: selectedNode.value.id,
+          name: selectedNode.value.name,
+          host: selectedNode.value.host,
+          ip: selectedNode.value.ip,
+        },
+        localIp: tunnel.localIp,
+        localPort: tunnel.localPort,
+        remotePort: tunnel.remotePort,
+        useEncryption: tunnel.useEncryption,
+        useCompression: tunnel.useCompression,
+        proxyProtocolVersion: tunnel.proxyProtocolVersion,
+        domain: tunnel.domain,
+        locations: tunnel.locations,
+        status: tunnelStatus,
+      });
   } else message.error(rs.message);
   loading.value.tunnel.editSubmit = false;
 }
@@ -1196,30 +1198,32 @@ async function getTunnels() {
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
     tunnels.value.length = 0;
-    rs.data.list.forEach((it) => {
-      tunnels.value.push({
-        id: it.id,
-        name: it.name,
-        type: it.type,
-        node: {
-          id: it.node.id,
-          name: it.node.name,
-          host: it.node.host,
-          ip: it.node.ip,
-        },
-        localIp: it.local_ip,
-        localPort: it.local_port,
-        remotePort: it.remote_port,
-        useEncryption: it.use_encryption,
-        useCompression: it.use_compression,
-        proxyProtocolVersion:
-          it.proxy_protocol_version as ProxyProtocolVersion | null,
-        domain: it.domain,
-        locations: it.locations,
-        status: it.status,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        tunnels.value.push({
+          id: it.id,
+          name: it.name,
+          type: it.type,
+          node: {
+            id: it.node.id,
+            name: it.node.name,
+            host: it.node.host,
+            ip: it.node.ip,
+          },
+          localIp: it.local_ip,
+          localPort: it.local_port,
+          remotePort: it.remote_port,
+          useEncryption: it.use_encryption,
+          useCompression: it.use_compression,
+          proxyProtocolVersion:
+            it.proxy_protocol_version as ProxyProtocolVersion | null,
+          domain: it.domain,
+          locations: it.locations,
+          status: it.status,
+        });
       });
-    });
-    tunnels.value = sortTunnelsById(tunnels.value);
     displayTunnels.value = [...tunnels.value];
   } else message.error(rs.message);
   loading.value.page = false;
@@ -1239,23 +1243,25 @@ async function getNodes() {
   if (rs.status === 200) {
     nodePage.value.count = rs.data.pagination.count;
     nodes.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodes.value.push({
-        id: it.id,
-        name: it.name,
-        description: it.description,
-        host: it.host,
-        ip: it.ip,
-        portRange: it.port_range,
-        additional: {
-          allowUdp: it.additional.allow_udp,
-          allowHttp: it.additional.allow_http,
-          allowBigTraffic: it.additional.allow_big_traffic,
-          needIcp: it.additional.need_icp,
-        },
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodes.value.push({
+          id: it.id,
+          name: it.name,
+          description: it.description,
+          host: it.host,
+          ip: it.ip,
+          portRange: it.port_range,
+          additional: {
+            allowUdp: it.additional.allow_udp,
+            allowHttp: it.additional.allow_http,
+            allowBigTraffic: it.additional.allow_big_traffic,
+            needIcp: it.additional.need_icp,
+          },
+        });
       });
-    });
-    nodes.value = sortNodesByName(nodes.value);
     await buildEditNodeSelectOptions();
   } else message.error(rs.message);
 }
@@ -1277,32 +1283,6 @@ onMounted(async () => {
   // noinspection ES6MissingAwait
   getNodes();
 });
-/**
- * 按排序 ID 隧道
- * @param data 隧道列表
- * @returns 排序后的隧道列表
- */
-function sortTunnelsById(data: Tunnel[]): Tunnel[] {
-  return data.sort((a, b) => {
-    if (a.id < b.id) {
-      return -1;
-    }
-    if (a.id > b.id) {
-      return 1;
-    }
-    return 0;
-  });
-}
-/**
- * 按名称排序节点
- * @param data 节点列表
- * @returns 排序后的节点列表
- */
-function sortNodesByName(data: Node[]): Node[] {
-  return data.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
-}
 
 /**
  * 计算连接地址

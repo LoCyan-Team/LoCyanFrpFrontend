@@ -187,22 +187,25 @@ async function getNodes() {
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
     nodes.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodes.value.push({
-        id: it.id,
-        name: it.name,
-        description: it.description,
-        host: it.host,
-        ip: it.ip,
-        portRange: it.port_range,
-        additional: {
-          allowUdp: it.additional.allow_udp,
-          allowHttp: it.additional.allow_http,
-          allowBigTraffic: it.additional.allow_big_traffic,
-          needIcp: it.additional.need_icp,
-        },
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodes.value.push({
+          id: it.id,
+          name: it.name,
+          description: it.description,
+          host: it.host,
+          ip: it.ip,
+          portRange: it.port_range,
+          additional: {
+            allowUdp: it.additional.allow_udp,
+            allowHttp: it.additional.allow_http,
+            allowBigTraffic: it.additional.allow_big_traffic,
+            needIcp: it.additional.need_icp,
+          },
+        });
       });
-    });
   } else message.error(rs.message);
   loading.value.nodes = false;
 }

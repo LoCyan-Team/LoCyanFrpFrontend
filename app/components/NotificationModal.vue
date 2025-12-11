@@ -114,8 +114,14 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetSystem } from "api/src/api/site/notification/system.get";
-import { GetUser } from "api/src/api/site/notification/user.get";
+import {
+  GetSystem,
+  type GetSystemResponse,
+} from "api/src/api/site/notification/system.get";
+import {
+  GetUser,
+  type GetUserResponse,
+} from "api/src/api/site/notification/user.get";
 import { PutRead as PutSystemRead } from "api/src/api/site/notification/system/read.put";
 import { PutBatch as PutSystemReadBatch } from "api/src/api/site/notification/system/read/batch.put";
 import { PutRead as PutUserRead } from "api/src/api/site/notification/user/read.put";
@@ -230,7 +236,7 @@ async function handleUserMarkPageRead() {
 }
 
 async function getSystemNotifications() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetSystemResponse>(
     new GetSystem({
       user_id: mainStore.userId!,
       page: systemPage.value.current,
@@ -239,21 +245,23 @@ async function getSystemNotifications() {
   );
   if (rs.status === 200) {
     systemPage.value.count = rs.data.pagination.count;
-    rs.data.list.forEach((it) => {
-      systemNotificationData.value.push({
-        id: it.id,
-        title: it.title,
-        content: it.content,
-        time: it.create_time,
-        readTime: it.read_time,
+    rs.data.list
+      .slice()
+      .sort((a, b) => dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf())
+      .forEach((it) => {
+        systemNotificationData.value.push({
+          id: it.id,
+          title: it.title,
+          content: it.content,
+          time: it.create_time,
+          readTime: it.read_time,
+        });
       });
-    });
-    systemNotificationData.value = sortByTime(systemNotificationData.value);
   } else message.error(rs.message);
 }
 
 async function getUserNotifications() {
-  const rs = await client.execute(
+  const rs = await client.execute<GetUserResponse>(
     new GetUser({
       user_id: mainStore.userId!,
       page: userPage.value.current,
@@ -262,16 +270,18 @@ async function getUserNotifications() {
   );
   if (rs.status === 200) {
     userPage.value.count = rs.data.pagination.count;
-    rs.data.list.forEach((it) => {
-      userNotificationData.value.push({
-        id: it.id,
-        title: it.title,
-        content: it.content,
-        time: it.create_time,
-        readTime: it.read_time,
+    rs.data.list
+      .slice()
+      .sort((a, b) => dayjs(a.create_time).valueOf() - dayjs(b.create_time).valueOf())
+      .forEach((it) => {
+        userNotificationData.value.push({
+          id: it.id,
+          title: it.title,
+          content: it.content,
+          time: it.create_time,
+          readTime: it.read_time,
+        });
       });
-    });
-    userNotificationData.value = sortByTime(userNotificationData.value);
   } else message.error(rs.message);
 }
 
@@ -280,18 +290,4 @@ onMounted(async () => {
   await getUserNotifications();
   loading.value = false;
 });
-
-function sortByTime(
-  data: SystemNotification[] | UserNotification[],
-): SystemNotification[] | UserNotification[] {
-  return data.sort((a, b) => {
-    if (dayjs(a.time).isBefore(dayjs(b.time))) {
-      return -1;
-    }
-    if (dayjs(a.time).isAfter(dayjs(b.time))) {
-      return 1;
-    }
-    return 0;
-  });
-}
 </script>

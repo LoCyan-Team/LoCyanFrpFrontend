@@ -35,11 +35,11 @@
                   switch (value) {
                     case 'tunnel':
                       tunnelPage.current = 1;
-                      getTunnelConfig(Mode.TUNNEL);
+                      getTunnels().then(() => getTunnelConfig(Mode.TUNNEL));
                       break;
                     case 'node':
                       nodePage.current = 1;
-                      getTunnelConfig(Mode.NODE);
+                      getNodes().then(() => getTunnelConfig(Mode.NODE));
                       break;
                   }
                 }
@@ -278,16 +278,16 @@ async function getTunnels() {
   if (rs.status === 200) {
     tunnelPage.value.count = rs.data.pagination.count;
     tunnelOptions.value.length = 0;
-    rs.data.list.forEach((it) => {
-      tunnelOptions.value.push({
-        label: it.name,
-        value: it.id,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        tunnelOptions.value.push({
+          label: it.name,
+          value: it.id,
+        });
       });
-    });
     if (rs.data.list.length !== 0) {
-      tunnelOptions.value.sort((a, b) => {
-        return (a.value as number) - (b.value as number);
-      });
       tunnelSelected.value = tunnelOptions.value[0]?.value as number;
     }
   } else message.error(rs.message);
@@ -304,15 +304,15 @@ async function getNodes() {
   if (rs.status === 200) {
     nodePage.value.count = rs.data.pagination.count;
     nodeOptions.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodeOptions.value.push({
-        label: it.name,
-        value: it.id,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodeOptions.value.push({
+          label: it.name,
+          value: it.id,
+        });
       });
-    });
-    nodeOptions.value.sort((a, b) => {
-      return (a.label as string).localeCompare(b.label as string);
-    });
     nodeSelected.value = nodeOptions.value[0]?.value as number;
   } else message.error(rs.message);
 }

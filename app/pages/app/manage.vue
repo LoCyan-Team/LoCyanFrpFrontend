@@ -156,13 +156,12 @@ async function handleEdit(
     const index = apps.value.findIndex((item) => item.id === appId);
     if (index !== -1) {
       apps.value[index] = {
-        id: apps.value[index].id,
+        id: apps.value[index]!.id,
         name: app.name,
         description: app.description,
         redirectUrl: app.redirectUrl,
       };
     }
-    apps.value.sort((a, b) => a.id - b.id);
     dialog.success({
       title: "更新成功",
       content: "更新应用信息成功。",
@@ -179,7 +178,7 @@ async function handleDelete(id: number) {
     }),
   );
   if (rs.status === 200) {
-    apps.value = apps.value.filter((app) => app.id !== appId);
+    apps.value = apps.value.filter((app) => app.id !== id);
   } else message.error(rs.message);
 }
 
@@ -194,15 +193,17 @@ async function getApps() {
   );
   if (rs.status === 200) {
     page.value.count = rs.data.pagination.count;
-    rs.data.list.forEach((it) => {
-      apps.value.push({
-        id: it.id,
-        name: it.name,
-        description: it.description ?? null,
-        redirectUrl: it.redirect_url,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        apps.value.push({
+          id: it.id,
+          name: it.name,
+          description: it.description ?? null,
+          redirectUrl: it.redirect_url,
+        });
       });
-    });
-    apps.value.sort((a, b) => a.id - b.id);
   } else message.error(rs.message);
   loading.value.page = false;
 }

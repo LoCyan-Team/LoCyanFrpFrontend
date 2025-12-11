@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed } from 'vue';
+import { computed } from "vue";
 
 const props = defineProps<{
   href?: string;
@@ -8,26 +8,25 @@ const props = defineProps<{
 
 const isExternalLink = computed(() => {
   if (!props.href) return false;
-  return props.href.startsWith('http') || props.href.startsWith('//');
+  return props.href.startsWith("http") || props.href.startsWith("//");
 });
 
 const computedTarget = computed(() => {
   if (isExternalLink.value) {
-    return '_blank';
+    return "_blank";
   }
   return props.target;
 });
 
 const computedRel = computed(() => {
-  let rel = props.rel ? props.rel.split(' ') : [];
+  let rel = props.rel ? props.rel.split(" ") : [];
 
-  if (computedTarget.value === '_blank' && !rel.includes('noopener')) {
-    rel.push('noopener', 'noreferrer');
+  if (computedTarget.value === "_blank" && !rel.includes("noopener")) {
+    rel.push("noopener", "noreferrer");
   }
 
-  return [...new Set(rel)].filter(Boolean).join(' ') || undefined;
+  return [...new Set(rel)].filter(Boolean).join(" ") || undefined;
 });
-
 </script>
 
 <template>

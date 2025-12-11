@@ -626,8 +626,9 @@
           remotePort: selectedTunnel.remotePort,
           useEncryption: selectedTunnel.useEncryption,
           useCompression: selectedTunnel.useCompression,
-          proxyProtocolVersion:
-            selectedTunnel.proxyProtocolVersion as ProxyProtocolVersion | null,
+          proxyProtocolVersion: selectedTunnel.proxyProtocolVersion as
+            | ProxyProtocolVersion
+            | undefined,
           domain: selectedTunnel.domain,
           locations: selectedTunnel.locations,
         }"
@@ -1024,11 +1025,9 @@ async function handleSubmitModifyTunnel(
   );
   if (rs.status === 200) {
     modal.value.edit.show = false;
-    const arr = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
-    arr
-      .slice()
-      .sort((a, b) => a.id - b.id)
-      .push({
+    const index = tunnels.value.findIndex((item) => item.id === tunnelId);
+    if (index !== -1) {
+      tunnels.value[index] = {
         id: tunnelId,
         name: tunnel.name,
         type: tunnel.type,
@@ -1047,7 +1046,8 @@ async function handleSubmitModifyTunnel(
         domain: tunnel.domain,
         locations: tunnel.locations,
         status: tunnelStatus,
-      });
+      };
+    }
   } else message.error(rs.message);
   loading.value.tunnel.editSubmit = false;
 }

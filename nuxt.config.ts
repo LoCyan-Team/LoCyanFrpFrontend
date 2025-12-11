@@ -1,6 +1,7 @@
 import AutoImport from "unplugin-auto-import/vite";
 import { NaiveUiResolver } from "unplugin-vue-components/resolvers";
 import Components from "unplugin-vue-components/vite";
+import { naiveUIMap } from "./mdc.config";
 
 // https://nuxt.com/docs/api/configuration/nuxt-config
 export default defineNuxtConfig({
@@ -70,6 +71,12 @@ export default defineNuxtConfig({
     host: "https://analytics.locyan.cn",
     autoTrack: true,
     ignoreLocalhost: true,
+  },
+  mdc: {
+    components: {
+      prose: false,
+      map: naiveUIMap,
+    },
   },
   app: {
     pageTransition: { name: "fade", mode: "out-in" },

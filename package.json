@@ -23,7 +23,7 @@
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",
     "@cap.js/widget": "^0.1.32",
-    "@nuxt/eslint": "1.10.0",
+    "@nuxt/eslint": "1.12.1",
     "@nuxtjs/mdc": "0.19.1",
     "@pinia/nuxt": "^0.11.3",
     "@vicons/carbon": "^0.13.0",

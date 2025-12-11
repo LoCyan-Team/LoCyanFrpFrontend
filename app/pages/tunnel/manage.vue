@@ -1015,7 +1015,10 @@ async function handleSubmitModifyTunnel(
       proxy_protocol_version: tunnel.proxyProtocolVersion ?? undefined,
       node_id: selectedNode.value.id,
       domain: tunnel.domain ?? undefined,
-      locations: tunnel.locations ?? undefined,
+      locations:
+        tunnel.locations?.length === 0
+          ? undefined
+          : (tunnel.locations ?? undefined),
       secret_key: tunnel.secretKey ?? undefined,
     }),
   );

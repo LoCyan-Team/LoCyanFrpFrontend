@@ -155,7 +155,10 @@ async function handleCreate(tunnel: {
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
       domain: tunnel.domain ?? undefined,
-      locations: tunnel.locations ?? undefined,
+      locations:
+        tunnel.locations?.length === 0
+          ? undefined
+          : (tunnel.locations ?? undefined),
       secret_key: tunnel.secretKey ?? undefined,
       proxy_protocol_version:
         (tunnel.proxyProtocolVersion as ProxyProtocolVersion | null) ??

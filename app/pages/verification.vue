@@ -170,7 +170,7 @@
           </n-card>
 
           <!-- 二级认证 -->
-          <n-card title="二级认证（实名认证）">
+          <n-card title="实名认证（二级认证）">
             <n-spin :show="data.realName" :rotate="false">
               <template #icon>
                 <n-icon>

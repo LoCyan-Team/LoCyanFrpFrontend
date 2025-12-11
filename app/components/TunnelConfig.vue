@@ -24,7 +24,7 @@
           <!-- 穿透协议 -->
           <n-grid-item span="0:2 700:1">
             <n-form-item label="穿透协议" path="type">
-              <n-scrollbar x-scrollable>
+              <n-scrollbar x-scrollable style="overflow-y: hidden;">
                 <n-radio-group v-model:value="form.type">
                   <n-radio-button value="TCP">TCP</n-radio-button>
                   <n-radio-button value="UDP">UDP</n-radio-button>

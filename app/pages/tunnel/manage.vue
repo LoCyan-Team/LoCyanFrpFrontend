@@ -1089,11 +1089,10 @@ async function handleBatchDeleteTunnel() {
     tunnels.value = tunnels.value.filter(
       (tunnel) => !selected.includes(tunnel.id),
     );
+    batchSelected.value.length = 0;
+    batchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-
-  batchSelected.value.length = 0;
-  batchSelectState.value = false;
 }
 
 /**

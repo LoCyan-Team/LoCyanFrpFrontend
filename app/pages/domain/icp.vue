@@ -434,10 +434,10 @@ async function handleBatchDeleteIcp() {
   );
   if (rs.status === 200) {
     data.value = data.value.filter((it) => !selected.includes(it.id));
+    batchSelected.value.length = 0;
+    batchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-  batchSelected.value.length = 0;
-  batchSelectState.value = false;
 }
 
 function handleBatchSelect(domainId: number) {

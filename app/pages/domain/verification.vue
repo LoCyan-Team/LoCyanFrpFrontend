@@ -427,10 +427,10 @@ async function handleBatchDeleteDomain() {
     domainData.value = domainData.value.filter(
       (it) => !domainBatchSelected.value.includes(it.id),
     );
+    domainBatchSelected.value.length = 0;
+    domainBatchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-  domainBatchSelected.value.length = 0;
-  domainBatchSelectState.value = false;
 }
 
 async function handleSubmitVerification(domain: string) {

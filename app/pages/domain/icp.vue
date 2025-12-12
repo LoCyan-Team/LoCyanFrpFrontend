@@ -463,7 +463,13 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (domainPage.value.current > rs.data.pagination.count) {
+      domainPage.value.current = rs.data.pagination.count;
+      await getDomains();
+      return;
+    }
     domainPage.value.count = rs.data.pagination.count;
+
     domainOptions.value.length = 0;
     rs.data.list.forEach((it) => {
       domainOptions.value.push({
@@ -485,7 +491,13 @@ async function getIcpDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (icpDomainPage.value.current > rs.data.pagination.count) {
+      icpDomainPage.value.current = rs.data.pagination.count;
+      await getIcpDomains();
+      return;
+    }
     icpDomainPage.value.count = rs.data.pagination.count;
+
     data.value.length = 0;
     rs.data.list.forEach((it) => {
       data.value.push({

@@ -476,7 +476,13 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (domainPage.value.current > rs.data.pagination.count) {
+      domainPage.value.current = rs.data.pagination.count;
+      await getDomains();
+      return;
+    }
     domainPage.value.count = rs.data.pagination.count;
+
     domainData.value.length = 0;
     rs.data.list.forEach((it) => {
       domainData.value.push({
@@ -498,7 +504,13 @@ async function getVerifications() {
     }),
   );
   if (rs.status === 200) {
+    if (verificationPage.value.current > rs.data.pagination.count) {
+      verificationPage.value.current = rs.data.pagination.count;
+      await getVerifications();
+      return;
+    }
     verificationPage.value.count = rs.data.pagination.count;
+
     verificationData.value.length = 0;
     rs.data.list.forEach((it) => {
       verificationData.value.push({

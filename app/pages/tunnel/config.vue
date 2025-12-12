@@ -277,7 +277,13 @@ async function getTunnels() {
     }),
   );
   if (rs.status === 200) {
+    if (tunnelPage.value.current > rs.data.pagination.count) {
+      tunnelPage.value.current = rs.data.pagination.count;
+      await getTunnels();
+      return;
+    }
     tunnelPage.value.count = rs.data.pagination.count;
+
     tunnelOptions.value.length = 0;
     rs.data.list
       .slice()
@@ -304,7 +310,13 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
+    if (nodePage.value.current > rs.data.pagination.count) {
+      nodePage.value.current = rs.data.pagination.count;
+      await getNodes();
+      return;
+    }
     nodePage.value.count = rs.data.pagination.count;
+
     nodeOptions.value.length = 0;
     rs.data.list
       .slice()

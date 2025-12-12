@@ -244,7 +244,13 @@ async function getSystemNotifications() {
     }),
   );
   if (rs.status === 200) {
+    if (systemPage.value.current > rs.data.pagination.count) {
+      systemPage.value.current = rs.data.pagination.count;
+      await getSystemNotifications();
+      return;
+    }
     systemPage.value.count = rs.data.pagination.count;
+
     rs.data.list
       .slice()
       .sort(
@@ -272,7 +278,13 @@ async function getUserNotifications() {
     }),
   );
   if (rs.status === 200) {
+    if (userPage.value.current > rs.data.pagination.count) {
+      userPage.value.current = rs.data.pagination.count;
+      await getUserNotifications();
+      return;
+    }
     userPage.value.count = rs.data.pagination.count;
+
     rs.data.list
       .slice()
       .sort(

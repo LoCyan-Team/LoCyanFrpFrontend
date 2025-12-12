@@ -192,7 +192,13 @@ async function getApps() {
     }),
   );
   if (rs.status === 200) {
+    if (page.value.current > rs.data.pagination.count) {
+      page.value.current = rs.data.pagination.count;
+      await getApps();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     rs.data.list
       .slice()
       .sort((a, b) => a.id - b.id)

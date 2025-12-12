@@ -351,7 +351,13 @@ async function getAuthorizations() {
     }),
   );
   if (rs.status === 200) {
+    if (authorizationPage.value.current > rs.data.pagination.count) {
+      authorizationPage.value.current = rs.data.pagination.count;
+      await getAuthorizations();
+      return;
+    }
     authorizationPage.value.count = rs.data.pagination.count;
+
     rs.data.list.forEach((it) => {
       authorizations.value.push({
         appId: it.app_id,

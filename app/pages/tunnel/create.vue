@@ -185,7 +185,13 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
+    if (page.value.current > rs.data.pagination.count) {
+      page.value.current = rs.data.pagination.count;
+      await getNodes();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     nodes.value.length = 0;
     rs.data.list
       .slice()

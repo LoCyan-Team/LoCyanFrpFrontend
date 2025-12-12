@@ -341,7 +341,13 @@ async function getDonations() {
     }),
   );
   if (rs.status === 200) {
+    if (page.value.current > rs.data.pagination.count) {
+      page.value.current = rs.data.pagination.count;
+      await getDonations();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     donations.value.length = 0;
     rs.data.list.forEach((it) => {
       donations.value.push({

@@ -191,7 +191,7 @@ async function handleSystemMarkPageRead() {
     new PutSystemReadBatch({
       user_id: mainStore.userId!,
       page: systemPage.value.current,
-      size: 10,
+      size: 15,
     }),
   );
   if (rs.status === 200) {
@@ -224,7 +224,7 @@ async function handleUserMarkPageRead() {
     new PutUserReadBatch({
       user_id: mainStore.userId!,
       page: systemPage.value.current,
-      size: 10,
+      size: 15,
     }),
   );
   if (rs.status === 200) {
@@ -240,7 +240,7 @@ async function getSystemNotifications() {
     new GetSystem({
       user_id: mainStore.userId!,
       page: systemPage.value.current,
-      size: 10,
+      size: 15,
     }),
   );
   if (rs.status === 200) {
@@ -268,7 +268,7 @@ async function getUserNotifications() {
     new GetUser({
       user_id: mainStore.userId!,
       page: userPage.value.current,
-      size: 10,
+      size: 15,
     }),
   );
   if (rs.status === 200) {

@@ -380,7 +380,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 500]"
             />
           </n-space>
         </n-space>
@@ -668,6 +668,7 @@
                   <n-select
                     v-model:value="editNodeSelected"
                     :options="editNodeSelectOptions"
+                    :loading="loading.tunnel.editGetNodeList"
                   />
                   <n-pagination
                     v-model:page="nodePage.current"
@@ -675,18 +676,24 @@
                     :page-count="nodePage.count"
                     :on-update:page="
                       (pageSel) => {
+                        loading.tunnel.editGetNodeList = true;
                         nodePage.current = pageSel;
-                        getNodes();
+                        getNodes().then(() => {
+                          loading.tunnel.editGetNodeList = false;
+                        });
                       }
                     "
                     :on-update:page-size="
                       (pageSizeSel) => {
+                        loading.tunnel.editGetNodeList = true;
                         nodePage.size = pageSizeSel;
-                        getNodes();
+                        getNodes().then(() => {
+                          loading.tunnel.editGetNodeList = false;
+                        });
                       }
                     "
                     show-size-picker
-                    :page-sizes="[10, 25, 50, 100]"
+                    :page-sizes="[15, 25, 50, 500]"
                   />
                 </n-space>
               </n-form-item>
@@ -749,6 +756,7 @@ const loading = ref<{
     down: boolean;
   };
   tunnel: {
+    editGetNodeList: boolean;
     editSubmit: boolean;
     delete: number[];
     down: number[];
@@ -760,6 +768,7 @@ const loading = ref<{
     down: false,
   },
   tunnel: {
+    editGetNodeList: false,
     editSubmit: false,
     delete: [],
     down: [],
@@ -887,7 +896,7 @@ const page = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   nodePage = ref<{
@@ -896,7 +905,7 @@ const page = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
@@ -987,7 +996,7 @@ async function handleModifyTunnel(tunnel: Tunnel) {
       allowBigTraffic: false,
       needIcp: false,
     },
-  }
+  };
   selectedNode.value = findNode(tunnel.node.id) ?? fallback;
   modal.value.edit.show = true;
 }
@@ -1283,6 +1292,7 @@ async function getNodes() {
  * 构建编辑节点选择选项
  */
 async function buildEditNodeSelectOptions() {
+  editNodeSelectOptions.value.length = 0;
   nodes.value.forEach((it) => {
     editNodeSelectOptions.value.push({
       label: it.name,

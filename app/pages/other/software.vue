@@ -45,7 +45,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 500]"
             />
           </n-space>
         </n-card>
@@ -77,7 +77,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 500]"
             />
             <n-space>
               <n-h3>
@@ -177,7 +177,7 @@ const softwarePage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   assetPage = ref<{
@@ -186,7 +186,7 @@ const softwarePage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 

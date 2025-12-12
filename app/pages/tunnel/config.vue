@@ -80,7 +80,7 @@
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -117,7 +117,7 @@
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -206,7 +206,7 @@ const tunnelPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   nodePage = ref<{
@@ -215,7 +215,7 @@ const tunnelPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 

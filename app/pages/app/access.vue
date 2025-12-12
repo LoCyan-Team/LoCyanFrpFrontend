@@ -135,7 +135,7 @@
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -188,7 +188,7 @@
               }
             "
             show-size-picker
-            :page-sizes="[10, 25, 50, 100]"
+            :page-sizes="[15, 25, 50, 500]"
           />
         </n-space>
       </n-space>
@@ -256,7 +256,7 @@ const authorizationPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   sessionPages = ref<
@@ -371,13 +371,13 @@ async function getAppSessions(appId: number) {
     sessionPages.value.push({
       appId: appId,
       current: 1,
-      size: 10,
+      size: 15,
       count: 1,
     });
     page = {
       appId: appId,
       current: 1,
-      size: 10,
+      size: 15,
       count: 1,
     };
   }

@@ -8,6 +8,6 @@ export class DeleteBatch extends API {
 }
 
 export interface DeleteBatchResponse {
-  succeed: number[];
+  succeeded: number[];
   failed: number[];
 }

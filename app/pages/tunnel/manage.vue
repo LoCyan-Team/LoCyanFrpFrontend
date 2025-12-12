@@ -1135,9 +1135,9 @@ async function handleBatchForceDownTunnel() {
   if (rs.status === 200) {
     dialog.success({
       title: "操作成功",
-      content: `强制下线指令发送成功。成功下线 ${rs.data.succeed.length} 条隧道，${
+      content: `强制下线指令发送成功。成功下线 ${rs.data.succeeded.length} 条隧道${
         rs.data.failed.length > 0
-          ? "失败隧道: " +
+          ? "，失败隧道: " +
             rs.data.failed
               .map((failedId) => {
                 const tunnel = tunnels.value.find((t) => t.id === failedId);

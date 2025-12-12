@@ -33,8 +33,6 @@
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
     "api": "./packages/api",
-    "baseline-browser-mapping": "^2.9.6",
-    "caniuse-lite": "^1.0.30001760",
     "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "highcharts-vue": "^2.0.1",

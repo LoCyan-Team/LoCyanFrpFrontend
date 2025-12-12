@@ -974,7 +974,21 @@ async function handleInfoModal(tunnel: Tunnel) {
  */
 async function handleModifyTunnel(tunnel: Tunnel) {
   selectedTunnel.value = tunnel;
-  selectedNode.value = findNode(tunnel.node.id);
+  const fallback = {
+    id: 0,
+    name: "未知节点",
+    description: null,
+    host: "",
+    ip: null,
+    portRange: [],
+    additional: {
+      allowUdp: false,
+      allowHttp: false,
+      allowBigTraffic: false,
+      needIcp: false,
+    },
+  }
+  selectedNode.value = findNode(tunnel.node.id) ?? fallback;
   modal.value.edit.show = true;
 }
 

@@ -351,7 +351,10 @@ async function getAuthorizations() {
     }),
   );
   if (rs.status === 200) {
-    if (authorizationPage.value.current > rs.data.pagination.count) {
+    if (
+      authorizationPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       authorizationPage.value.current = rs.data.pagination.count;
       await getAuthorizations();
       return;

@@ -476,7 +476,10 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
-    if (domainPage.value.current > rs.data.pagination.count) {
+    if (
+      domainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       domainPage.value.current = rs.data.pagination.count;
       await getDomains();
       return;
@@ -504,7 +507,10 @@ async function getVerifications() {
     }),
   );
   if (rs.status === 200) {
-    if (verificationPage.value.current > rs.data.pagination.count) {
+    if (
+      verificationPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       verificationPage.value.current = rs.data.pagination.count;
       await getVerifications();
       return;

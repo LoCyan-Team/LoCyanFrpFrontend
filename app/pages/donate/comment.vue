@@ -103,7 +103,10 @@ async function getComments() {
     }),
   );
   if (rs.status === 200) {
-    if (page.value.current > rs.data.pagination.count) {
+    if (
+      page.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       page.value.current = rs.data.pagination.count;
       await getComments();
       return;

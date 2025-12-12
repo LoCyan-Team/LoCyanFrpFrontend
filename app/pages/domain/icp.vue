@@ -463,7 +463,10 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
-    if (domainPage.value.current > rs.data.pagination.count) {
+    if (
+      domainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       domainPage.value.current = rs.data.pagination.count;
       await getDomains();
       return;
@@ -491,7 +494,10 @@ async function getIcpDomains() {
     }),
   );
   if (rs.status === 200) {
-    if (icpDomainPage.value.current > rs.data.pagination.count) {
+    if (
+      icpDomainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
       icpDomainPage.value.current = rs.data.pagination.count;
       await getIcpDomains();
       return;

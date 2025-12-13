@@ -12,21 +12,6 @@ export interface ApiUrlConfig {
   };
 }
 
-const runtimeConfig = useRuntimeConfig();
-
-const env = {
-  apiUrl: runtimeConfig.public.apiUrl,
-  apiBackupUrl: runtimeConfig.public.apiBackupUrl,
-};
-
-export class DefaultApiUrlConfig implements ApiUrlConfig {
-  v3 = {
-    // main: "http://localhost:8080/default", // 保持本地调试地址
-    main: env.apiUrl,
-    backup: env.apiBackupUrl,
-  };
-}
-
 interface RawResponse<T> {
   status: number;
   message: string;
@@ -40,10 +25,7 @@ export class Client {
   // 使用标志位记录当前是否处于备份节点模式
   private useBackup = false;
 
-  constructor(
-    token?: string,
-    apiUrlConfig: ApiUrlConfig = new DefaultApiUrlConfig(),
-  ) {
+  constructor(apiUrlConfig: ApiUrlConfig, token?: string) {
     this.token = token;
     this.urlConfig = apiUrlConfig;
   }
@@ -193,14 +175,23 @@ export function useApiClient(
 ): Client {
   const mainStore = useMainStore();
 
+  const runtimeConfig = useRuntimeConfig();
+
+  const apiUrlConfig: ApiUrlConfig = {
+    v3: {
+      main: runtimeConfig.public.apiUrl,
+      backup: runtimeConfig.public.apiBackupUrl,
+    },
+  };
+
   if (options.auth) {
     if (!mainStore.token) {
       throw new Error(
         "Authentication token required, but token is null or undefined.",
       );
     }
-    return new Client(mainStore.token);
+    return new Client(apiUrlConfig, mainStore.token);
   }
 
-  return new Client();
+  return new Client(apiUrlConfig);
 }

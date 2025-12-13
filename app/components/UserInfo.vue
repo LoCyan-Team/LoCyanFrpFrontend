@@ -51,15 +51,31 @@
           <n-spin :show="loading.thirdParty">
             <n-tooltip>
               <template #trigger>
-                <n-button
-                  :type="data.thirdParty.bind.qq ? 'info' : 'tertiary'"
-                  circle
-                  @click="handleThirdPartyButton(ThirdParty.QQ)"
-                >
-                  <client-only>
-                    <n-icon><Qq /></n-icon>
-                  </client-only>
-                </n-button>
+                <n-el v-if="!data.thirdParty.bind.qq">
+                  <n-button
+                    type="tertiary"
+                    circle
+                    @click="handleThirdPartyButton(ThirdParty.QQ)"
+                  >
+                    <client-only>
+                      <n-icon><Qq /></n-icon>
+                    </client-only>
+                  </n-button>
+                </n-el>
+                <n-el v-else>
+                  <n-popconfirm
+                    @positive-click="handleThirdPartyButton(ThirdParty.QQ)"
+                  >
+                    <template #trigger>
+                      <n-button type="info" circle>
+                        <client-only>
+                          <n-icon><Qq /></n-icon>
+                        </client-only>
+                      </n-button>
+                    </template>
+                    正在解除绑定，请确认。
+                  </n-popconfirm>
+                </n-el>
               </template>
               <n-el v-if="data.thirdParty.bind.qq">已绑定，点击解绑</n-el>
               <n-el v-else>未绑定，点击绑定</n-el>
@@ -397,12 +413,13 @@ async function handleThirdPartyButton(type: ThirdParty) {
               user_id: mainStore.userId!,
             }),
           );
-          if (rs.status === 200)
+          if (rs.status === 200) {
+            data.value.thirdParty.bind.qq = false;
             dialog.success({
               title: "解除绑定成功",
               content: "已解除与此第三方服务的绑定。",
             });
-          else message.error(rs.message);
+          } else message.error(rs.message);
         }
       }
       break;

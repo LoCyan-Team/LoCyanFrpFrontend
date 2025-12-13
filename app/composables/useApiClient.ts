@@ -6,25 +6,24 @@ import { FetchError, type FetchOptions } from "ofetch";
 import type { NitroFetchOptions } from "nitropack/types";
 
 export interface ApiUrlConfig {
-  v2: {
-    main: string;
-    backup: string;
-  };
   v3: {
     main: string;
     backup: string;
   };
 }
 
+const runtimeConfig = useRuntimeConfig();
+
+const env = {
+  apiUrl: runtimeConfig.public.apiUrl,
+  apiBackupUrl: runtimeConfig.public.apiBackupUrl,
+};
+
 export class DefaultApiUrlConfig implements ApiUrlConfig {
-  v2 = {
-    main: "https://api.locyanfrp.cn/v2",
-    backup: "https://backup.api.locyanfrp.cn/v2",
-  };
   v3 = {
     // main: "http://localhost:8080/default", // 保持本地调试地址
-    main: "https://api.locyanfrp.cn/v3",
-    backup: "https://backup.api.locyanfrp.cn/v3",
+    main: env.apiUrl,
+    backup: env.apiBackupUrl,
   };
 }
 

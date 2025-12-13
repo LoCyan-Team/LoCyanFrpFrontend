@@ -25,6 +25,8 @@ export default defineNuxtConfig({
       devMode: process.env.NODE_ENV === "development",
       capJsEndpoint: "",
       capJsSiteKey: "",
+      apiUrl: "",
+      apiBackupUrl: "",
     },
   },
   vue: {

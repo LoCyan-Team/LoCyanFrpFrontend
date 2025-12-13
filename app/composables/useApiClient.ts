@@ -4,7 +4,6 @@ import { Method } from "api/src/type/method";
 import type { API } from "api/src/type/api";
 import { FetchError, type FetchOptions } from "ofetch";
 import type { NitroFetchOptions } from "nitropack/types";
-import QS from "qs";
 
 export interface ApiUrlConfig {
   v3: {
@@ -98,20 +97,12 @@ export class Client {
       };
     }
 
-    // 处理参数逻辑修改
     if (api.params) {
       switch (api.method) {
         case Method.POST:
         case Method.PUT:
         case Method.PATCH:
-          const stringifyParams = QS.stringify(api.params, {
-            arrayFormat: 'indices',
-          });
-          opts.body = stringifyParams;
-          opts.headers = {
-            ...opts.headers,
-            'Content-Type': 'application/x-www-form-urlencoded'
-          };
+          opts.body = this.normalizeParams(api.params);
           break;
         default:
           opts.query = api.params;
@@ -119,11 +110,25 @@ export class Client {
       }
     }
 
-    // 如果没有参数，直接发起请求
+    // 发起请求，期望返回 RawResponse<T> 结构
     return await $fetch<RawResponse<T>>(
       api.endpoint,
       opts as NitroFetchOptions<never>,
     );
+  }
+
+  /**
+   * 将参数对象规范化为 URLSearchParams
+   * 过滤掉 undefined/null 值，并安全转换为字符串
+   */
+  private normalizeParams(params: Record<string, unknown>): URLSearchParams {
+    const searchParams = new URLSearchParams();
+    for (const [key, value] of Object.entries(params)) {
+      if (value !== undefined && value !== null) {
+        searchParams.append(key, String(value));
+      }
+    }
+    return searchParams;
   }
 
   /**

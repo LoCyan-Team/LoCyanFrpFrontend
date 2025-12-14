@@ -30,7 +30,7 @@
                     }
                   "
                   show-size-picker
-                  :page-sizes="[15, 25, 50, 500]"
+                  :page-sizes="[15, 25, 50, 100, 250, 500]"
                 />
               </n-space>
               <n-button
@@ -144,7 +144,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[15, 25, 50, 500]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
           </n-space>
         </n-space>

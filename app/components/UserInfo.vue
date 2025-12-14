@@ -48,8 +48,8 @@
         </n-text>
         <n-h3>第三方账户绑定</n-h3>
         <n-el class="three-side-buttons">
-          <n-spin :show="loading.thirdParty">
-            <n-tooltip>
+          <n-spin :show="loading.thirdParty" style="width: min-content">
+            <n-tooltip placement="bottom">
               <template #trigger>
                 <n-el v-if="!data.thirdParty.bind.qq">
                   <n-button
@@ -397,32 +397,34 @@ enum ThirdParty {
 async function handleThirdPartyButton(type: ThirdParty) {
   switch (type) {
     case ThirdParty.QQ:
-      {
-        if (!data.value.thirdParty.bind.qq) {
-          const rs = await client.execute<GetQqBindResponse>(
-            new GetQqBind({
-              user_id: mainStore.userId!,
-            }),
-          );
-          if (rs.status === 200) {
-            window.open(rs.data.url);
-          } else message.error(rs.message);
-        } else {
-          const rs = await client.execute(
-            new DeleteQqBind({
-              user_id: mainStore.userId!,
-            }),
-          );
-          if (rs.status === 200) {
-            data.value.thirdParty.bind.qq = false;
-            dialog.success({
-              title: "解除绑定成功",
-              content: "已解除与此第三方服务的绑定。",
-            });
-          } else message.error(rs.message);
-        }
-      }
+      await handleQqButton();
       break;
+  }
+
+  async function handleQqButton() {
+    if (!data.value.thirdParty.bind.qq) {
+      const rs = await client.execute<GetQqBindResponse>(
+        new GetQqBind({
+          user_id: mainStore.userId!,
+        }),
+      );
+      if (rs.status === 200) {
+        window.open(rs.data.url);
+      } else message.error(rs.message);
+    } else {
+      const rs = await client.execute(
+        new DeleteQqBind({
+          user_id: mainStore.userId!,
+        }),
+      );
+      if (rs.status === 200) {
+        data.value.thirdParty.bind.qq = false;
+        dialog.success({
+          title: "解除绑定成功",
+          content: "已解除与此第三方服务的绑定。",
+        });
+      } else message.error(rs.message);
+    }
   }
 }
 

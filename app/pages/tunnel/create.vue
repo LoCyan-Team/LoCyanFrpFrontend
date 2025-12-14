@@ -14,56 +14,54 @@
       </n-el>
       <n-el v-else>
         <n-spin :show="loading.nodes">
-          <n-card title="请选择节点">
-            <n-space vertical>
-              <n-empty v-if="nodes.length === 0" />
-              <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
-                <n-grid-item
-                  v-for="node in nodes"
-                  :key="node.id"
-                  span="0:3 1000:1"
-                >
-                  <node-card :node="node">
-                    <template #header-extra>
-                      <n-button
-                        type="success"
-                        secondary
-                        @click="handleNodeSelect(node)"
-                      >
-                        选择
-                      </n-button>
-                    </template>
-                  </node-card>
-                </n-grid-item>
-              </n-grid>
-
-              <n-space
-                v-if="nodes.length !== 0"
-                justify="center"
-                style="width: 100%"
+          <n-space vertical>
+            <n-empty v-if="nodes.length === 0" />
+            <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
+              <n-grid-item
+                v-for="node in nodes"
+                :key="node.id"
+                span="0:3 1000:1"
               >
-                <n-pagination
-                  v-model:page="page.current"
-                  v-model:page-size="page.size"
-                  :page-count="page.count"
-                  show-size-picker
-                  :on-update:page="
-                    (pageSel) => {
-                      page.current = pageSel;
-                      getNodes();
-                    }
-                  "
-                  :on-update:page-size="
-                    (pageSizeSel) => {
-                      page.size = pageSizeSel;
-                      getNodes();
-                    }
-                  "
-                  :page-sizes="[15, 25, 50, 500]"
-                />
-              </n-space>
+                <node-card :node="node">
+                  <template #header-extra>
+                    <n-button
+                      type="success"
+                      secondary
+                      @click="handleNodeSelect(node)"
+                    >
+                      选择
+                    </n-button>
+                  </template>
+                </node-card>
+              </n-grid-item>
+            </n-grid>
+
+            <n-space
+              v-if="nodes.length !== 0"
+              justify="center"
+              style="width: 100%"
+            >
+              <n-pagination
+                v-model:page="page.current"
+                v-model:page-size="page.size"
+                :page-count="page.count"
+                show-size-picker
+                :on-update:page="
+                  (pageSel) => {
+                    page.current = pageSel;
+                    getNodes();
+                  }
+                "
+                :on-update:page-size="
+                  (pageSizeSel) => {
+                    page.size = pageSizeSel;
+                    getNodes();
+                  }
+                "
+                :page-sizes="[15, 25, 50, 500]"
+              />
             </n-space>
-          </n-card>
+          </n-space>
         </n-spin>
       </n-el>
     </transition>

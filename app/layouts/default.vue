@@ -34,32 +34,30 @@
               </template>
             </n-spin>
           </n-layout>
-          <n-layout
-            v-show="loaded"
-            style="height: 100dvh"
-            :native-scrollbar="false"
-          >
-            <n-layout-header bordered>
-              <site-header />
-            </n-layout-header>
-            <n-layout has-sider style="height: calc(100dvh - 61px)">
-              <n-el v-if="pageSidebar" class="sidebar-container">
-                <sidebar />
-              </n-el>
-              <n-layout-content
-                :native-scrollbar="false"
-                :class="{ content: pageSidebar }"
-                style="width: 100%"
-              >
-                <n-el class="body-wrapper">
-                  <slot />
+          <n-el :class="{ 'content-invisible': !loaded }">
+            <n-layout style="height: 100dvh" :native-scrollbar="false">
+              <n-layout-header bordered>
+                <site-header />
+              </n-layout-header>
+              <n-layout has-sider style="height: calc(100dvh - 61px)">
+                <n-el v-if="pageSidebar" class="sidebar-container">
+                  <sidebar />
                 </n-el>
-                <n-layout-footer bordered>
-                  <site-footer />
-                </n-layout-footer>
-              </n-layout-content>
+                <n-layout-content
+                  :native-scrollbar="false"
+                  :class="{ content: pageSidebar }"
+                  style="width: 100%"
+                >
+                  <n-el class="body-wrapper">
+                    <slot />
+                  </n-el>
+                  <n-layout-footer bordered>
+                    <site-footer />
+                  </n-layout-footer>
+                </n-layout-content>
+              </n-layout>
             </n-layout>
-          </n-layout>
+          </n-el>
           <client-only>
             <alive-test />
           </client-only>
@@ -115,7 +113,7 @@ onMounted(() => {
 
   updateTheme();
   watch(naiveOsTheme, updateTheme);
-  loaded.value = true;
+  nextTick(() => (loaded.value = true));
 });
 </script>
 
@@ -155,5 +153,11 @@ onMounted(() => {
   .content {
     margin-left: 64px;
   }
+}
+</style>
+
+<style>
+.content-invisible {
+  display: none;
 }
 </style>

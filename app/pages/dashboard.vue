@@ -76,8 +76,10 @@
             </n-card>
           </n-spin>
           <n-card title="流量统计图">
-            <highcharts :options="speedChartOptions" />
-            <highcharts :options="trafficChartOptions" />
+            <client-only>
+              <highcharts :options="speedChartOptions" />
+              <highcharts :options="trafficChartOptions" />
+            </client-only>
           </n-card>
         </n-space>
       </n-gi>
@@ -103,6 +105,7 @@ useHead({
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
+
 const client = useApiClient();
 
 const message = useMessage();

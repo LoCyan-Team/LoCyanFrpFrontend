@@ -41,6 +41,10 @@ export class Client {
    * 执行 API 请求
    */
   public async execute<T extends object>(api: API): Promise<Response<T>> {
+    if (import.meta.server) {
+      return new Response(204, "SSR Skipped", {} as T);
+    }
+
     try {
       // 1. 首次尝试
       const result = await this.performFetch<T>(api, this.currentBaseURL);
@@ -185,12 +189,12 @@ export function useApiClient(
   };
 
   if (options.auth) {
-    if (!mainStore.token) {
+    if (!mainStore.token && import.meta.client) {
       throw new Error(
         "Authentication token required, but token is null or undefined.",
       );
     }
-    return new Client(apiUrlConfig, mainStore.token);
+    return new Client(apiUrlConfig, mainStore.token ?? undefined);
   }
 
   return new Client(apiUrlConfig);

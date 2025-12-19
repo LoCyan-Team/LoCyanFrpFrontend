@@ -1,9 +1,9 @@
 <template>
   <nuxt-route-announcer />
   <nuxt-layout>
-    <client-only class="content">
+    <n-el class="content">
       <nuxt-page />
-    </client-only>
+    </n-el>
   </nuxt-layout>
 </template>
 
@@ -12,5 +12,7 @@
 <style scoped>
 .content {
   min-height: calc(100dvh - 61px);
+  display: flex;
+  flex-direction: column;
 }
 </style>

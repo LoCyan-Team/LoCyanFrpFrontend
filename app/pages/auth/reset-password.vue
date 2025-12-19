@@ -231,6 +231,8 @@ function handleResetPassword() {
 
 <style scoped>
 .reset-box {
+  flex: 1;
+  width: 100%;
   margin-inline: auto;
   max-width: 400px;
   display: flex;

@@ -1,27 +1,9 @@
 <template>
-  <n-layout-sider
-    id="sider"
-    bordered
-    show-trigger
-    :collapsed="collapsed"
-    collapse-mode="width"
-    :collapsed-width="64"
-    :native-scrollbar="false"
-    style="height: 100%; bottom: 0"
-    @collapse="collapsed = true"
-    @expand="collapsed = false"
-  >
+  <n-layout-sider id="sider" bordered show-trigger :collapsed="collapsed" collapse-mode="width" :collapsed-width="64"
+    :native-scrollbar="false" style="height: 100%; bottom: 0" @collapse="collapsed = true" @expand="collapsed = false">
     <client-only>
-      <n-menu
-        ref="menuInstRef"
-        :collapsed="collapsed"
-        :collapsed-width="64"
-        :collapsed-icon-size="22"
-        :options="menuOptions"
-        style=""
-        :value="activeKey"
-        @update:value="handleUpdateValue"
-      />
+      <n-menu ref="menuInstRef" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
+        :options="menuOptions" style="" :value="activeKey" @update:value="handleUpdateValue" />
     </client-only>
   </n-layout-sider>
 </template>
@@ -52,6 +34,9 @@ import AttachMoneyFilled from "@vicons/material/AttachMoneyFilled";
 import AccountTreeOutlined from "@vicons/material/AccountTreeOutlined";
 import AccountBalanceWalletFilled from "@vicons/material/AccountBalanceWalletFilled";
 import VerifiedOutlined from "@vicons/material/VerifiedOutlined";
+import Gift from "@vicons/ionicons5/Gift";
+import LocalActivityFilled from "@vicons/material/LocalActivityFilled";
+import MessageFilled from "@vicons/material/MessageFilled";
 
 import { usePageStore } from "@/store/page";
 
@@ -98,6 +83,25 @@ const loggedInMenuOptions: MenuOption[] = [
     label: "签到",
     key: "sign",
     icon: renderIcon(PencilSharp),
+  },
+  {
+    label: "跨年活动",
+    key: "yearly-event",
+    icon: renderIcon(LocalActivityFilled),
+    children: [
+      {
+        path: "/activity/message",
+        label: "新年祝福",
+        key: "message",
+        icon: renderIcon(MessageFilled),
+      },
+      {
+        path: "/activity/prize",
+        label: "抽奖",
+        key: "prize",
+        icon: renderIcon(Gift),
+      },
+    ],
   },
   {
     label: "隧道",

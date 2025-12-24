@@ -1,8 +1,12 @@
 <template>
     <page-content title="新年祝福">
-        <n-flex size="large">
+        <n-flex :vertical="true" size="large">
             <n-input v-model:value="messageInput"></n-input>
-            <n-button type="primary" @click="sendMessage">发送留言</n-button>
+            <n-grid :y-gap="8" :x-gap="12" :cols="10" item-responsive>
+                <n-grid-item span="0:3 1000:4">
+                    <n-button type="primary" @click="sendMessage">发送留言</n-button>
+                </n-grid-item>
+            </n-grid>
             <n-spin :show="loading">
                 <n-grid :y-gap="8" :x-gap="12" :cols="3" item-responsive>
                     <n-grid-item v-for="i in messageList" :key="i.id" span="0:3 1000:1">

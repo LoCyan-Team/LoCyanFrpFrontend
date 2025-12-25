@@ -12,7 +12,7 @@
                 v-model:value="formatSelected"
                 :options="formatOptions"
                 @update:value="
-                  (value) => {
+                  (value: string) => {
                     umTrackEvent(`switch-tunnel-config-format-${value.toLowerCase()}`);
                     switch (selectedMode) {
                       case 'tunnel':

@@ -13,7 +13,7 @@
                 :options="formatOptions"
                 @update:value="
                   (value) => {
-                    umTrackEvent(`switch-tunnel-config-format-${value}`);
+                    umTrackEvent(`switch-tunnel-config-format-${value.toLowerCase()}`);
                     switch (selectedMode) {
                       case 'tunnel':
                         getTunnelConfig(Mode.TUNNEL);

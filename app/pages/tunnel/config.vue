@@ -12,7 +12,8 @@
                 v-model:value="formatSelected"
                 :options="formatOptions"
                 @update:value="
-                  () => {
+                  (value) => {
+                    umTrackEvent(`switch-tunnel-config-format-${value}`);
                     switch (selectedMode) {
                       case 'tunnel':
                         getTunnelConfig(Mode.TUNNEL);
@@ -29,9 +30,9 @@
               v-model:value="selectedMode"
               type="line"
               animated
-              :on-update:value="
+              @update:value="
                 (value) => {
-                  selectedMode = value;
+                  umTrackEvent(`switch-tunnel-config-strategy-${value}`);
                   switch (value) {
                     case 'tunnel':
                       tunnelPage.current = 1;
@@ -52,7 +53,14 @@
                     <n-select
                       v-model:value="tunnelSelected"
                       :options="tunnelOptions"
-                      @update:value="() => getTunnelConfig(Mode.TUNNEL)"
+                      @update:value="
+                        (value) => {
+                          umTrackEvent('switch-tunnel-config-tunnel', {
+                            '隧道 ID': value,
+                          });
+                          getTunnelConfig(Mode.TUNNEL);
+                        }
+                      "
                     />
                     <n-space
                       v-if="tunnelOptions.length !== 0"
@@ -93,7 +101,14 @@
                     <n-select
                       v-model:value="nodeSelected"
                       :options="nodeOptions"
-                      @update:value="() => getTunnelConfig(Mode.NODE)"
+                      @update:value="
+                        (value) => {
+                          umTrackEvent('switch-tunnel-config-tunnel', {
+                            '节点 ID': value,
+                          });
+                          getTunnelConfig(Mode.NODE);
+                        }
+                      "
                     />
                     <n-space
                       v-if="nodeOptions.length !== 0"
@@ -132,6 +147,7 @@
         <n-card title="配置文件">
           <template #header-extra>
             <n-button
+              v-umami="'click-tunnel-config-copy'"
               type="success"
               secondary
               @click="$copyToClipboard(content)"

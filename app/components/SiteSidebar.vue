@@ -1,9 +1,27 @@
 <template>
-  <n-layout-sider id="sider" bordered show-trigger :collapsed="collapsed" collapse-mode="width" :collapsed-width="64"
-    :native-scrollbar="false" style="height: 100%; bottom: 0" @collapse="collapsed = true" @expand="collapsed = false">
+  <n-layout-sider
+    id="sider"
+    bordered
+    show-trigger
+    :collapsed="collapsed"
+    collapse-mode="width"
+    :collapsed-width="64"
+    :native-scrollbar="false"
+    style="height: 100%; bottom: 0"
+    @collapse="collapsed = true"
+    @expand="collapsed = false"
+  >
     <client-only>
-      <n-menu ref="menuInstRef" :collapsed="collapsed" :collapsed-width="64" :collapsed-icon-size="22"
-        :options="menuOptions" style="" :value="activeKey" @update:value="handleUpdateValue" />
+      <n-menu
+        ref="menuInstRef"
+        :collapsed="collapsed"
+        :collapsed-width="64"
+        :collapsed-icon-size="22"
+        :options="menuOptions"
+        style=""
+        :value="activeKey"
+        @update:value="handleUpdateValue"
+      />
     </client-only>
   </n-layout-sider>
 </template>
@@ -261,6 +279,7 @@ const collapsed = ref<boolean>(true);
 const route = useRoute();
 
 function handleUpdateValue(_: unknown, item: MenuOption) {
+  umTrackEvent(`click-sidebar-option-${item.key}`);
   computeActiveKey(menuOptions.value, item.path as string);
   if (item.path) navigateTo(item.path as string);
 }

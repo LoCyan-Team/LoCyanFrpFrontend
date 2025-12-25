@@ -12,6 +12,7 @@
             <n-input v-model:value="formData.domain" placeholder="请输入域名" />
           </n-form-item>
           <n-button
+            v-umami="'click-domain-verification-submit'"
             type="success"
             :loading="loading.submit"
             :disabled="loading.submit"
@@ -31,6 +32,7 @@
                   <n-popconfirm @positive-click="handleBatchDeleteDomain">
                     <template #trigger>
                       <n-button
+                        v-umami="'click-domain-verification-batch-delete'"
                         type="error"
                         secondary
                         :loading="loading.batch.delete"
@@ -55,6 +57,9 @@
                       <n-th>
                         <n-switch
                           v-model:value="domainBatchSelectState"
+                          v-umami="
+                            'switch-domain-verification-batch-select-all'
+                          "
                           :round="false"
                           @update:value="handleDomainSelectAll"
                         >
@@ -72,6 +77,7 @@
                       <n-td>
                         <n-el @click="handleDomainBatchSelect(domain.id)">
                           <n-checkbox
+                            v-umami="'click-domain-verification-select'"
                             :checked="domainBatchSelected.includes(domain.id)"
                           />
                         </n-el>
@@ -84,6 +90,7 @@
                         >
                           <template #trigger>
                             <n-button
+                              v-umami="'click-domain-verification-delete'"
                               type="error"
                               secondary
                               :loading="
@@ -162,6 +169,9 @@
                         <n-tooltip trigger="hover">
                           <template #trigger>
                             <n-button
+                              v-umami="
+                                'click-domain-verification-verify-content-copy'
+                              "
                               text
                               @click="$copyToClipboard(verification.recordData)"
                             >
@@ -173,6 +183,7 @@
                       </n-td>
                       <n-td>
                         <n-button
+                          v-umami="'click-domain-verification-verify'"
                           type="info"
                           secondary
                           @click="handleSubmitVerification(verification.domain)"
@@ -228,6 +239,7 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-button
+                  v-umami="'click-domain-verification-verify-hostname-topy'"
                   text
                   @click="$copyToClipboard(`_lcf-verify.${formData.domain}.`)"
                 >
@@ -241,6 +253,7 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-button
+                  v-umami="'click-domain-verification-verify-content-topy'"
                   text
                   @click="$copyToClipboard(modal.verification.record.data)"
                 >
@@ -253,6 +266,7 @@
         </n-el>
         <template #footer>
           <n-button
+            v-umami="'click-domain-verification-verify'"
             type="success"
             @click="handleSubmitVerification(formData.domain!)"
           >

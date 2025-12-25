@@ -39,6 +39,9 @@
                   <n-tab-pane name="buy" tab="购买">
                     <n-space>
                       <n-button
+                        v-umami="
+                          'click-verification-real-person-accreditation-buy'
+                        "
                         type="success"
                         :loading="loading.buyAccreditation"
                         :disabled="loading.buyAccreditation"
@@ -47,6 +50,9 @@
                         购买
                       </n-button>
                       <n-button
+                        v-umami="
+                          'click-verification-real-person-accreditation-buy-refresh-state'
+                        "
                         type="success"
                         secondary
                         :loading="loading.buyAccreditation"
@@ -79,6 +85,11 @@
                       >
                         <template #trigger>
                           <n-button
+                            v-umami="{
+                              name: 'click-verification-real-person-accreditation-gift',
+                              '赠送目标用户 ID':
+                                verificationForm.giftAccreditationUserId,
+                            }"
                             type="success"
                             :loading="loading.giftAccreditation"
                             :disabled="loading.giftAccreditation"
@@ -119,6 +130,7 @@
                       <n-form-item label="证件类型" path="idType">
                         <n-select
                           v-model:value="verificationForm.idType"
+                          v-umami="'switch-verification-real-person-id-type'"
                           :options="options.idType"
                         />
                       </n-form-item>
@@ -136,6 +148,7 @@
                       </n-form-item>
                       <n-space>
                         <n-button
+                          v-umami="'click-verification-real-person-submit'"
                           type="success"
                           :loading="loading.realPerson"
                           :disabled="loading.realPerson"
@@ -144,6 +157,9 @@
                           提交
                         </n-button>
                         <n-button
+                          v-umami="
+                            'click-verification-real-person-refresh-state'
+                          "
                           type="success"
                           secondary
                           :loading="loading.realPerson"
@@ -153,6 +169,7 @@
                           刷新状态
                         </n-button>
                         <n-button
+                          v-umami="'click-verification-real-person-reset-state'"
                           type="error"
                           secondary
                           :loading="loading.realPerson"
@@ -196,6 +213,7 @@
                   />
                 </n-form-item>
                 <n-button
+                  v-umami="'click-verification-real-name-submit'"
                   type="success"
                   :loading="loading.realName"
                   :disabled="loading.realName"
@@ -226,6 +244,7 @@
       />
       <template #footer>
         <n-button
+          v-umami="'click-verification-real-person-refresh-state'"
           type="success"
           :loading="loading.realPerson"
           :disabled="loading.realPerson"

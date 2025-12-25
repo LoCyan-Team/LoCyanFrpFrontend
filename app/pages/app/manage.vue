@@ -17,12 +17,29 @@
               </n-scrollbar>
               <template #action>
                 <n-space>
-                  <n-button type="info" secondary @click="handleEditModal(app)">
+                  <n-button
+                    v-umami="{
+                      name: 'click-app-manage-edit-app',
+                      'APP ID': app.id,
+                    }"
+                    type="info"
+                    secondary
+                    @click="handleEditModal(app)"
+                  >
                     修改
                   </n-button>
                   <n-popconfirm @positive-click="handleDelete(app.id)">
                     <template #trigger>
-                      <n-button type="error" secondary>删除</n-button>
+                      <n-button
+                        v-umami="{
+                          name: 'click-app-manage-delete-app',
+                          'APP ID': app.id,
+                        }"
+                        type="error"
+                        secondary
+                      >
+                        删除
+                      </n-button>
                     </template>
                     确定要删除此应用吗？此操作不可撤销。
                   </n-popconfirm>

@@ -7,7 +7,12 @@
             <n-el v-if="!data.signed">
               <n-space vertical>
                 <n-text>通过签到，您可以获得更多流量</n-text>
-                <n-button type="success" @click="handleSign">签到</n-button>
+                <n-button
+                  v-umami="'click-sign-sign'"
+                  type="success"
+                  @click="handleSign"
+                  >签到</n-button
+                >
               </n-space>
             </n-el>
             <n-el v-else>

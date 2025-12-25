@@ -5,7 +5,12 @@
         <n-spin :show="loading.create">
           <tunnel-config :node="selectedNode" @submit="handleCreate">
             <template #node-footer>
-              <n-button type="warning" secondary @click="selectedNode = null">
+              <n-button
+                v-umami="'click-tunnel-create-node-reselect'"
+                type="warning"
+                secondary
+                @click="selectedNode = null"
+              >
                 重新选择
               </n-button>
             </template>
@@ -25,6 +30,7 @@
                 <node-card :node="node">
                   <template #header-extra>
                     <n-button
+                      v-umami="'click-tunnel-create-node-select'"
                       type="success"
                       secondary
                       @click="handleNodeSelect(node)"
@@ -140,6 +146,7 @@ async function handleCreate(tunnel: {
   secretKey: string | null;
   proxyProtocolVersion: string | null;
 }) {
+  umTrackEvent("click-tunnel-create-submit");
   loading.value.create = true;
   const rs = await client.execute(
     new PutTunnel({

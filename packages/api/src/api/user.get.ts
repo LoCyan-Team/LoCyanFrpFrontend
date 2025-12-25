@@ -40,7 +40,7 @@ export interface GetUserResponse {
   /**
    * 剩余流量
    */
-  traffic: string;
+  traffic: number;
   /**
    * 用户名
    */

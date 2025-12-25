@@ -41,7 +41,7 @@
               </n-layout-header>
               <n-layout has-sider style="height: calc(100dvh - 61px)">
                 <n-el v-if="pageSidebar" class="sidebar-container">
-                  <sidebar />
+                  <site-sidebar />
                 </n-el>
                 <n-layout-content
                   :native-scrollbar="false"
@@ -71,9 +71,6 @@
 import "~/assets/css/style.css";
 
 import { dateZhCN, zhCN, darkTheme, useOsTheme } from "naive-ui";
-
-import SiteHeader from "~/components/Header.vue";
-import SiteFooter from "~/components/Footer.vue";
 
 import NotificationInject from "~/components/inject/Notification.vue";
 

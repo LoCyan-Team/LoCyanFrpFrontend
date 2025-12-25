@@ -64,6 +64,10 @@
                               <n-tooltip trigger="click">
                                 <template #trigger>
                                   <n-button
+                                    v-umami="{
+                                      name: 'click-app-access-show-refresh-token',
+                                      'APP ID': auth.appId,
+                                    }"
                                     type="success"
                                     size="small"
                                     secondary
@@ -76,6 +80,10 @@
                                 </n-scrollbar>
                               </n-tooltip>
                               <n-button
+                                v-umami="{
+                                  name: 'click-app-access-copy-refresh-token',
+                                  'APP ID': auth.appId,
+                                }"
                                 type="info"
                                 size="small"
                                 secondary
@@ -99,7 +107,14 @@
                               "
                             >
                               <template #trigger>
-                                <n-button type="error" secondary>
+                                <n-button
+                                  v-umami="{
+                                    name: 'click-app-access-revoke-session-authorize',
+                                    'APP ID': auth.appId,
+                                  }"
+                                  type="error"
+                                  secondary
+                                >
                                   撤销授权
                                 </n-button>
                               </template>
@@ -148,7 +163,15 @@
                   @positive-click="handleRevokeAppAuthorize(auth.appId)"
                 >
                   <template #trigger>
-                    <n-button type="error"> 撤销授权 </n-button>
+                    <n-button
+                      v-umami="{
+                        name: 'click-app-access-revoke-app-authorize',
+                        'APP ID': auth.appId,
+                      }"
+                      type="error"
+                    >
+                      撤销授权
+                    </n-button>
                   </template>
                   确定要撤销授权吗？撤销后您需要重新授权。
                 </n-popconfirm>
@@ -156,7 +179,14 @@
                   @positive-click="handleRevokeSessionAuthorize(auth.appId)"
                 >
                   <template #trigger>
-                    <n-button type="error" secondary>
+                    <n-button
+                      v-umami="{
+                        name: 'click-app-access-revoke-all-session-authorize',
+                        'APP ID': auth.appId,
+                      }"
+                      type="error"
+                      secondary
+                    >
                       撤销全部会话授权
                     </n-button>
                   </template>

@@ -33,6 +33,10 @@
             将以此身份继续: {{ userStore.username }}
           </n-tooltip>
           <n-button
+            v-umami="{
+              name: 'click-auth-oauth-authorize-agree',
+              模式: params.mode,
+            }"
             :loading="loading.accept"
             :disabled="loading.accept"
             type="success"
@@ -65,9 +69,12 @@
         <n-tooltip trigger="hover">
           <template #trigger>
             <n-code
+              v-umami="{
+                name: 'click-auth-oauth-authorize-copy-code',
+              }"
               :code="result.code"
-              @click="$copyToClipboard(result.code)"
               word-wrap
+              @click="$copyToClipboard(result.code)"
             />
           </template>
           点击复制

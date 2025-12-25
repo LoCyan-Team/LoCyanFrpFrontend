@@ -41,6 +41,7 @@
           <n-tooltip :show="loading.captcha.solving" trigger="manual">
             <template #trigger>
               <n-button
+                v-umami="'click-auth-reset-password-email-code-send'"
                 type="success"
                 secondary
                 :loading="loading.emailCode"
@@ -65,6 +66,7 @@
         <n-el>
           <n-space style="margin-bottom: 1rem">
             <n-button
+              v-umami="'click-auth-reset-password-redirect-login'"
               ghost
               text
               type="success"
@@ -75,6 +77,7 @@
           </n-space>
           <n-space>
             <n-button
+              v-umami="'click-auth-reset-password-reset'"
               type="success"
               :loading="loading.reset"
               :disabled="loading.reset"

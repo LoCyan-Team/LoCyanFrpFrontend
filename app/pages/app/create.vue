@@ -37,6 +37,7 @@ async function handleCreate(app: {
   description: string | null;
   redirectUrl: string;
 }) {
+  umTrackEvent("click-app-create-create");
   loading.value = true;
   const rs = await client.execute<PutAppResponse>(
     new PutApp({

@@ -94,6 +94,7 @@ export default defineNuxtConfig({
     host: "https://analytics.locyan.cn",
     autoTrack: true,
     ignoreLocalhost: true,
+    useDirective: true,
   },
   app: {
     pageTransition: { name: "fade", mode: "out-in" },

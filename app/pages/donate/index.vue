@@ -20,6 +20,13 @@
           <n-form-item label="付款方式" path="paymentMethod">
             <n-radio-group
               v-model:value="formData.paymentMethod"
+              v-umami="{
+                name: 'select-donate-payment-method',
+                付款方式:
+                  paymentMethods[
+                    formData.paymentMethod as keyof typeof paymentMethods
+                  ].name,
+              }"
               name="payment-method"
             >
               <n-radio
@@ -31,6 +38,7 @@
             </n-radio-group>
           </n-form-item>
           <n-button
+            v-umami="'click-donate-submit'"
             type="success"
             :loading="loading.submit"
             :disabled="loading.submit"
@@ -86,6 +94,7 @@
                     <n-spin :show="loading.donationList.includes(donation.id)">
                       <n-space v-if="donation.status === 'PAID'">
                         <n-button
+                          v-umami="'click-donate-comment'"
                           type="success"
                           secondary
                           @click="handleButtonComment(donation.id)"
@@ -95,16 +104,20 @@
                       </n-space>
                       <n-space v-else-if="donation.status === 'UNPAID'">
                         <n-button
+                          v-umami="'click-donate-pay'"
                           type="success"
                           @click="handleButtonPayment(donation.id)"
-                          >支付</n-button
                         >
+                          支付
+                        </n-button>
                         <n-button
+                          v-umami="'click-donate-cancel'"
                           type="warning"
                           secondary
                           @click="handleButtonCancel(donation.id)"
-                          >取消订单</n-button
                         >
+                          取消订单
+                        </n-button>
                       </n-space>
                     </n-spin>
                   </n-td>
@@ -160,8 +173,14 @@
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="commentModal.show = false">取消</n-button>
           <n-button
+            v-umami="'click-donate-comment-cancel'"
+            @click="commentModal.show = false"
+          >
+            取消
+          </n-button>
+          <n-button
+            v-umami="'click-donate-comment-submit'"
             type="success"
             @click="
               handleComment(commentModal.form.id);

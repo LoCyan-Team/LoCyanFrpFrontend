@@ -6,3 +6,7 @@ export class PostPayment extends API {
     super("/verification/real-person/payment", Method.POST, params, {});
   }
 }
+
+export interface PostPaymentResponse {
+  url: string;
+}

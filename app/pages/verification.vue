@@ -262,10 +262,19 @@ import { useMainStore } from "@/store/main";
 
 import FileDownloadDoneOutlined from "@vicons/material/FileDownloadDoneOutlined";
 
-import { GetVerification as GetStatus } from "api/src/api/verification.get";
-import { PostPayment as PostBuyAccreditation } from "api/src/api/verification/real-person/payment.post";
+import {
+  GetVerification as GetStatus,
+  type GetVerificationResponse as GetStatusResponse,
+} from "api/src/api/verification.get";
+import {
+  PostPayment as PostBuyAccreditation,
+  type PostPaymentResponse as PostBuyAccreditationResponse,
+} from "api/src/api/verification/real-person/payment.post";
 import { PostGiven as PostGivenAccreditation } from "api/src/api/verification/real-person/given.post";
-import { PostRealPerson } from "api/src/api/verification/real-person.post";
+import {
+  PostRealPerson,
+  type PostRealPersonResponse,
+} from "api/src/api/verification/real-person.post";
 import { GetRealPerson } from "api/src/api/verification/real-person.get";
 import { DeleteRealPerson } from "api/src/api/verification/real-person.delete";
 import { PostRealName } from "api/src/api/verification/real-name.post";
@@ -355,7 +364,7 @@ const options = {
 
 async function handleBuyRealPersonAccreditation() {
   loading.value.buyAccreditation = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostBuyAccreditationResponse>(
     new PostBuyAccreditation({
       user_id: mainStore.userId!,
     }),
@@ -389,7 +398,7 @@ async function handleGiftRealPersonAccreditation() {
 
 async function handleRealPersonQrCode() {
   loading.value.realPerson = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostRealPersonResponse>(
     new PostRealPerson({
       user_id: mainStore.userId!,
       name: verificationForm.value.name!,
@@ -461,7 +470,7 @@ async function handleRealName() {
 }
 
 async function getStatus() {
-  const resStatus = await client.execute(
+  const resStatus = await client.execute<GetStatusResponse>(
     new GetStatus({
       user_id: mainStore.userId!,
     }),

@@ -27,7 +27,7 @@
                   <n-tag v-else type="error">未开奖</n-tag>
                 </n-flex>
                 <n-button
-                  v-umami="'click-activity-join-prize'"
+                  v-umami="'click-button-activity-join-prize'"
                   type="primary"
                   @click="joinPrize(i.id)"
                 >

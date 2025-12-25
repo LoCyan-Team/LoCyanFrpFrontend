@@ -13,8 +13,21 @@
         <br />
         <n-text style="color: gray"
           >本站使用 WeAvatar 公用头像库 API ，可以前往
-          <n-a target="_blank" href="https://weavatar.com/">WeAvatar</n-a> 或
-          <n-a target="_blank" href="https://gravatar.com/">Gravatar</n-a>
+          <n-a
+            v-umami="'click-link-user-info-weavatar'"
+            target="_blank"
+            href="https://weavatar.com/"
+          >
+            WeAvatar
+          </n-a>
+          或
+          <n-a
+            v-umami="'click-link-user-info-gravatar'"
+            target="_blank"
+            href="https://gravatar.com/"
+          >
+            Gravatar
+          </n-a>
           修改您的头像
         </n-text>
       </n-el>
@@ -28,7 +41,12 @@
             <n-text>访问密钥:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
-                <n-button type="success" size="small" secondary>
+                <n-button
+                  v-umami="'click-button-user-info-show-frp-token'"
+                  type="success"
+                  size="small"
+                  secondary
+                >
                   点击显示
                 </n-button>
               </template>
@@ -37,6 +55,7 @@
               </n-scrollbar>
             </n-tooltip>
             <n-button
+              v-umami="'click-button-user-info-copy-frp-token'"
               type="info"
               size="small"
               secondary
@@ -53,6 +72,10 @@
               <template #trigger>
                 <n-el v-if="!data.thirdParty.bind.qq">
                   <n-button
+                    v-umami="{
+                      name: 'click-button-user-info-third-party-bind',
+                      第三方平台: 'QQ',
+                    }"
                     type="tertiary"
                     circle
                     @click="handleThirdPartyButton(ThirdParty.QQ)"
@@ -64,6 +87,10 @@
                 </n-el>
                 <n-el v-else>
                   <n-popconfirm
+                    v-umami="{
+                      name: 'click-button-user-info-third-party-unbind',
+                      第三方平台: 'QQ',
+                    }"
                     @positive-click="handleThirdPartyButton(ThirdParty.QQ)"
                   >
                     <template #trigger>
@@ -87,6 +114,7 @@
           <n-popconfirm @positive-click="handleResetFrpToken">
             <template #trigger>
               <n-button
+                v-umami="'click-button-user-info-reset-frp-token'"
                 type="error"
                 secondary
                 :loading="loading.resetFrpToken"
@@ -100,6 +128,7 @@
           <n-popconfirm @positive-click="handleExitAllDevices">
             <template #trigger>
               <n-button
+                v-umami="'click-button-user-info-exit-all-devices'"
                 type="error"
                 secondary
                 :loading="loading.exitAllDevices"
@@ -129,6 +158,7 @@
                 />
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-username-submit'"
                 :loading="loading.updateUsername"
                 :disabled="loading.updateUsername"
                 type="success"
@@ -173,6 +203,7 @@
                 />
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-password-submit'"
                 :loading="loading.updatePassword"
                 :disabled="loading.updatePassword"
                 type="success"
@@ -207,6 +238,9 @@
                   placeholder="请输入验证码"
                 />
                 <n-button
+                  v-umami="
+                    'click-button-user-info-update-email-email-code-send'
+                  "
                   style="margin-left: 0.5rem"
                   :loading="loading.updateEmail.emailCode"
                   :disabled="loading.updateEmail.emailCode"
@@ -218,6 +252,7 @@
                 </n-button>
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-email-submit'"
                 :loading="loading.updateEmail.submit"
                 :disabled="loading.updateEmail.submit"
                 type="success"

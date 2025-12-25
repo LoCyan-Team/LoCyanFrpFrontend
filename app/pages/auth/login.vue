@@ -37,7 +37,7 @@
           />
           <n-space style="margin-bottom: 1rem">
             <n-button
-              v-umami="'click-auth-login-redirect-register'"
+              v-umami="'click-button-auth-login-redirect-register'"
               ghost
               text
               type="success"
@@ -50,7 +50,7 @@
             <n-tooltip :show="loading.captcha.solving" trigger="manual">
               <template #trigger>
                 <n-button
-                  v-umami="'click-auth-login-login'"
+                  v-umami="'click-button-auth-login-login'"
                   type="success"
                   :loading="loading.login"
                   :disabled="loading.login"
@@ -68,7 +68,7 @@
     </n-card>
     <n-el style="margin-block: 1rem; width: 100%">
       <n-button
-        v-umami="'click-auth-login-passkey-login'"
+        v-umami="'click-button-auth-login-passkey-login'"
         type="success"
         secondary
         style="width: 100%"
@@ -266,7 +266,7 @@ async function handleThirdPartyLogin(type: ThirdParty) {
   loading.value.threeSide = true;
   switch (type) {
     case ThirdParty.QQ: {
-      umTrackEvent("click-auth-login-third-party-login", {
+      umTrackEvent("click-button-auth-login-third-party-login", {
         第三方账户: "QQ",
       });
       const rs = await client.execute<GetQqLoginResponse>(new GetQqLogin());

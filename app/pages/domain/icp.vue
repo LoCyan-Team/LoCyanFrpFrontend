@@ -34,7 +34,7 @@
                 />
               </n-space>
               <n-button
-                v-umami="'click-domain-icp-submit'"
+                v-umami="'click-button-domain-icp-submit'"
                 type="success"
                 :loading="loading.submit"
                 :disabled="loading.submit"
@@ -52,7 +52,7 @@
           <n-popconfirm @positive-click="handleBatchDeleteIcp">
             <template #trigger>
               <n-button
-                v-umami="'click-domain-icp-batch-delete'"
+                v-umami="'click-button-domain-icp-batch-delete'"
                 type="error"
                 secondary
                 :loading="loading.batch.delete"
@@ -102,7 +102,7 @@
                   <n-td>
                     <n-el @click="handleBatchSelect(domain.id)">
                       <n-checkbox
-                        v-umami="'click-domain-icp-select'"
+                        v-umami="'click-checkbox-domain-icp-select'"
                         :checked="batchSelected.includes(domain.id)"
                       />
                     </n-el>
@@ -115,7 +115,7 @@
                     <n-popconfirm @positive-click="handleDeleteIcp(domain.id)">
                       <template #trigger>
                         <n-button
-                          v-umami="'click-domain-icp-delete'"
+                          v-umami="'click-button-domain-icp-delete'"
                           type="error"
                           secondary
                           :loading="loading.icp.delete.includes(domain.id)"
@@ -173,7 +173,7 @@
               @update:markers="handleMiitImageMarkerUpdate"
             />
             <n-button
-              v-umami="'click-domain-icp-miit-captcha-refresh'"
+              v-umami="'click-button-domain-icp-miit-captcha-refresh'"
               type="success"
               :loading="loading.submit"
               :disabled="loading.submit"
@@ -298,7 +298,7 @@ const miit = ref<MIIT>({
   sign: null,
 });
 
-let markerData: {
+const markerData: {
   origin: object | null;
   string: string | null;
 } = {

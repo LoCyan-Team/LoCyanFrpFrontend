@@ -5,7 +5,7 @@
       <n-grid :y-gap="8" :x-gap="12" :cols="10" item-responsive>
         <n-grid-item span="0:3 1000:4">
           <n-button
-            v-umami="'click-activity-send-message'"
+            v-umami="'click-button-activity-send-message'"
             type="primary"
             @click="sendMessage"
           >

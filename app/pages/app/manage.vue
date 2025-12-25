@@ -19,7 +19,7 @@
                 <n-space>
                   <n-button
                     v-umami="{
-                      name: 'click-app-manage-edit-app',
+                      name: 'click-button-app-manage-edit-app',
                       'APP ID': app.id,
                     }"
                     type="info"
@@ -32,7 +32,7 @@
                     <template #trigger>
                       <n-button
                         v-umami="{
-                          name: 'click-app-manage-delete-app',
+                          name: 'click-button-app-manage-delete-app',
                           'APP ID': app.id,
                         }"
                         type="error"

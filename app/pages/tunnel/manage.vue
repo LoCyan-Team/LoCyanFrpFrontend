@@ -11,12 +11,23 @@
             <n-icon :component="Search" />
           </template>
         </n-input>
-        <n-button type="success" @click="handleSearch">搜索</n-button>
-        <n-radio-group v-model:value="viewMode" name="viewMode">
+        <n-button
+          v-umami="'click-button-tunnel-manage-search'"
+          type="success"
+          @click="handleSearch"
+        >
+          搜索
+        </n-button>
+        <n-radio-group
+          v-umami="'switch-tunnel-manage-view-mode'"
+          v-model:value="viewMode"
+          name="viewMode"
+        >
           <n-radio-button value="card" label="卡片视图" />
           <n-radio-button value="list" label="列表视图" />
         </n-radio-group>
         <n-switch
+          v-umami="'switch-tunnel-manage-select-all'"
           v-model:value="batchSelectState"
           :round="false"
           size="large"
@@ -28,12 +39,18 @@
       </n-space>
       <n-card v-if="batchSelected.length > 0" embedded>
         <n-space>
-          <n-button type="info" secondary @click="handleBatchEdit">
+          <n-button
+            v-umami="'click-button-tunnel-manage-batch-edit'"
+            type="info"
+            secondary
+            @click="handleBatchEdit"
+          >
             修改
           </n-button>
           <n-popconfirm @positive-click="handleBatchDeleteTunnel">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-batch-delete'"
                 type="error"
                 :loading="loading.batch.delete"
                 :disabled="loading.batch.delete"
@@ -47,6 +64,7 @@
           <n-popconfirm @positive-click="handleBatchForceDownTunnel">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-batch-force-down'"
                 type="warning"
                 :loading="loading.batch.down"
                 :disabled="loading.batch.delete"
@@ -113,6 +131,7 @@
                         </n-space>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
+                            v-umami="'click-checkbox-tunnel-manage-select'"
                             :checked="batchSelected.includes(tunnel.id)"
                             size="large"
                           />
@@ -145,6 +164,9 @@
                           <n-tooltip trigger="hover">
                             <template #trigger>
                               <n-button
+                                v-umami="
+                                  'click-button-tunnel-manage-copy-connect-address'
+                                "
                                 text
                                 @click="
                                   $copyToClipboard(computeConnectAddr(tunnel))
@@ -160,6 +182,9 @@
                       <template #action>
                         <n-space>
                           <n-button
+                            v-umami="
+                              'click-button-tunnel-manage-open-info-modal'
+                            "
                             type="info"
                             secondary
                             @click="handleInfoModal(tunnel)"
@@ -167,6 +192,7 @@
                             详细信息
                           </n-button>
                           <n-button
+                            v-umami="'click-button-tunnel-manage-edit'"
                             type="success"
                             secondary
                             @click="handleModifyTunnel(tunnel)"
@@ -178,6 +204,7 @@
                           >
                             <template #trigger>
                               <n-button
+                                v-umami="'click-button-tunnel-manage-delete'"
                                 type="error"
                                 :loading="
                                   loading.tunnel.delete.includes(tunnel.id)
@@ -197,6 +224,9 @@
                           >
                             <template #trigger>
                               <n-button
+                                v-umami="
+                                  'click-button-tunnel-manage-force-down'
+                                "
                                 type="warning"
                                 :loading="
                                   loading.tunnel.down.includes(tunnel.id)
@@ -245,6 +275,7 @@
                       <n-td>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
+                            v-umami="'click-checkbox-tunnel-manage-select'"
                             :checked="batchSelected.includes(tunnel.id)"
                           />
                         </n-el>
@@ -259,6 +290,7 @@
                       <n-td>{{ tunnel.remotePort }}</n-td>
                       <n-td>
                         <n-a
+                          v-umami="'click-link-tunnel-manage-domain'"
                           v-if="tunnel.domain"
                           :href="`${tunnel.type}://${tunnel.domain}`"
                           target="_blank"
@@ -270,6 +302,9 @@
                         <n-tooltip trigger="hover">
                           <template #trigger>
                             <n-button
+                              v-umami="
+                                'click-button-tunnel-manage-copy-connect-address'
+                              "
                               text
                               @click="
                                 $copyToClipboard(computeConnectAddr(tunnel))
@@ -298,6 +333,9 @@
                           <template #description>已封禁</template>
                           <n-space :inline="true" :wrap="false">
                             <n-button
+                              v-umami="
+                                'click-button-tunnel-manage-open-info-modal'
+                              "
                               type="info"
                               secondary
                               @click="handleInfoModal(tunnel)"
@@ -305,6 +343,7 @@
                               详细信息
                             </n-button>
                             <n-button
+                              v-umami="'click-button-tunnel-manage-edit'"
                               type="success"
                               secondary
                               @click="handleModifyTunnel(tunnel)"
@@ -316,6 +355,7 @@
                             >
                               <template #trigger>
                                 <n-button
+                                  v-umami="'click-button-tunnel-manage-delete'"
                                   type="error"
                                   :loading="
                                     loading.tunnel.delete.includes(tunnel.id)
@@ -335,6 +375,9 @@
                             >
                               <template #trigger>
                                 <n-button
+                                  v-umami="
+                                    'click-button-tunnel-manage-force-down'
+                                  "
                                   type="warning"
                                   :loading="
                                     loading.tunnel.down.includes(tunnel.id)
@@ -541,16 +584,18 @@
                 <tr>
                   <td>
                     <n-button
+                      v-umami="'click-button-tunnel-manage-copy-domain'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.domain)"
+                      @click="$copyToClipboard(selectedTunnel.domain!)"
                     >
                       <n-code :code="selectedTunnel.domain!" />
                     </n-button>
                   </td>
                   <td>
                     <n-button
+                      v-umami="'click-button-tunnel-manage-copy-hostname'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.node.host)"
+                      @click="$copyToClipboard(selectedTunnel.node.host!)"
                     >
                       <n-code :code="selectedTunnel.node.host!" />
                     </n-button>
@@ -565,6 +610,7 @@
           <n-tooltip trigger="hover">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-copy-connect-address'"
                 text
                 @click="$copyToClipboard(computeConnectAddr(selectedTunnel))"
               >
@@ -579,7 +625,12 @@
             <n-text>简易启动命令:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
-                <n-button type="success" size="small" secondary>
+                <n-button
+                  v-umami="'click-button-tunnel-manage-show-easy-start-command'"
+                  type="success"
+                  size="small"
+                  secondary
+                >
                   点击显示
                 </n-button>
               </template>
@@ -588,6 +639,7 @@
               </n-scrollbar>
             </n-tooltip>
             <n-button
+              v-umami="'click-button-tunnel-manage-copy-easy-start-command'"
               type="info"
               size="small"
               secondary
@@ -599,6 +651,7 @@
         </n-el>
         <n-divider />
         <n-button
+          v-umami="'click-button-tunnel-manage-click-to-run'"
           type="success"
           secondary
           style="width: 100%"
@@ -633,16 +686,19 @@
           locations: selectedTunnel.locations,
         }"
         @submit="
-          (tunnelData) =>
+          (tunnelData) => {
+            umTrackEvent('click-button-tunnel-manage-edit-submit');
             handleSubmitModifyTunnel(
               selectedTunnel.id,
               selectedTunnel.status,
               tunnelData,
-            )
+            );
+          }
         "
       >
         <template #node-footer>
           <n-button
+            v-umami="'click-button-tunnel-manage-edit-change-node'"
             type="warning"
             secondary
             @click="
@@ -698,6 +754,10 @@
                 </n-space>
               </n-form-item>
               <n-button
+                v-umami="{
+                  name: 'click-button-tunnel-manage-edit-change-node-submit',
+                  '节点 ID': editNodeSelected,
+                }"
                 type="success"
                 @click="
                   () => {
@@ -953,6 +1013,7 @@ watch(
  * 处理搜索隧道
  */
 async function handleSearch() {
+  umTrackEvent("keydown-tunnel-manage-search");
   loading.value.page = true;
   displayTunnels.value = filterTunnelsByKeyword(
     tunnels.value,

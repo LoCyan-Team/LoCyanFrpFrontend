@@ -8,7 +8,7 @@
               <n-space vertical>
                 <n-text>通过签到，您可以获得更多流量</n-text>
                 <n-button
-                  v-umami="'click-sign-sign'"
+                  v-umami="'click-button-sign-sign'"
                   type="success"
                   @click="handleSign"
                   >签到</n-button

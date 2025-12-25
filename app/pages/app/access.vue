@@ -65,7 +65,7 @@
                                 <template #trigger>
                                   <n-button
                                     v-umami="{
-                                      name: 'click-app-access-show-refresh-token',
+                                      name: 'click-button-app-access-show-refresh-token',
                                       'APP ID': auth.appId,
                                     }"
                                     type="success"
@@ -81,7 +81,7 @@
                               </n-tooltip>
                               <n-button
                                 v-umami="{
-                                  name: 'click-app-access-copy-refresh-token',
+                                  name: 'click-button-app-access-copy-refresh-token',
                                   'APP ID': auth.appId,
                                 }"
                                 type="info"
@@ -109,7 +109,7 @@
                               <template #trigger>
                                 <n-button
                                   v-umami="{
-                                    name: 'click-app-access-revoke-session-authorize',
+                                    name: 'click-button-app-access-revoke-session-authorize',
                                     'APP ID': auth.appId,
                                   }"
                                   type="error"
@@ -165,7 +165,7 @@
                   <template #trigger>
                     <n-button
                       v-umami="{
-                        name: 'click-app-access-revoke-app-authorize',
+                        name: 'click-button-app-access-revoke-app-authorize',
                         'APP ID': auth.appId,
                       }"
                       type="error"
@@ -181,7 +181,7 @@
                   <template #trigger>
                     <n-button
                       v-umami="{
-                        name: 'click-app-access-revoke-all-session-authorize',
+                        name: 'click-button-app-access-revoke-all-session-authorize',
                         'APP ID': auth.appId,
                       }"
                       type="error"

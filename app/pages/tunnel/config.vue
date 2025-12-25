@@ -147,7 +147,7 @@
         <n-card title="配置文件">
           <template #header-extra>
             <n-button
-              v-umami="'click-tunnel-config-copy'"
+              v-umami="'click-button-tunnel-config-copy'"
               type="success"
               secondary
               @click="$copyToClipboard(content)"

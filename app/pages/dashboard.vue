@@ -44,7 +44,7 @@
               <n-popconfirm @positive-click="handleResetTraffic">
                 <template #trigger>
                   <n-button
-                    v-umami="'click-dashboard-reset-traffic'"
+                    v-umami="'click-button-dashboard-reset-traffic'"
                     :loading="loading.resetTraffic"
                     :disabled="loading.resetTraffic"
                     >重置流量</n-button

@@ -14,7 +14,7 @@
       <client-only>
         <n-button
           v-show="useLoggedIn()"
-          v-umami="'click-notification'"
+          v-umami="'click-button-open-notification'"
           circle
           style="margin-top: 15px; margin-right: 10px"
           @click="() => (showNotification = true)"

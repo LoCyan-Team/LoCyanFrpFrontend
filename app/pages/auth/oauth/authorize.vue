@@ -34,7 +34,7 @@
           </n-tooltip>
           <n-button
             v-umami="{
-              name: 'click-auth-oauth-authorize-agree',
+              name: 'click-button-auth-oauth-authorize-agree',
               模式: params.mode,
             }"
             :loading="loading.accept"
@@ -68,14 +68,13 @@
         <n-text>授权成功，一次性代码为:</n-text>
         <n-tooltip trigger="hover">
           <template #trigger>
-            <n-code
-              v-umami="{
-                name: 'click-auth-oauth-authorize-copy-code',
-              }"
-              :code="result.code"
-              word-wrap
+            <n-button
+              v-umami="'click-button-auth-oauth-authorize-copy-code'"
+              text
               @click="$copyToClipboard(result.code)"
-            />
+            >
+              <n-code :code="result.code" word-wrap />
+            </n-button>
           </template>
           点击复制
         </n-tooltip>

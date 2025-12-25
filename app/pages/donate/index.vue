@@ -38,7 +38,7 @@
             </n-radio-group>
           </n-form-item>
           <n-button
-            v-umami="'click-donate-submit'"
+            v-umami="'click-button-donate-submit'"
             type="success"
             :loading="loading.submit"
             :disabled="loading.submit"
@@ -94,7 +94,7 @@
                     <n-spin :show="loading.donationList.includes(donation.id)">
                       <n-space v-if="donation.status === 'PAID'">
                         <n-button
-                          v-umami="'click-donate-comment'"
+                          v-umami="'click-button-donate-comment'"
                           type="success"
                           secondary
                           @click="handleButtonComment(donation.id)"
@@ -104,14 +104,14 @@
                       </n-space>
                       <n-space v-else-if="donation.status === 'UNPAID'">
                         <n-button
-                          v-umami="'click-donate-pay'"
+                          v-umami="'click-button-donate-pay'"
                           type="success"
                           @click="handleButtonPayment(donation.id)"
                         >
                           支付
                         </n-button>
                         <n-button
-                          v-umami="'click-donate-cancel'"
+                          v-umami="'click-button-donate-cancel'"
                           type="warning"
                           secondary
                           @click="handleButtonCancel(donation.id)"
@@ -174,13 +174,13 @@
       <template #footer>
         <n-space justify="end">
           <n-button
-            v-umami="'click-donate-comment-cancel'"
+            v-umami="'click-button-donate-comment-cancel'"
             @click="commentModal.show = false"
           >
             取消
           </n-button>
           <n-button
-            v-umami="'click-donate-comment-submit'"
+            v-umami="'click-button-donate-comment-submit'"
             type="success"
             @click="
               handleComment(commentModal.form.id);

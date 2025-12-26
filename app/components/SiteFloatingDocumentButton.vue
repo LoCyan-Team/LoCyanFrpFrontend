@@ -143,6 +143,7 @@ async function handleButtonClick() {
   border-radius: 12px;
   display: flex;
   flex-direction: column;
+  box-shadow: var(--n-box-shadow);
 }
 
 .doc-iframe {

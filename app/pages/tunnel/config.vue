@@ -13,7 +13,9 @@
                 :options="formatOptions"
                 @update:value="
                   (value: string) => {
-                    umTrackEvent(`switch-tunnel-config-format-${value.toLowerCase()}`);
+                    umTrackEvent(
+                      `switch-tunnel-config-format-${value.toLowerCase()}`,
+                    );
                     switch (selectedMode) {
                       case 'tunnel':
                         getTunnelConfig(Mode.TUNNEL);
@@ -181,6 +183,13 @@ import {
   GetConfig,
   type GetConfigResponse,
 } from "api/src/api/tunnel/config.get";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/config",
+  },
+});
 
 useHead({
   title: "配置文件",

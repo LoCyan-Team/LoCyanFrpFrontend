@@ -283,6 +283,13 @@ import { GetRealPerson } from "api/src/api/verification/real-person.get";
 import { DeleteRealPerson } from "api/src/api/verification/real-person.delete";
 import { PostRealName } from "api/src/api/verification/real-name.post";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/verification",
+  },
+});
+
 useHead({
   title: "身份认证",
 });

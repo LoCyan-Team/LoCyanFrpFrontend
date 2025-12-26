@@ -80,6 +80,13 @@ import { useMainStore } from "@/store/main";
 import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
 import { PutTunnel } from "api/src/api/tunnel.put";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/create",
+  },
+});
+
 useHead({
   title: "创建隧道",
 });

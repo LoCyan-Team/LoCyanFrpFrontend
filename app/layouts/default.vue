@@ -51,6 +51,7 @@
                   <n-el class="body-wrapper">
                     <slot />
                   </n-el>
+                  <site-floating-document-button />
                   <n-layout-footer bordered>
                     <site-footer />
                   </n-layout-footer>

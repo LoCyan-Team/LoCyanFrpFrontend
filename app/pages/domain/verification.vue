@@ -309,6 +309,13 @@ const client = useApiClient();
 const message = useMessage();
 const notification = useNotification();
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/domain/verification",
+  },
+});
+
 useHead({
   title: "所有权验证",
 });

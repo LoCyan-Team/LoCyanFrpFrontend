@@ -100,6 +100,13 @@ import { PostTraffic as PostResetTraffic } from "api/src/api/user/traffic.post";
 const naiveOsTheme = useOsTheme();
 if (naiveOsTheme.value === "dark") await import("highcharts/themes/dark-unica");
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/dashboard",
+  },
+});
+
 useHead({
   title: "仪表盘",
 });

@@ -216,6 +216,13 @@ const client = useApiClient();
 const message = useMessage();
 const dialog = useDialog();
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/domain/icp-beian-whitelist",
+  },
+});
+
 useHead({
   title: "ICP 备案白名单",
 });

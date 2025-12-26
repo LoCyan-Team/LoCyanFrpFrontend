@@ -57,6 +57,13 @@ import { useMainStore } from "@/store/main";
 import { GetSign, type GetSignResponse } from "api/src/api/sign.get";
 import { PostSign, type PostSignResponse } from "api/src/api/sign.post";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/sign",
+  },
+});
+
 useHead({
   title: "签到",
 });

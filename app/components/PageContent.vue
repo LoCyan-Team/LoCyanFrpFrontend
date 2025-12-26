@@ -8,7 +8,7 @@
         </n-text>
       </n-h1>
       <slot />
-      <n-back-top :listen-to="page" :right="50" />
+      <n-back-top :listen-to="page" :right="100" />
     </n-el>
   </n-el>
 </template>

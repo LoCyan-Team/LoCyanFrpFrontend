@@ -1,59 +1,64 @@
 <template>
-  <n-float-button
-    v-if="document?.enable"
-    v-umami="'click-button-document'"
-    :bottom="40"
-    :right="40"
-    :width="45"
-    :height="45"
-    @click="handleButtonClick"
-  >
-    <n-icon>
-      <component :is="showPanel ? CloseOutline : Document" />
-    </n-icon>
-  </n-float-button>
+  <n-el v-if="document?.enable">
+    <n-float-button
+      v-umami="'click-button-document'"
+      :bottom="40"
+      :right="40"
+      :width="45"
+      :height="45"
+      @click="handleButtonClick"
+    >
+      <n-icon>
+        <component :is="showPanel ? CloseOutline : Document" />
+      </n-icon>
+    </n-float-button>
 
-  <client-only>
-    <transition name="slide-up">
-      <n-card
-        v-if="showPanel"
-        class="doc-panel"
-        closable
-        title="帮助文档"
-        :content-style="{ padding: 0, flex: 1 }"
-        @close="showPanel = false"
-      >
-        <n-spin
-          :show="loading"
-          style="flex: 1; height: 100%"
-          :content-style="{ height: '100%' }"
+    <client-only>
+      <transition name="slide-up">
+        <n-card
+          v-if="showPanel"
+          class="doc-panel"
+          closable
+          title="帮助文档"
+          :content-style="{ padding: 0, flex: 1 }"
+          @close="showPanel = false"
         >
-          <n-el style="height: 100%">
-            <iframe :src="docUrl" class="doc-iframe" @load="loading = false" />
-          </n-el>
-        </n-spin>
+          <n-spin
+            :show="loading"
+            style="flex: 1; height: 100%"
+            :content-style="{ height: '100%' }"
+          >
+            <n-el style="height: 100%">
+              <iframe
+                :src="docUrl"
+                class="doc-iframe"
+                @load="loading = false"
+              />
+            </n-el>
+          </n-spin>
 
-        <template #header-extra>
-          <n-tooltip>
-            <template #trigger>
-              <n-button
-                v-umami="'click-button-document-open-in-new-tab'"
-                text
-                @click="openInNewTab()"
-              >
-                <template #icon>
-                  <n-icon>
-                    <InsertLinkOutlined />
-                  </n-icon>
-                </template>
-              </n-button>
-            </template>
-            在新标签页打开
-          </n-tooltip>
-        </template>
-      </n-card>
-    </transition>
-  </client-only>
+          <template #header-extra>
+            <n-tooltip>
+              <template #trigger>
+                <n-button
+                  v-umami="'click-button-document-open-in-new-tab'"
+                  text
+                  @click="openInNewTab()"
+                >
+                  <template #icon>
+                    <n-icon>
+                      <InsertLinkOutlined />
+                    </n-icon>
+                  </template>
+                </n-button>
+              </template>
+              在新标签页打开
+            </n-tooltip>
+          </template>
+        </n-card>
+      </transition>
+    </client-only>
+  </n-el>
 </template>
 
 <script setup lang="ts">
@@ -77,6 +82,7 @@ watch(
   () => document.value,
   (val) => {
     if (val?.enable) loading.value = true;
+    if (!val?.enable) showPanel.value = false;
   },
 );
 

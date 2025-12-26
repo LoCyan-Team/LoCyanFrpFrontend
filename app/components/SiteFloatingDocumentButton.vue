@@ -84,23 +84,23 @@ const isMobile = ref(false);
 
 let mediaQuery: MediaQueryList | null = null;
 
-const updateMobileStatus = (e: MediaQueryListEvent | MediaQueryList) => {
+function checkScreenSize(e: MediaQueryListEvent | MediaQueryList) {
   isMobile.value = e.matches;
   // 如果窗口突然缩小到移动端，自动关闭已经打开的面板，防止遮挡
   if (isMobile.value) showPanel.value = false;
-};
+}
 
 onMounted(() => {
-  mediaQuery = window.matchMedia("(max-width: 768px and max-height: 740px)");
+  mediaQuery = window.matchMedia("(max-width: 768px), (max-height: 740px)");
 
   isMobile.value = mediaQuery.matches;
 
-  mediaQuery.addEventListener("change", updateMobileStatus);
+  mediaQuery.addEventListener("change", checkScreenSize);
 });
 
 onUnmounted(() => {
   // 清理监听器
-  mediaQuery?.removeEventListener("change", updateMobileStatus);
+  mediaQuery?.removeEventListener("change", checkScreenSize);
 });
 
 async function openInNewTab() {
@@ -128,7 +128,7 @@ async function handleButtonClick() {
   bottom: 95px;
   width: 400px;
   height: 650px;
-  z-index: 1000;
+  z-index: auto;
   border-radius: 12px;
   display: flex;
   flex-direction: column;

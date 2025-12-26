@@ -1,6 +1,7 @@
 <template>
   <n-float-button
     v-if="document?.enable"
+    v-umami="'click-button-document'"
     :bottom="40"
     :right="40"
     :width="45"
@@ -35,7 +36,11 @@
         <template #header-extra>
           <n-tooltip>
             <template #trigger>
-              <n-button text @click="openInNewTab()">
+              <n-button
+                v-umami="'click-button-document-open-in-new-tab'"
+                text
+                @click="openInNewTab()"
+              >
                 <template #icon>
                   <n-icon>
                     <InsertLinkOutlined />

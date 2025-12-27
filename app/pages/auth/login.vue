@@ -1,5 +1,5 @@
 <template>
-  <n-el class="login-box">
+  <n-el class="auth-box">
     <n-h1>登录</n-h1>
     <n-card title="账户登录">
       <n-form ref="loginFormRef" :model="loginForm" :rules="formRules">
@@ -288,23 +288,3 @@ enum ThirdParty {
   QQ,
 }
 </script>
-
-<style scoped>
-.login-box {
-  flex: 1;
-  width: 100%;
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .login-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

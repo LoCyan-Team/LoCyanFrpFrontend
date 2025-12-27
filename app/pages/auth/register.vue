@@ -1,5 +1,5 @@
 <template>
-  <n-el class="register-box">
+  <n-el class="auth-box">
     <n-h1>注册</n-h1>
     <n-card title="账户注册">
       <n-form ref="registerFormRef" :model="registerForm" :rules="formRules">
@@ -266,23 +266,3 @@ async function handleRegister() {
   });
 }
 </script>
-
-<style scoped>
-.register-box {
-  flex: 1;
-  width: 100%;
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .register-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

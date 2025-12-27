@@ -79,14 +79,14 @@
           点击复制
         </n-tooltip>
       </n-card>
-      <n-card v-else title="发生错误">
-        <n-text>{{ error }}</n-text>
-      </n-card>
+      <n-h3 v-else>{{ error }}</n-h3>
     </n-spin>
   </n-el>
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
@@ -357,23 +357,3 @@ onMounted(async () => {
   loading.value.page = false;
 });
 </script>
-
-<style scoped>
-.auth-box {
-  flex: 1;
-  width: 100%;
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .auth-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

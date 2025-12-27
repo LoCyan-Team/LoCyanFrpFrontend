@@ -1,17 +1,14 @@
 <template>
   <n-el class="auth-box">
     <n-h1>应用授权本地重定向</n-h1>
-    <client-only style="width: 100%">
-      <n-spin :show="!error">
-        <n-card v-if="error" title="发生错误">
-          <n-text>{{ error }}</n-text>
-        </n-card>
-      </n-spin>
-    </client-only>
+    <n-spin v-if="!error" />
+    <n-h3 v-else>{{ error }}</n-h3>
   </n-el>
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 definePageMeta({
   needLogin: false,
   sidebar: false,
@@ -52,23 +49,3 @@ onMounted(() => {
     });
 });
 </script>
-
-<style scoped>
-.auth-box {
-  flex: 1;
-  width: 100%;
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .auth-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

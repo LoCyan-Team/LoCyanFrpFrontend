@@ -1,5 +1,5 @@
 <template>
-  <n-el class="reset-box">
+  <n-el class="auth-box">
     <n-h1>重置密码</n-h1>
     <n-card title="修改密码">
       <n-form
@@ -231,23 +231,3 @@ function handleResetPassword() {
   });
 }
 </script>
-
-<style scoped>
-.reset-box {
-  flex: 1;
-  width: 100%;
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .reset-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

@@ -94,6 +94,26 @@
         </n-spin>
       </n-space>
     </n-card>
+    <n-modal
+      v-model:show="showTotpModal"
+      title="双因素身份验证"
+      preset="card"
+      :bordered="false"
+      :mask-closable="false"
+      style="width: auto"
+    >
+      <n-spin :show="loading.login" style="margin-inline: 2rem">
+        <n-form ref="totpFormRef" :model="totpForm" :rules="totpFormRules">
+          <n-form-item label="TOTP 验证代码" path="code">
+            <n-input-otp
+              v-model:value="totpForm.code"
+              :allow-input="(value: string) => !value || /^\d+$/.test(value)"
+              @finish="handleLoginButton"
+            />
+          </n-form-item>
+        </n-form>
+      </n-spin>
+    </n-modal>
   </n-el>
 </template>
 
@@ -116,6 +136,7 @@ import {
   type GetLoginResponse as GetQqLoginResponse,
 } from "api/src/api/auth/third-party/qq/login.get";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
+import FormValidator from "~/utils/formValidator";
 
 definePageMeta({
   needLogin: false,
@@ -137,7 +158,8 @@ const route = useRoute();
 
 const captchaRef = ref<typeof CaptchaDialog | null>(null);
 
-const loginFormRef = ref<FormInst | null>(null);
+const loginFormRef = ref<FormInst | null>(null),
+  totpFormRef = ref<FormInst | null>(null);
 
 // 表单验证规则
 const formRules = {
@@ -163,28 +185,45 @@ const formRules = {
 };
 
 const loading = ref<{
-  login: boolean;
-  threeSide: boolean;
-  passkey: boolean;
-  captcha: {
-    solving: boolean;
+    login: boolean;
+    threeSide: boolean;
+    passkey: boolean;
+    captcha: {
+      solving: boolean;
+    };
+  }>({
+    login: false,
+    threeSide: false,
+    passkey: false,
+    captcha: {
+      solving: false,
+    },
+  }),
+  totpFormRules = {
+    code: [
+      {
+        required: true,
+        validator: (_: unknown, value: number) =>
+          FormValidator.number(value, "请输入验证代码"),
+        trigger: ["input", "blur"],
+      },
+    ] as FormItemRule[],
   };
-}>({
-  login: false,
-  threeSide: false,
-  passkey: false,
-  captcha: {
-    solving: false,
-  },
-});
 
 const loginForm = ref<{
-  user: string | null;
-  password: string | null;
-}>({
-  user: null,
-  password: null,
-});
+    user: string | null;
+    password: string | null;
+  }>({
+    user: null,
+    password: null,
+  }),
+  totpForm = ref<{
+    code: string[] | null;
+  }>({
+    code: null,
+  });
+
+const showTotpModal = ref(false);
 
 async function handleLoginButton() {
   if (!loginFormRef.value) return;
@@ -201,6 +240,9 @@ async function handleLogin(captchaToken: string) {
     new PostLogin({
       user: loginForm.value.user!,
       password: loginForm.value.password!,
+      totp_code: totpForm.value.code
+        ? Number(totpForm.value.code.join(""))
+        : undefined,
       captcha_token: captchaToken,
     }),
   );
@@ -209,6 +251,7 @@ async function handleLogin(captchaToken: string) {
       token: rs.data.token,
       userId: rs.data.user_id,
     });
+    showTotpModal.value = false;
     userStore.$patch({
       frpToken: rs.data.frp_token,
       username: rs.data.user_info.username,
@@ -226,6 +269,8 @@ async function handleLogin(captchaToken: string) {
       duration: 2500,
     });
     navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
+  } else if (rs.status === 202) {
+    showTotpModal.value = true;
   } else message.error(rs.message);
   loading.value.login = false;
 }

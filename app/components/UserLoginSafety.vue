@@ -159,29 +159,71 @@
       </n-space>
     </n-card>
 
-    <!-- Keep -->
-    <!--    <n-card title="双因素身份验证">-->
-    <!--      <n-space vertical>-->
-    <!--        <n-space>-->
-    <!--          <n-button type="success">注册 OTP 管理器</n-button>-->
-    <!--          <n-button type="error" secondary>取消绑定</n-button>-->
-    <!--        </n-space>-->
-    <!--        <n-table :bordered="true" :single-line="false">-->
-    <!--          <n-thead>-->
-    <!--            <n-tr>-->
-    <!--              <n-th>设备名称</n-th>-->
-    <!--              <n-th>创建时间</n-th>-->
-    <!--            </n-tr>-->
-    <!--          </n-thead>-->
-    <!--          <n-tbody>-->
-    <!--            <n-tr>-->
-    <!--              <n-td></n-td>-->
-    <!--              <n-td></n-td>-->
-    <!--            </n-tr>-->
-    <!--          </n-tbody>-->
-    <!--        </n-table>-->
-    <!--      </n-space>-->
-    <!--    </n-card>-->
+    <n-card title="双因素身份验证">
+      <n-space vertical>
+        <n-space>
+          <n-button
+            type="success"
+            :disabled="totpRegistered || loading.totp.register"
+            :loading="loading.totp.register"
+            @click="handleStartTotpRegisterButton"
+          >
+            注册 TOTP 验证器
+          </n-button>
+          <n-popconfirm @positive-click="handleTotpUnregisterButton">
+            <template #trigger>
+              <n-button
+                type="error"
+                secondary
+                :disabled="!totpRegistered || loading.totp.unregister"
+                :loading="loading.totp.unregister"
+              >
+                解除绑定 TOTP 验证器
+              </n-button>
+            </template>
+            确认要解除绑定吗？绑定的验证器将失效。
+          </n-popconfirm>
+        </n-space>
+      </n-space>
+
+      <n-modal
+        v-model:show="totpModal.show"
+        preset="card"
+        title="请使用验证器扫描二维码"
+        :bordered="false"
+        :mask-closable="false"
+        style="max-width: 600px"
+        content-style="text-align: center;"
+      >
+        <n-space vertical style="align-items: center">
+          <n-qr-code
+            :value="totpModal.qrCodeUrl!"
+            :size="200"
+            :error-correction-level="'L'"
+          />
+          <n-thing>
+            <n-scrollbar x-scrollable>
+              <n-button text @click="$copyToClipboard(totpModal.secret!)">
+                <n-code :code="totpModal.secret!" />
+              </n-button>
+            </n-scrollbar>
+          </n-thing>
+          <n-space style="align-items: center">
+            <n-form ref="totpFormRef" :model="totpForm" :rules="totpRules">
+              <n-form-item label="TOTP 验证代码" path="code">
+                <n-input-otp
+                  v-model:value="totpForm.code"
+                  :allow-input="
+                    (value: string) => !value || /^\d+$/.test(value)
+                  "
+                  @finish="handleTotpRegisterButton"
+                />
+              </n-form-item>
+            </n-form>
+          </n-space>
+        </n-space>
+      </n-modal>
+    </n-card>
   </n-space>
 </template>
 
@@ -202,6 +244,10 @@ import {
   GetPasskeys,
   type GetPasskeysResponse,
 } from "api/src/api/user/webauthn/passkeys.get";
+import { GetTotp, type GetTotpResponse } from "api/src/api/user/totp.get";
+import { PostTotp, type PostTotpResponse } from "api/src/api/user/totp.post";
+import { PutTotp } from "api/src/api/user/totp.put";
+import { DeleteTotp } from "api/src/api/user/totp.delete";
 
 const mainStore = useMainStore();
 const client = useApiClient();
@@ -216,24 +262,47 @@ const loading = ref({
     emailCode: false,
     submit: false,
   },
+  passkey: {
+    register: false,
+  },
+  totp: {
+    register: false,
+    unregister: false,
+  },
 });
 
-const updateUsernameForm = ref({
-    username: null as string | null,
+const updateUsernameForm = ref<{
+    username: string | null;
+  }>({
+    username: null,
   }),
-  updatePasswordForm = ref({
-    oldPassword: null as string | null,
-    newPassword: null as string | null,
-    confirmPassword: null as string | null,
+  updatePasswordForm = ref<{
+    oldPassword: string | null;
+    newPassword: string | null;
+    confirmPassword: string | null;
+  }>({
+    oldPassword: null,
+    newPassword: null,
+    confirmPassword: null,
   }),
-  updateEmailForm = ref({
-    email: null as string | null,
-    verifyCode: null as number | null,
+  updateEmailForm = ref<{
+    email: string | null;
+    verifyCode: number | null;
+  }>({
+    email: null,
+    verifyCode: null,
   });
+
+const totpForm = ref<{
+  code: string[] | null;
+}>({
+  code: null,
+});
 
 const updateUsernameFormRef = ref<FormInst | null>(null),
   updatePasswordFormRef = ref<FormInst | null>(null),
-  updateEmailFormRef = ref<FormInst | null>(null);
+  updateEmailFormRef = ref<FormInst | null>(null),
+  totpFormRef = ref<FormInst | null>(null);
 
 const updateUserRules = {
     username: [
@@ -287,7 +356,27 @@ const updateUserRules = {
         trigger: ["input", "blur"],
       },
     ] as FormItemRule[],
+  },
+  totpRules = {
+    code: [
+      {
+        required: true,
+        validator: (_: unknown, value: number) =>
+          FormValidator.number(value, "请输入验证代码"),
+        trigger: ["input", "blur"],
+      },
+    ] as FormItemRule[],
   };
+
+const totpModal = ref<{
+  show: boolean;
+  secret: string | null;
+  qrCodeUrl: string | null;
+}>({
+  show: false,
+  secret: null,
+  qrCodeUrl: null,
+});
 
 const registeredPasskeys = ref<
   {
@@ -297,6 +386,8 @@ const registeredPasskeys = ref<
     lastUsed: string;
   }[]
 >([]);
+
+const totpRegistered = ref(false);
 
 /**
  * 更新用户名
@@ -459,7 +550,74 @@ async function handleRegisterPasskey() {
   }
 }
 
+async function fetchTotpStatus() {
+  const rs = await client.execute<GetTotpResponse>(
+    new GetTotp({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    totpRegistered.value = rs.data.registered;
+  } else {
+    message.error(rs.message);
+  }
+}
+
+async function handleStartTotpRegisterButton() {
+  loading.value.totp.register = true;
+  const rs = await client.execute<PostTotpResponse>(
+    new PostTotp({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    totpModal.value.secret = rs.data.secret;
+    totpModal.value.qrCodeUrl = rs.data.url;
+    totpModal.value.show = true;
+  } else {
+    message.error(rs.message);
+  }
+  loading.value.totp.register = false;
+}
+
+async function handleTotpRegisterButton() {
+  if (!totpFormRef.value) return;
+  totpFormRef.value.validate().then(async () => {
+    loading.value.totp.register = true;
+    const rs = await client.execute(
+      new PutTotp({
+        user_id: mainStore.userId!,
+        code: Number(totpForm.value.code!.join("")),
+      }),
+    );
+    if (rs.status === 200) {
+      totpModal.value.show = false;
+      dialog.success({ title: "注册成功", content: "成功注册 TOTP 验证器。" });
+    } else {
+      message.error(rs.message);
+    }
+    loading.value.totp.register = false;
+  });
+}
+
+async function handleTotpUnregisterButton() {
+  const rs = await client.execute(
+    new DeleteTotp({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "解除绑定成功",
+      content: "成功解除绑定 TOTP 验证器。",
+    });
+  } else {
+    message.error(rs.message);
+  }
+}
+
 onMounted(() => {
   fetchRegisteredPasskeys();
+  fetchTotpStatus();
 });
 </script>

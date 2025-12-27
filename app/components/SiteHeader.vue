@@ -53,7 +53,17 @@
     :bordered="false"
     style="max-width: 600px"
   >
-    <user-info @logout="handleUserInfoModalLogout" />
+    <user-account-info @logout="handleUserInfoModalLogout" />
+  </n-modal>
+  <n-modal
+    v-model:show="showLoginSafety"
+    preset="card"
+    title="账户安全"
+    size="huge"
+    :bordered="false"
+    style="max-width: 600px"
+  >
+    <user-login-safety />
   </n-modal>
   <n-modal
     v-model:show="showNotification"
@@ -71,6 +81,7 @@
 import MdNotifications from "@vicons/ionicons4/MdNotifications";
 import PersonCircleOutline from "@vicons/ionicons5/PersonCircleOutline";
 import LogOutOutline from "@vicons/ionicons5/LogOutOutline";
+import ManageAccountsOutlined from "@vicons/material/ManageAccountsOutlined";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
@@ -88,13 +99,19 @@ const avatarOptions = [
     icon: renderIcon(PersonCircleOutline),
   },
   {
+    label: "登录安全",
+    key: "account-safety",
+    icon: renderIcon(ManageAccountsOutlined),
+  },
+  {
     label: "退出登录",
     key: "logout",
     icon: renderIcon(LogOutOutline),
   },
 ];
 
-const showUserInfo = ref(false);
+const showUserInfo = ref(false),
+  showLoginSafety = ref(false);
 const showNotification = ref(false);
 
 function handleUserInfoModalLogout() {
@@ -117,6 +134,9 @@ async function handleAvatarOptionSelect(key) {
   switch (key) {
     case "profile":
       showUserInfo.value = true;
+      break;
+    case "account-safety":
+      showLoginSafety.value = true;
       break;
     case "logout": {
       const client = useApiClient();

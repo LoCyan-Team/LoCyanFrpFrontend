@@ -1,8 +1,8 @@
 import { API } from "../../../type/api";
 import { Method } from "../../../type/method";
 
-export class GetOptions extends API {
+export class DeletePasskey extends API {
   constructor(params: { user_id: number }) {
-    super("/user/webauthn/options", Method.GET, params, {});
+    super("/user/webauthn/passkey", Method.DELETE, params, {});
   }
 }

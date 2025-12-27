@@ -124,9 +124,10 @@
         </n-tab-pane>
       </n-tabs>
     </n-card>
+
     <n-card title="通行密钥">
       <n-space vertical>
-        <n-button type="success" @click="handleRegisterPasskey">
+        <n-button type="success" disabled @click="handleRegisterPasskey">
           注册通行密钥
         </n-button>
         <n-scrollbar x-scrollable>
@@ -157,6 +158,7 @@
         </n-scrollbar>
       </n-space>
     </n-card>
+
     <!-- Keep -->
     <!--    <n-card title="双因素身份验证">-->
     <!--      <n-space vertical>-->

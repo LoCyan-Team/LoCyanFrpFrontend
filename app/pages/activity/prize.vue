@@ -10,30 +10,34 @@
               footer: 'soft',
             }"
           >
-            <template #header-extra> 开奖时间: {{ i.openTime }} </template>
-            <MDC :value="i.description" />
+            <n-scrollbar style="height: 125px">
+              <MDC :value="i.description" />
+            </n-scrollbar>
             <template #footer>
               <n-p>参与人员: {{ countJoinedUsers(i.joinedUserId) }} 人</n-p>
               <n-p>奖品总数: {{ i.count }} 个</n-p>
               <n-p>创建时间: {{ i.createdTime }}</n-p>
+              <n-p>开奖时间: {{ i.openTime }}</n-p>
             </template>
             <template #action>
-              <n-flex justify="space-between">
-                <n-flex>
-                  <n-p>中奖用户: </n-p>
-                  <n-tag v-if="i.prizedUserId" type="primary">{{
-                    i.prizedUserId
-                  }}</n-tag>
-                  <n-tag v-else type="error">未开奖</n-tag>
-                </n-flex>
+              <n-space justify="space-between">
+                <n-space>
+                  <n-text>
+                    中奖用户:
+                    <n-tag v-if="i.prizedUserId" type="primary">{{
+                      i.prizedUserId
+                    }}</n-tag>
+                    <n-tag v-else type="warning">未开奖</n-tag>
+                  </n-text>
+                </n-space>
                 <n-button
                   v-umami="'click-button-activity-join-prize'"
                   type="primary"
-                  @click="joinPrize(i.id)"
+                  @click="handleJoinPrize(i.id)"
                 >
                   参与抽奖
                 </n-button>
-              </n-flex>
+              </n-space>
             </template>
           </n-card>
         </n-grid-item>
@@ -92,7 +96,7 @@ async function getPrizeList() {
   }
 }
 
-async function joinPrize(prizeId: number) {
+async function handleJoinPrize(prizeId: number) {
   const rs = await client.execute(
     new PostPrize({
       prize_id: prizeId,

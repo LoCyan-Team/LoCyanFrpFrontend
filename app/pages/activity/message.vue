@@ -23,7 +23,7 @@
                 footer: 'soft',
               }"
             >
-              <template #header-extra> 发送时间: {{ i.time }} </template>
+              <template #header-extra>{{ i.time }}</template>
               <MDC :value="i.context" />
             </n-card>
           </n-grid-item>

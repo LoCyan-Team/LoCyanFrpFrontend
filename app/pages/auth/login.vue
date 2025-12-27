@@ -108,9 +108,9 @@ import { useUserStore } from "@/store/user";
 
 import { PostLogin, type PostLoginResponse } from "api/src/api/auth/login.post";
 import {
-  PostLogin as PostWebauthnLogin,
-  type PostLoginResponse as PostWebauthnLoginResponse,
-} from "api/src/api/auth/webauthn/login.post";
+  PostLogin as PostPasskeyLogin,
+  type PostLoginResponse as PostPasskeyLoginResponse,
+} from "api/src/api/auth/webauthn/passkey/login.post";
 import {
   GetLogin as GetQqLogin,
   type GetLoginResponse as GetQqLoginResponse,
@@ -233,8 +233,8 @@ async function handleLogin(captchaToken: string) {
 async function handlePasskeyLogin() {
   // TODO: Get credential from navigator
   loading.value.passkey = true;
-  const rs = await client.execute<PostWebauthnLoginResponse>(
-    new PostWebauthnLogin({ credential: "" }),
+  const rs = await client.execute<PostPasskeyLoginResponse>(
+    new PostPasskeyLogin({ response_json: "" }),
   );
   if (rs.status === 200) {
     mainStore.$patch({

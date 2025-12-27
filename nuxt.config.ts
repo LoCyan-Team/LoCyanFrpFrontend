@@ -25,6 +25,9 @@ export default defineNuxtConfig({
       devMode: process.env.NODE_ENV === "development",
       capJsEndpoint: "",
       capJsSiteKey: "",
+      apiUrl: "",
+      apiBackupUrl: "",
+      docUrl: "",
     },
   },
   vue: {
@@ -54,6 +57,28 @@ export default defineNuxtConfig({
         resolvers: [NaiveUiResolver()],
       }),
     ],
+    build: {
+      rollupOptions: {
+        output: {
+          manualChunks(id) {
+            const xiconsPackages = [
+              "@vicons/carbon",
+              "@vicons/fa",
+              "@vicons/fluent",
+              "@vicons/ionicons4",
+              "@vicons/ionicons5",
+              "@vicons/material",
+            ];
+
+            if (xiconsPackages.some((pkg) => id.includes(pkg))) {
+              return "xicons-library";
+            }
+
+            return undefined;
+          },
+        },
+      },
+    },
   },
   piniaPluginPersistedstate: {
     storage: "localStorage",
@@ -70,6 +95,7 @@ export default defineNuxtConfig({
     host: "https://analytics.locyan.cn",
     autoTrack: true,
     ignoreLocalhost: true,
+    useDirective: true,
   },
   app: {
     pageTransition: { name: "fade", mode: "out-in" },

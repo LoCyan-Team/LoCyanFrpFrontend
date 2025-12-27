@@ -44,6 +44,7 @@
               <n-popconfirm @positive-click="handleResetTraffic">
                 <template #trigger>
                   <n-button
+                    v-umami="'click-button-dashboard-reset-traffic'"
                     :loading="loading.resetTraffic"
                     :disabled="loading.resetTraffic"
                     >重置流量</n-button
@@ -76,8 +77,10 @@
             </n-card>
           </n-spin>
           <n-card title="流量统计图">
-            <highcharts :options="speedChartOptions" />
-            <highcharts :options="trafficChartOptions" />
+            <client-only>
+              <highcharts :options="speedChartOptions" />
+              <highcharts :options="trafficChartOptions" />
+            </client-only>
           </n-card>
         </n-space>
       </n-gi>
@@ -97,12 +100,20 @@ import { PostTraffic as PostResetTraffic } from "api/src/api/user/traffic.post";
 const naiveOsTheme = useOsTheme();
 if (naiveOsTheme.value === "dark") await import("highcharts/themes/dark-unica");
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/dashboard",
+  },
+});
+
 useHead({
   title: "仪表盘",
 });
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
+
 const client = useApiClient();
 
 const message = useMessage();

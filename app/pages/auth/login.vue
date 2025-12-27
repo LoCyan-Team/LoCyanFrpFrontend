@@ -1,5 +1,5 @@
 <template>
-  <n-el class="login-box">
+  <n-el class="auth-box">
     <n-h1>登录</n-h1>
     <n-card title="账户登录">
       <n-form ref="loginFormRef" :model="loginForm" :rules="formRules">
@@ -28,6 +28,7 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.login = false;
               }
@@ -36,6 +37,7 @@
           />
           <n-space style="margin-bottom: 1rem">
             <n-button
+              v-umami="'click-button-auth-login-redirect-register'"
               ghost
               text
               type="success"
@@ -45,29 +47,37 @@
             </n-button>
           </n-space>
           <n-space>
-            <n-button
-              type="success"
-              :loading="loading.login"
-              :disabled="loading.login"
-              @click="handleLoginButton"
-            >
-              登录
-            </n-button>
+            <n-tooltip :show="loading.captcha.solving" trigger="manual">
+              <template #trigger>
+                <n-button
+                  v-umami="'click-button-auth-login-login'"
+                  type="success"
+                  :loading="loading.login"
+                  :disabled="loading.login"
+                  @click="handleLoginButton"
+                >
+                  登录
+                </n-button>
+              </template>
+              <n-spin class="captcha-solving" :size="14" />
+              验证中...
+            </n-tooltip>
           </n-space>
         </n-el>
       </n-form>
     </n-card>
     <n-el style="margin-block: 1rem; width: 100%">
-      <n-spin :show="loading.passkey" style="width: 100%">
-        <n-button
-          type="success"
-          secondary
-          style="width: 100%"
-          @click="handlePasskeyLogin"
-        >
-          通行密钥登录
-        </n-button>
-      </n-spin>
+      <n-button
+        v-umami="'click-button-auth-login-passkey-login'"
+        type="success"
+        secondary
+        style="width: 100%"
+        :loading="loading.passkey"
+        :disabled="loading.passkey"
+        @click="handlePasskeyLogin"
+      >
+        通行密钥登录
+      </n-button>
     </n-el>
     <n-card title="第三方登录">
       <n-space>
@@ -88,6 +98,8 @@
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import Qq from "@vicons/fa/Qq";
 import type { FormInst, FormItemRule } from "naive-ui";
 
@@ -154,10 +166,16 @@ const loading = ref<{
   login: boolean;
   threeSide: boolean;
   passkey: boolean;
+  captcha: {
+    solving: boolean;
+  };
 }>({
   login: false,
   threeSide: false,
   passkey: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const loginForm = ref<{
@@ -172,11 +190,13 @@ async function handleLoginButton() {
   if (!loginFormRef.value) return;
   loginFormRef.value.validate().then(async () => {
     loading.value.login = true;
+    loading.value.captcha.solving = true;
     captchaRef?.value?.solve();
   });
 }
 
 async function handleLogin(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute<PostLoginResponse>(
     new PostLogin({
       user: loginForm.value.user!,
@@ -239,13 +259,16 @@ async function handlePasskeyLogin() {
     });
     navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
   } else message.error(rs.message);
-  loading.value.login = false;
+  loading.value.passkey = false;
 }
 
 async function handleThirdPartyLogin(type: ThirdParty) {
   loading.value.threeSide = true;
   switch (type) {
     case ThirdParty.QQ: {
+      umTrackEvent("click-button-auth-login-third-party-login", {
+        第三方账户: "QQ",
+      });
       const rs = await client.execute<GetQqLoginResponse>(new GetQqLogin());
       if (rs.status === 200) {
         window.open(rs.data.url);
@@ -265,21 +288,3 @@ enum ThirdParty {
   QQ,
 }
 </script>
-
-<style scoped>
-.login-box {
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .login-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

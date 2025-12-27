@@ -13,8 +13,21 @@
         <br />
         <n-text style="color: gray"
           >本站使用 WeAvatar 公用头像库 API ，可以前往
-          <n-a target="_blank" href="https://weavatar.com/">WeAvatar</n-a> 或
-          <n-a target="_blank" href="https://gravatar.com/">Gravatar</n-a>
+          <n-a
+            v-umami="'click-link-user-info-weavatar'"
+            target="_blank"
+            href="https://weavatar.com/"
+          >
+            WeAvatar
+          </n-a>
+          或
+          <n-a
+            v-umami="'click-link-user-info-gravatar'"
+            target="_blank"
+            href="https://gravatar.com/"
+          >
+            Gravatar
+          </n-a>
           修改您的头像
         </n-text>
       </n-el>
@@ -28,7 +41,12 @@
             <n-text>访问密钥:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
-                <n-button type="success" size="small" secondary>
+                <n-button
+                  v-umami="'click-button-user-info-show-frp-token'"
+                  type="success"
+                  size="small"
+                  secondary
+                >
                   点击显示
                 </n-button>
               </template>
@@ -37,6 +55,7 @@
               </n-scrollbar>
             </n-tooltip>
             <n-button
+              v-umami="'click-button-user-info-copy-frp-token'"
               type="info"
               size="small"
               secondary
@@ -48,18 +67,42 @@
         </n-text>
         <n-h3>第三方账户绑定</n-h3>
         <n-el class="three-side-buttons">
-          <n-spin :show="loading.thirdParty">
-            <n-tooltip>
+          <n-spin :show="loading.thirdParty" style="width: min-content">
+            <n-tooltip placement="bottom">
               <template #trigger>
-                <n-button
-                  :type="data.thirdParty.bind.qq ? 'info' : 'tertiary'"
-                  circle
-                  @click="handleThirdPartyButton(ThirdParty.QQ)"
-                >
-                  <client-only>
-                    <n-icon><Qq /></n-icon>
-                  </client-only>
-                </n-button>
+                <n-el v-if="!data.thirdParty.bind.qq">
+                  <n-button
+                    v-umami="{
+                      name: 'click-button-user-info-third-party-bind',
+                      第三方平台: 'QQ',
+                    }"
+                    type="tertiary"
+                    circle
+                    @click="handleThirdPartyButton(ThirdParty.QQ)"
+                  >
+                    <client-only>
+                      <n-icon><Qq /></n-icon>
+                    </client-only>
+                  </n-button>
+                </n-el>
+                <n-el v-else>
+                  <n-popconfirm
+                    v-umami="{
+                      name: 'click-button-user-info-third-party-unbind',
+                      第三方平台: 'QQ',
+                    }"
+                    @positive-click="handleThirdPartyButton(ThirdParty.QQ)"
+                  >
+                    <template #trigger>
+                      <n-button type="info" circle>
+                        <client-only>
+                          <n-icon><Qq /></n-icon>
+                        </client-only>
+                      </n-button>
+                    </template>
+                    正在解除绑定，请确认。
+                  </n-popconfirm>
+                </n-el>
               </template>
               <n-el v-if="data.thirdParty.bind.qq">已绑定，点击解绑</n-el>
               <n-el v-else>未绑定，点击绑定</n-el>
@@ -71,6 +114,7 @@
           <n-popconfirm @positive-click="handleResetFrpToken">
             <template #trigger>
               <n-button
+                v-umami="'click-button-user-info-reset-frp-token'"
                 type="error"
                 secondary
                 :loading="loading.resetFrpToken"
@@ -84,6 +128,7 @@
           <n-popconfirm @positive-click="handleExitAllDevices">
             <template #trigger>
               <n-button
+                v-umami="'click-button-user-info-exit-all-devices'"
                 type="error"
                 secondary
                 :loading="loading.exitAllDevices"
@@ -113,6 +158,7 @@
                 />
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-username-submit'"
                 :loading="loading.updateUsername"
                 :disabled="loading.updateUsername"
                 type="success"
@@ -157,6 +203,7 @@
                 />
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-password-submit'"
                 :loading="loading.updatePassword"
                 :disabled="loading.updatePassword"
                 type="success"
@@ -191,6 +238,9 @@
                   placeholder="请输入验证码"
                 />
                 <n-button
+                  v-umami="
+                    'click-button-user-info-update-email-email-code-send'
+                  "
                   style="margin-left: 0.5rem"
                   :loading="loading.updateEmail.emailCode"
                   :disabled="loading.updateEmail.emailCode"
@@ -202,6 +252,7 @@
                 </n-button>
               </n-form-item>
               <n-button
+                v-umami="'click-button-user-info-update-email-submit'"
                 :loading="loading.updateEmail.submit"
                 :disabled="loading.updateEmail.submit"
                 type="success"
@@ -381,31 +432,34 @@ enum ThirdParty {
 async function handleThirdPartyButton(type: ThirdParty) {
   switch (type) {
     case ThirdParty.QQ:
-      {
-        if (!data.value.thirdParty.bind.qq) {
-          const rs = await client.execute<GetQqBindResponse>(
-            new GetQqBind({
-              user_id: mainStore.userId!,
-            }),
-          );
-          if (rs.status === 200) {
-            window.open(rs.data.url);
-          } else message.error(rs.message);
-        } else {
-          const rs = await client.execute(
-            new DeleteQqBind({
-              user_id: mainStore.userId!,
-            }),
-          );
-          if (rs.status === 200)
-            dialog.success({
-              title: "解除绑定成功",
-              content: "已解除与此第三方服务的绑定。",
-            });
-          else message.error(rs.message);
-        }
-      }
+      await handleQqButton();
       break;
+  }
+
+  async function handleQqButton() {
+    if (!data.value.thirdParty.bind.qq) {
+      const rs = await client.execute<GetQqBindResponse>(
+        new GetQqBind({
+          user_id: mainStore.userId!,
+        }),
+      );
+      if (rs.status === 200) {
+        window.open(rs.data.url);
+      } else message.error(rs.message);
+    } else {
+      const rs = await client.execute(
+        new DeleteQqBind({
+          user_id: mainStore.userId!,
+        }),
+      );
+      if (rs.status === 200) {
+        data.value.thirdParty.bind.qq = false;
+        dialog.success({
+          title: "解除绑定成功",
+          content: "已解除与此第三方服务的绑定。",
+        });
+      } else message.error(rs.message);
+    }
   }
 }
 

@@ -52,6 +52,9 @@ import AttachMoneyFilled from "@vicons/material/AttachMoneyFilled";
 import AccountTreeOutlined from "@vicons/material/AccountTreeOutlined";
 import AccountBalanceWalletFilled from "@vicons/material/AccountBalanceWalletFilled";
 import VerifiedOutlined from "@vicons/material/VerifiedOutlined";
+import Gift from "@vicons/ionicons5/Gift";
+import LocalActivityFilled from "@vicons/material/LocalActivityFilled";
+import MessageFilled from "@vicons/material/MessageFilled";
 
 import { usePageStore } from "@/store/page";
 
@@ -98,6 +101,25 @@ const loggedInMenuOptions: MenuOption[] = [
     label: "签到",
     key: "sign",
     icon: renderIcon(PencilSharp),
+  },
+  {
+    label: "跨年活动",
+    key: "yearly-event",
+    icon: renderIcon(LocalActivityFilled),
+    children: [
+      {
+        path: "/activity/message",
+        label: "新年祝福",
+        key: "message",
+        icon: renderIcon(MessageFilled),
+      },
+      {
+        path: "/activity/prize",
+        label: "抽奖",
+        key: "prize",
+        icon: renderIcon(Gift),
+      },
+    ],
   },
   {
     label: "隧道",
@@ -257,6 +279,7 @@ const collapsed = ref<boolean>(true);
 const route = useRoute();
 
 function handleUpdateValue(_: unknown, item: MenuOption) {
+  umTrackEvent(`click-sidebar-option-${item.key}`);
   computeActiveKey(menuOptions.value, item.path as string);
   if (item.path) navigateTo(item.path as string);
 }

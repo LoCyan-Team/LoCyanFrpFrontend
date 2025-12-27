@@ -1,5 +1,5 @@
 {
-  "name": "nuxt-app",
+  "name": "locyanfrp-dashboard-frontend",
   "private": true,
   "type": "module",
   "scripts": {
@@ -12,19 +12,19 @@
   "devDependencies": {
     "@types/bun": "latest",
     "@types/git-rev-sync": "^2.0.2",
-    "eslint": "^9.39.1",
+    "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
     "nuxt-build-info": "^1.1.0",
     "prettier": "^3.6.2",
-    "unplugin-auto-import": "^20.2.0",
+    "unplugin-auto-import": "^20.3.0",
     "unplugin-vue-components": "^30.0.0"
   },
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",
-    "@cap.js/widget": "^0.1.31",
-    "@nuxt/eslint": "1.10.0",
-    "@nuxtjs/mdc": "0.18.4",
+    "@cap.js/widget": "^0.1.32",
+    "@nuxt/eslint": "1.12.1",
+    "@nuxtjs/mdc": "0.19.1",
     "@pinia/nuxt": "^0.11.3",
     "@vicons/carbon": "^0.13.0",
     "@vicons/fa": "^0.13.0",
@@ -38,7 +38,7 @@
     "highcharts-vue": "^2.0.1",
     "highlight.js": "^11.11.1",
     "naive-ui": "^2.43.2",
-    "nuxt": "^4.2.1",
+    "nuxt": "^4.2.2",
     "nuxt-umami": "3.2.1",
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",

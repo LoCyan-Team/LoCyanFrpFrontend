@@ -12,7 +12,10 @@
                 v-model:value="formatSelected"
                 :options="formatOptions"
                 @update:value="
-                  () => {
+                  (value: string) => {
+                    umTrackEvent(
+                      `switch-tunnel-config-format-${value.toLowerCase()}`,
+                    );
                     switch (selectedMode) {
                       case 'tunnel':
                         getTunnelConfig(Mode.TUNNEL);
@@ -29,17 +32,17 @@
               v-model:value="selectedMode"
               type="line"
               animated
-              :on-update:value="
+              @update:value="
                 (value) => {
-                  selectedMode = value;
+                  umTrackEvent(`switch-tunnel-config-strategy-${value}`);
                   switch (value) {
                     case 'tunnel':
                       tunnelPage.current = 1;
-                      getTunnelConfig(Mode.TUNNEL);
+                      getTunnels().then(() => getTunnelConfig(Mode.TUNNEL));
                       break;
                     case 'node':
                       nodePage.current = 1;
-                      getTunnelConfig(Mode.NODE);
+                      getNodes().then(() => getTunnelConfig(Mode.NODE));
                       break;
                   }
                 }
@@ -52,7 +55,14 @@
                     <n-select
                       v-model:value="tunnelSelected"
                       :options="tunnelOptions"
-                      @update:value="() => getTunnelConfig(Mode.TUNNEL)"
+                      @update:value="
+                        (value) => {
+                          umTrackEvent('switch-tunnel-config-tunnel', {
+                            '隧道 ID': value,
+                          });
+                          getTunnelConfig(Mode.TUNNEL);
+                        }
+                      "
                     />
                     <n-space
                       v-if="tunnelOptions.length !== 0"
@@ -66,19 +76,21 @@
                         :on-update:page="
                           (pageSel) => {
                             tunnelPage.current = pageSel;
-                            getTunnelConfig(Mode.TUNNEL);
-
-                            getTunnelConfig(Mode.NODE);
+                            getTunnels().then(() =>
+                              getTunnelConfig(Mode.TUNNEL),
+                            );
                           }
                         "
                         :on-update:page-size="
                           (pageSizeSel) => {
                             tunnelPage.size = pageSizeSel;
-                            getTunnelConfig(Mode.TUNNEL);
+                            getTunnels().then(() =>
+                              getTunnelConfig(Mode.TUNNEL),
+                            );
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 100, 250, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -91,7 +103,14 @@
                     <n-select
                       v-model:value="nodeSelected"
                       :options="nodeOptions"
-                      @update:value="() => getTunnelConfig(Mode.NODE)"
+                      @update:value="
+                        (value) => {
+                          umTrackEvent('switch-tunnel-config-tunnel', {
+                            '节点 ID': value,
+                          });
+                          getTunnelConfig(Mode.NODE);
+                        }
+                      "
                     />
                     <n-space
                       v-if="nodeOptions.length !== 0"
@@ -105,19 +124,17 @@
                         :on-update:page="
                           (pageSel) => {
                             nodePage.current = pageSel;
-                            getTunnelConfig(Mode.TUNNEL);
-
-                            getTunnelConfig(Mode.NODE);
+                            getNodes().then(() => getTunnelConfig(Mode.NODE));
                           }
                         "
                         :on-update:page-size="
                           (pageSizeSel) => {
                             nodePage.size = pageSizeSel;
-                            getTunnelConfig(Mode.TUNNEL);
+                            getNodes().then(() => getTunnelConfig(Mode.NODE));
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 100, 250, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -132,6 +149,7 @@
         <n-card title="配置文件">
           <template #header-extra>
             <n-button
+              v-umami="'click-button-tunnel-config-copy'"
               type="success"
               secondary
               @click="$copyToClipboard(content)"
@@ -165,6 +183,13 @@ import {
   GetConfig,
   type GetConfigResponse,
 } from "api/src/api/tunnel/config.get";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/config",
+  },
+});
 
 useHead({
   title: "配置文件",
@@ -206,7 +231,7 @@ const tunnelPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   nodePage = ref<{
@@ -215,7 +240,7 @@ const tunnelPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
@@ -268,6 +293,7 @@ async function getTunnelConfig(mode: Mode) {
 }
 
 async function getTunnels() {
+  loading.value = true;
   const rs = await client.execute<GetTunnelsResponse>(
     new GetTunnels({
       user_id: mainStore.userId!,
@@ -276,24 +302,34 @@ async function getTunnels() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      tunnelPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      tunnelPage.value.current = rs.data.pagination.count;
+      await getTunnels();
+      return;
+    }
     tunnelPage.value.count = rs.data.pagination.count;
+
     tunnelOptions.value.length = 0;
-    rs.data.list.forEach((it) => {
-      tunnelOptions.value.push({
-        label: it.name,
-        value: it.id,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        tunnelOptions.value.push({
+          label: it.name,
+          value: it.id,
+        });
       });
-    });
     if (rs.data.list.length !== 0) {
-      tunnelOptions.value.sort((a, b) => {
-        return (a.value as number) - (b.value as number);
-      });
       tunnelSelected.value = tunnelOptions.value[0]?.value as number;
     }
   } else message.error(rs.message);
 }
 
 async function getNodes() {
+  loading.value = true;
   const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,
@@ -302,17 +338,26 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      nodePage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      nodePage.value.current = rs.data.pagination.count;
+      await getNodes();
+      return;
+    }
     nodePage.value.count = rs.data.pagination.count;
+
     nodeOptions.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodeOptions.value.push({
-        label: it.name,
-        value: it.id,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodeOptions.value.push({
+          label: it.name,
+          value: it.id,
+        });
       });
-    });
-    nodeOptions.value.sort((a, b) => {
-      return (a.label as string).localeCompare(b.label as string);
-    });
     nodeSelected.value = nodeOptions.value[0]?.value as number;
   } else message.error(rs.message);
 }

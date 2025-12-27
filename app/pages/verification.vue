@@ -39,6 +39,9 @@
                   <n-tab-pane name="buy" tab="购买">
                     <n-space>
                       <n-button
+                        v-umami="
+                          'click-button-verification-real-person-accreditation-buy'
+                        "
                         type="success"
                         :loading="loading.buyAccreditation"
                         :disabled="loading.buyAccreditation"
@@ -47,6 +50,9 @@
                         购买
                       </n-button>
                       <n-button
+                        v-umami="
+                          'click-button-verification-real-person-accreditation-buy-refresh-state'
+                        "
                         type="success"
                         secondary
                         :loading="loading.buyAccreditation"
@@ -79,6 +85,11 @@
                       >
                         <template #trigger>
                           <n-button
+                            v-umami="{
+                              name: 'click-button-verification-real-person-accreditation-gift',
+                              '赠送目标用户 ID':
+                                verificationForm.giftAccreditationUserId,
+                            }"
                             type="success"
                             :loading="loading.giftAccreditation"
                             :disabled="loading.giftAccreditation"
@@ -119,6 +130,7 @@
                       <n-form-item label="证件类型" path="idType">
                         <n-select
                           v-model:value="verificationForm.idType"
+                          v-umami="'switch-verification-real-person-id-type'"
                           :options="options.idType"
                         />
                       </n-form-item>
@@ -136,6 +148,9 @@
                       </n-form-item>
                       <n-space>
                         <n-button
+                          v-umami="
+                            'click-button-verification-real-person-submit'
+                          "
                           type="success"
                           :loading="loading.realPerson"
                           :disabled="loading.realPerson"
@@ -144,6 +159,9 @@
                           提交
                         </n-button>
                         <n-button
+                          v-umami="
+                            'click-button-verification-real-person-refresh-state'
+                          "
                           type="success"
                           secondary
                           :loading="loading.realPerson"
@@ -153,6 +171,9 @@
                           刷新状态
                         </n-button>
                         <n-button
+                          v-umami="
+                            'click-button-verification-real-person-reset-state'
+                          "
                           type="error"
                           secondary
                           :loading="loading.realPerson"
@@ -170,7 +191,7 @@
           </n-card>
 
           <!-- 二级认证 -->
-          <n-card title="二级认证（实名认证）">
+          <n-card title="实名认证（二级认证）">
             <n-spin :show="data.realName" :rotate="false">
               <template #icon>
                 <n-icon>
@@ -196,6 +217,7 @@
                   />
                 </n-form-item>
                 <n-button
+                  v-umami="'click-button-verification-real-name-submit'"
                   type="success"
                   :loading="loading.realName"
                   :disabled="loading.realName"
@@ -226,6 +248,7 @@
       />
       <template #footer>
         <n-button
+          v-umami="'click-button-verification-real-person-refresh-state'"
           type="success"
           :loading="loading.realPerson"
           :disabled="loading.realPerson"
@@ -243,13 +266,29 @@ import { useMainStore } from "@/store/main";
 
 import FileDownloadDoneOutlined from "@vicons/material/FileDownloadDoneOutlined";
 
-import { GetVerification as GetStatus } from "api/src/api/verification.get";
-import { PostPayment as PostBuyAccreditation } from "api/src/api/verification/real-person/payment.post";
+import {
+  GetVerification as GetStatus,
+  type GetVerificationResponse as GetStatusResponse,
+} from "api/src/api/verification.get";
+import {
+  PostPayment as PostBuyAccreditation,
+  type PostPaymentResponse as PostBuyAccreditationResponse,
+} from "api/src/api/verification/real-person/payment.post";
 import { PostGiven as PostGivenAccreditation } from "api/src/api/verification/real-person/given.post";
-import { PostRealPerson } from "api/src/api/verification/real-person.post";
+import {
+  PostRealPerson,
+  type PostRealPersonResponse,
+} from "api/src/api/verification/real-person.post";
 import { GetRealPerson } from "api/src/api/verification/real-person.get";
 import { DeleteRealPerson } from "api/src/api/verification/real-person.delete";
 import { PostRealName } from "api/src/api/verification/real-name.post";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/verification",
+  },
+});
 
 useHead({
   title: "身份认证",
@@ -336,7 +375,7 @@ const options = {
 
 async function handleBuyRealPersonAccreditation() {
   loading.value.buyAccreditation = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostBuyAccreditationResponse>(
     new PostBuyAccreditation({
       user_id: mainStore.userId!,
     }),
@@ -370,7 +409,7 @@ async function handleGiftRealPersonAccreditation() {
 
 async function handleRealPersonQrCode() {
   loading.value.realPerson = true;
-  const rs = await client.execute(
+  const rs = await client.execute<PostRealPersonResponse>(
     new PostRealPerson({
       user_id: mainStore.userId!,
       name: verificationForm.value.name!,
@@ -442,7 +481,7 @@ async function handleRealName() {
 }
 
 async function getStatus() {
-  const resStatus = await client.execute(
+  const resStatus = await client.execute<GetStatusResponse>(
     new GetStatus({
       user_id: mainStore.userId!,
     }),

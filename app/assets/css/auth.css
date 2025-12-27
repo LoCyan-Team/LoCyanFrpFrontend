@@ -1,0 +1,22 @@
+.captcha-solving {
+  transform: translateY(1px);
+}
+
+.auth-box {
+  flex: 1;
+  width: 100%;
+  margin-inline: auto;
+  max-width: 400px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  padding-block: 0.5rem;
+}
+
+@media screen and (width <= 500px) {
+  .auth-box {
+    width: auto;
+    margin-inline: 0.5rem;
+  }
+}

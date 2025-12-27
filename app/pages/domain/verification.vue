@@ -1,12 +1,18 @@
 <template>
   <page-content title="所有权验证">
     <n-space vertical>
+      <n-alert type="info" title="域名解析提示">
+        在解析域名 DNS 可能存在缓存等因素，通常来说您的 DNS 记录会在 24
+        小时内由您的 DNS 服务商同步，期间可能不能立即验证成功，请您耐心等待。
+        如果超过 24 小时未同步，请您咨询您的域名 DNS 提供商。
+      </n-alert>
       <n-card title="提交验证">
         <n-form :model="formData">
           <n-form-item label="域名" path="domain">
             <n-input v-model:value="formData.domain" placeholder="请输入域名" />
           </n-form-item>
           <n-button
+            v-umami="'click-button-domain-verification-submit'"
             type="success"
             :loading="loading.submit"
             :disabled="loading.submit"
@@ -26,6 +32,9 @@
                   <n-popconfirm @positive-click="handleBatchDeleteDomain">
                     <template #trigger>
                       <n-button
+                        v-umami="
+                          'click-button-domain-verification-batch-delete'
+                        "
                         type="error"
                         secondary
                         :loading="loading.batch.delete"
@@ -50,6 +59,9 @@
                       <n-th>
                         <n-switch
                           v-model:value="domainBatchSelectState"
+                          v-umami="
+                            'switch-domain-verification-batch-select-all'
+                          "
                           :round="false"
                           @update:value="handleDomainSelectAll"
                         >
@@ -67,6 +79,9 @@
                       <n-td>
                         <n-el @click="handleDomainBatchSelect(domain.id)">
                           <n-checkbox
+                            v-umami="
+                              'click-checkbox-domain-verification-select'
+                            "
                             :checked="domainBatchSelected.includes(domain.id)"
                           />
                         </n-el>
@@ -79,6 +94,9 @@
                         >
                           <template #trigger>
                             <n-button
+                              v-umami="
+                                'click-button-domain-verification-delete'
+                              "
                               type="error"
                               secondary
                               :loading="
@@ -116,7 +134,7 @@
                     }
                   "
                   show-size-picker
-                  :page-sizes="[10, 25, 50, 100]"
+                  :page-sizes="[15, 25, 50, 100, 250, 500]"
                 />
               </n-space>
             </n-space>
@@ -139,6 +157,7 @@
                   <n-thead>
                     <n-tr>
                       <n-th>域名</n-th>
+                      <n-th>主机名</n-th>
                       <n-th>DNS 记录类型</n-th>
                       <n-th>DNS 记录内容</n-th>
                       <n-th>操作</n-th>
@@ -150,11 +169,15 @@
                       :key="verification.domain"
                     >
                       <n-td>{{ verification.domain }}</n-td>
+                      <n-td>_lcf-verify.{{ verification.domain }}.</n-td>
                       <n-td>{{ verification.recordType }}</n-td>
                       <n-td>
                         <n-tooltip trigger="hover">
                           <template #trigger>
                             <n-button
+                              v-umami="
+                                'click-button-domain-verification-verify-content-copy'
+                              "
                               text
                               @click="$copyToClipboard(verification.recordData)"
                             >
@@ -166,6 +189,7 @@
                       </n-td>
                       <n-td>
                         <n-button
+                          v-umami="'click-button-domain-verification-verify'"
                           type="info"
                           secondary
                           @click="handleSubmitVerification(verification.domain)"
@@ -195,7 +219,7 @@
                     }
                   "
                   show-size-picker
-                  :page-sizes="[10, 25, 50, 100]"
+                  :page-sizes="[15, 25, 50, 100, 250, 500]"
                 />
               </n-space>
             </n-space>
@@ -221,6 +245,9 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-button
+                  v-umami="
+                    'click-button-domain-verification-verify-copy-hostname'
+                  "
                   text
                   @click="$copyToClipboard(`_lcf-verify.${formData.domain}.`)"
                 >
@@ -234,6 +261,9 @@
             <n-tooltip trigger="hover">
               <template #trigger>
                 <n-button
+                  v-umami="
+                    'click-button-domain-verification-verify-copy-content'
+                  "
                   text
                   @click="$copyToClipboard(modal.verification.record.data)"
                 >
@@ -246,6 +276,7 @@
         </n-el>
         <template #footer>
           <n-button
+            v-umami="'click-button-domain-verification-verify'"
             type="success"
             @click="handleSubmitVerification(formData.domain!)"
           >
@@ -277,6 +308,13 @@ const client = useApiClient();
 
 const message = useMessage();
 const notification = useNotification();
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/domain/verification",
+  },
+});
 
 useHead({
   title: "所有权验证",
@@ -353,7 +391,7 @@ const domainPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   verificationPage = ref<{
@@ -362,7 +400,7 @@ const domainPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
@@ -420,10 +458,10 @@ async function handleBatchDeleteDomain() {
     domainData.value = domainData.value.filter(
       (it) => !domainBatchSelected.value.includes(it.id),
     );
+    domainBatchSelected.value.length = 0;
+    domainBatchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-  domainBatchSelected.value.length = 0;
-  domainBatchSelectState.value = false;
 }
 
 async function handleSubmitVerification(domain: string) {
@@ -469,7 +507,16 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      domainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      domainPage.value.current = rs.data.pagination.count;
+      await getDomains();
+      return;
+    }
     domainPage.value.count = rs.data.pagination.count;
+
     domainData.value.length = 0;
     rs.data.list.forEach((it) => {
       domainData.value.push({
@@ -491,7 +538,16 @@ async function getVerifications() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      verificationPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      verificationPage.value.current = rs.data.pagination.count;
+      await getVerifications();
+      return;
+    }
     verificationPage.value.count = rs.data.pagination.count;
+
     verificationData.value.length = 0;
     rs.data.list.forEach((it) => {
       verificationData.value.push({

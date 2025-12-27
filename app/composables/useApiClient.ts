@@ -6,25 +6,9 @@ import { FetchError, type FetchOptions } from "ofetch";
 import type { NitroFetchOptions } from "nitropack/types";
 
 export interface ApiUrlConfig {
-  v2: {
-    main: string;
-    backup: string;
-  };
   v3: {
     main: string;
     backup: string;
-  };
-}
-
-export class DefaultApiUrlConfig implements ApiUrlConfig {
-  v2 = {
-    main: "https://api.locyanfrp.cn/v2",
-    backup: "https://backup.api.locyanfrp.cn/v2",
-  };
-  v3 = {
-    // main: "http://localhost:8080/default", // 保持本地调试地址
-    main: "https://api.locyanfrp.cn/v3",
-    backup: "https://backup.api.locyanfrp.cn/v3",
   };
 }
 
@@ -41,10 +25,7 @@ export class Client {
   // 使用标志位记录当前是否处于备份节点模式
   private useBackup = false;
 
-  constructor(
-    token?: string,
-    apiUrlConfig: ApiUrlConfig = new DefaultApiUrlConfig(),
-  ) {
+  constructor(apiUrlConfig: ApiUrlConfig, token?: string) {
     this.token = token;
     this.urlConfig = apiUrlConfig;
   }
@@ -60,6 +41,10 @@ export class Client {
    * 执行 API 请求
    */
   public async execute<T extends object>(api: API): Promise<Response<T>> {
+    if (import.meta.server) {
+      return new Response(204, "SSR Skipped", {} as T);
+    }
+
     try {
       // 1. 首次尝试
       const result = await this.performFetch<T>(api, this.currentBaseURL);
@@ -194,14 +179,23 @@ export function useApiClient(
 ): Client {
   const mainStore = useMainStore();
 
+  const runtimeConfig = useRuntimeConfig();
+
+  const apiUrlConfig: ApiUrlConfig = {
+    v3: {
+      main: runtimeConfig.public.apiUrl,
+      backup: runtimeConfig.public.apiBackupUrl,
+    },
+  };
+
   if (options.auth) {
-    if (!mainStore.token) {
+    if (!mainStore.token && import.meta.client) {
       throw new Error(
         "Authentication token required, but token is null or undefined.",
       );
     }
-    return new Client(mainStore.token);
+    return new Client(apiUrlConfig, mainStore.token ?? undefined);
   }
 
-  return new Client();
+  return new Client(apiUrlConfig);
 }

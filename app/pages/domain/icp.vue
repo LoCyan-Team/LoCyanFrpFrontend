@@ -30,10 +30,11 @@
                     }
                   "
                   show-size-picker
-                  :page-sizes="[10, 25, 50, 100]"
+                  :page-sizes="[15, 25, 50, 100, 250, 500]"
                 />
               </n-space>
               <n-button
+                v-umami="'click-button-domain-icp-submit'"
                 type="success"
                 :loading="loading.submit"
                 :disabled="loading.submit"
@@ -51,6 +52,7 @@
           <n-popconfirm @positive-click="handleBatchDeleteIcp">
             <template #trigger>
               <n-button
+                v-umami="'click-button-domain-icp-batch-delete'"
                 type="error"
                 secondary
                 :loading="loading.batch.delete"
@@ -79,6 +81,7 @@
                 <n-tr>
                   <n-th>
                     <n-switch
+                      v-umami="'switch-domain-icp-batch-select-all'"
                       v-model:value="batchSelectState"
                       :round="false"
                       @update:value="handleSelectAll"
@@ -99,6 +102,7 @@
                   <n-td>
                     <n-el @click="handleBatchSelect(domain.id)">
                       <n-checkbox
+                        v-umami="'click-checkbox-domain-icp-select'"
                         :checked="batchSelected.includes(domain.id)"
                       />
                     </n-el>
@@ -111,6 +115,7 @@
                     <n-popconfirm @positive-click="handleDeleteIcp(domain.id)">
                       <template #trigger>
                         <n-button
+                          v-umami="'click-button-domain-icp-delete'"
                           type="error"
                           secondary
                           :loading="loading.icp.delete.includes(domain.id)"
@@ -144,7 +149,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
           </n-space>
         </n-space>
@@ -168,6 +173,7 @@
               @update:markers="handleMiitImageMarkerUpdate"
             />
             <n-button
+              v-umami="'click-button-domain-icp-miit-captcha-refresh'"
               type="success"
               :loading="loading.submit"
               :disabled="loading.submit"
@@ -209,6 +215,13 @@ const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/domain/icp-beian-whitelist",
+  },
+});
 
 useHead({
   title: "ICP 备案白名单",
@@ -292,7 +305,7 @@ const miit = ref<MIIT>({
   sign: null,
 });
 
-let markerData: {
+const markerData: {
   origin: object | null;
   string: string | null;
 } = {
@@ -308,7 +321,7 @@ const domainPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   icpDomainPage = ref<{
@@ -317,7 +330,7 @@ const domainPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
@@ -434,10 +447,10 @@ async function handleBatchDeleteIcp() {
   );
   if (rs.status === 200) {
     data.value = data.value.filter((it) => !selected.includes(it.id));
+    batchSelected.value.length = 0;
+    batchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-  batchSelected.value.length = 0;
-  batchSelectState.value = false;
 }
 
 function handleBatchSelect(domainId: number) {
@@ -463,7 +476,16 @@ async function getDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      domainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      domainPage.value.current = rs.data.pagination.count;
+      await getDomains();
+      return;
+    }
     domainPage.value.count = rs.data.pagination.count;
+
     domainOptions.value.length = 0;
     rs.data.list.forEach((it) => {
       domainOptions.value.push({
@@ -485,7 +507,16 @@ async function getIcpDomains() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      icpDomainPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      icpDomainPage.value.current = rs.data.pagination.count;
+      await getIcpDomains();
+      return;
+    }
     icpDomainPage.value.count = rs.data.pagination.count;
+
     data.value.length = 0;
     rs.data.list.forEach((it) => {
       data.value.push({

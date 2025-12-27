@@ -14,6 +14,7 @@
       <client-only>
         <n-button
           v-show="useLoggedIn()"
+          v-umami="'click-button-open-notification'"
           circle
           style="margin-top: 15px; margin-right: 10px"
           @click="() => (showNotification = true)"
@@ -24,7 +25,15 @@
         </n-button>
       </client-only>
       <client-only>
-        <n-dropdown :options="avatarOptions" @select="handleAvatarOptionSelect">
+        <n-dropdown
+          :options="avatarOptions"
+          @select="handleAvatarOptionSelect"
+          @update:value="
+            (key, _) => {
+              umTrackEvent(`click-avatar-option-${key}`);
+            }
+          "
+        >
           <n-avatar
             v-show="useLoggedIn()"
             round

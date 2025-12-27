@@ -64,6 +64,10 @@
                               <n-tooltip trigger="click">
                                 <template #trigger>
                                   <n-button
+                                    v-umami="{
+                                      name: 'click-button-app-access-show-refresh-token',
+                                      'APP ID': auth.appId,
+                                    }"
                                     type="success"
                                     size="small"
                                     secondary
@@ -76,6 +80,10 @@
                                 </n-scrollbar>
                               </n-tooltip>
                               <n-button
+                                v-umami="{
+                                  name: 'click-button-app-access-copy-refresh-token',
+                                  'APP ID': auth.appId,
+                                }"
                                 type="info"
                                 size="small"
                                 secondary
@@ -99,7 +107,14 @@
                               "
                             >
                               <template #trigger>
-                                <n-button type="error" secondary>
+                                <n-button
+                                  v-umami="{
+                                    name: 'click-button-app-access-revoke-session-authorize',
+                                    'APP ID': auth.appId,
+                                  }"
+                                  type="error"
+                                  secondary
+                                >
                                   撤销授权
                                 </n-button>
                               </template>
@@ -135,7 +150,7 @@
                           }
                         "
                         show-size-picker
-                        :page-sizes="[10, 25, 50, 100]"
+                        :page-sizes="[15, 25, 50, 100, 250, 500]"
                       />
                     </n-space>
                   </n-space>
@@ -148,7 +163,15 @@
                   @positive-click="handleRevokeAppAuthorize(auth.appId)"
                 >
                   <template #trigger>
-                    <n-button type="error"> 撤销授权 </n-button>
+                    <n-button
+                      v-umami="{
+                        name: 'click-button-app-access-revoke-app-authorize',
+                        'APP ID': auth.appId,
+                      }"
+                      type="error"
+                    >
+                      撤销授权
+                    </n-button>
                   </template>
                   确定要撤销授权吗？撤销后您需要重新授权。
                 </n-popconfirm>
@@ -156,7 +179,14 @@
                   @positive-click="handleRevokeSessionAuthorize(auth.appId)"
                 >
                   <template #trigger>
-                    <n-button type="error" secondary>
+                    <n-button
+                      v-umami="{
+                        name: 'click-button-app-access-revoke-all-session-authorize',
+                        'APP ID': auth.appId,
+                      }"
+                      type="error"
+                      secondary
+                    >
                       撤销全部会话授权
                     </n-button>
                   </template>
@@ -188,7 +218,7 @@
               }
             "
             show-size-picker
-            :page-sizes="[10, 25, 50, 100]"
+            :page-sizes="[15, 25, 50, 100, 250, 500]"
           />
         </n-space>
       </n-space>
@@ -256,7 +286,7 @@ const authorizationPage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   sessionPages = ref<
@@ -351,7 +381,16 @@ async function getAuthorizations() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      authorizationPage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      authorizationPage.value.current = rs.data.pagination.count;
+      await getAuthorizations();
+      return;
+    }
     authorizationPage.value.count = rs.data.pagination.count;
+
     rs.data.list.forEach((it) => {
       authorizations.value.push({
         appId: it.app_id,
@@ -371,13 +410,13 @@ async function getAppSessions(appId: number) {
     sessionPages.value.push({
       appId: appId,
       current: 1,
-      size: 10,
+      size: 15,
       count: 1,
     });
     page = {
       appId: appId,
       current: 1,
-      size: 10,
+      size: 15,
       count: 1,
     };
   }

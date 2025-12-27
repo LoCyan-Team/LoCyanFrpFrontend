@@ -33,6 +33,7 @@ export interface GetTunnelsResponse {
     type: string;
     use_compression: boolean;
     use_encryption: boolean;
+    proxy_protocol_version: "V1" | "V2" | null;
   }[];
   pagination: {
     count: number;

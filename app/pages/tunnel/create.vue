@@ -5,7 +5,12 @@
         <n-spin :show="loading.create">
           <tunnel-config :node="selectedNode" @submit="handleCreate">
             <template #node-footer>
-              <n-button type="warning" secondary @click="selectedNode = null">
+              <n-button
+                v-umami="'click-button-tunnel-create-node-reselect'"
+                type="warning"
+                secondary
+                @click="selectedNode = null"
+              >
                 重新选择
               </n-button>
             </template>
@@ -14,56 +19,55 @@
       </n-el>
       <n-el v-else>
         <n-spin :show="loading.nodes">
-          <n-card title="请选择节点">
-            <n-space vertical>
-              <n-empty v-if="nodes.length === 0" />
-              <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
-                <n-grid-item
-                  v-for="node in nodes"
-                  :key="node.id"
-                  span="0:3 1000:1"
-                >
-                  <node-card :node="node">
-                    <template #header-extra>
-                      <n-button
-                        type="success"
-                        secondary
-                        @click="handleNodeSelect(node)"
-                      >
-                        选择
-                      </n-button>
-                    </template>
-                  </node-card>
-                </n-grid-item>
-              </n-grid>
-
-              <n-space
-                v-if="nodes.length !== 0"
-                justify="center"
-                style="width: 100%"
+          <n-space vertical>
+            <n-empty v-if="nodes.length === 0" />
+            <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
+              <n-grid-item
+                v-for="node in nodes"
+                :key="node.id"
+                span="0:3 1000:1"
               >
-                <n-pagination
-                  v-model:page="page.current"
-                  v-model:page-size="page.size"
-                  :page-count="page.count"
-                  show-size-picker
-                  :on-update:page="
-                    (pageSel) => {
-                      page.current = pageSel;
-                      getNodes();
-                    }
-                  "
-                  :on-update:page-size="
-                    (pageSizeSel) => {
-                      page.size = pageSizeSel;
-                      getNodes();
-                    }
-                  "
-                  :page-sizes="[10, 25, 50, 100]"
-                />
-              </n-space>
+                <node-card :node="node">
+                  <template #header-extra>
+                    <n-button
+                      v-umami="'click-button-tunnel-create-node-select'"
+                      type="success"
+                      secondary
+                      @click="handleNodeSelect(node)"
+                    >
+                      选择
+                    </n-button>
+                  </template>
+                </node-card>
+              </n-grid-item>
+            </n-grid>
+
+            <n-space
+              v-if="nodes.length !== 0"
+              justify="center"
+              style="width: 100%"
+            >
+              <n-pagination
+                v-model:page="page.current"
+                v-model:page-size="page.size"
+                :page-count="page.count"
+                show-size-picker
+                :on-update:page="
+                  (pageSel) => {
+                    page.current = pageSel;
+                    getNodes();
+                  }
+                "
+                :on-update:page-size="
+                  (pageSizeSel) => {
+                    page.size = pageSizeSel;
+                    getNodes();
+                  }
+                "
+                :page-sizes="[15, 25, 50, 100, 250, 500]"
+              />
             </n-space>
-          </n-card>
+          </n-space>
         </n-spin>
       </n-el>
     </transition>
@@ -76,6 +80,13 @@ import { useMainStore } from "@/store/main";
 import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
 import { PutTunnel } from "api/src/api/tunnel.put";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/create",
+  },
+});
+
 useHead({
   title: "创建隧道",
 });
@@ -85,6 +96,8 @@ const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();
+
+type ProxyProtocolVersion = "V1" | "V2";
 
 interface Node {
   id: number;
@@ -119,7 +132,7 @@ const page = ref<{
   count: number;
 }>({
   current: 1,
-  size: 10,
+  size: 15,
   count: 1,
 });
 
@@ -138,7 +151,9 @@ async function handleCreate(tunnel: {
   domain: string | null;
   locations: string[] | null;
   secretKey: string | null;
+  proxyProtocolVersion: string | null;
 }) {
+  umTrackEvent("click-button-tunnel-create-submit");
   loading.value.create = true;
   const rs = await client.execute(
     new PutTunnel({
@@ -152,8 +167,14 @@ async function handleCreate(tunnel: {
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
       domain: tunnel.domain ?? undefined,
-      locations: tunnel.locations ?? undefined,
+      locations:
+        tunnel.locations?.length === 0
+          ? undefined
+          : (tunnel.locations ?? undefined),
       secret_key: tunnel.secretKey ?? undefined,
+      proxy_protocol_version:
+        (tunnel.proxyProtocolVersion as ProxyProtocolVersion | null) ??
+        undefined,
     }),
   );
   if (rs.status === 200)
@@ -176,24 +197,36 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      page.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      page.value.current = rs.data.pagination.count;
+      await getNodes();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     nodes.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodes.value.push({
-        id: it.id,
-        name: it.name,
-        description: it.description,
-        host: it.host,
-        ip: it.ip,
-        portRange: it.port_range,
-        additional: {
-          allowUdp: it.additional.allow_udp,
-          allowHttp: it.additional.allow_http,
-          allowBigTraffic: it.additional.allow_big_traffic,
-          needIcp: it.additional.need_icp,
-        },
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodes.value.push({
+          id: it.id,
+          name: it.name,
+          description: it.description,
+          host: it.host,
+          ip: it.ip,
+          portRange: it.port_range,
+          additional: {
+            allowUdp: it.additional.allow_udp,
+            allowHttp: it.additional.allow_http,
+            allowBigTraffic: it.additional.allow_big_traffic,
+            needIcp: it.additional.need_icp,
+          },
+        });
       });
-    });
   } else message.error(rs.message);
   loading.value.nodes = false;
 }

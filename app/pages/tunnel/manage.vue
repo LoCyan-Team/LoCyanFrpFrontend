@@ -11,12 +11,23 @@
             <n-icon :component="Search" />
           </template>
         </n-input>
-        <n-button type="success" @click="handleSearch">搜索</n-button>
-        <n-radio-group v-model:value="viewMode" name="viewMode">
+        <n-button
+          v-umami="'click-button-tunnel-manage-search'"
+          type="success"
+          @click="handleSearch"
+        >
+          搜索
+        </n-button>
+        <n-radio-group
+          v-umami="'switch-tunnel-manage-view-mode'"
+          v-model:value="viewMode"
+          name="viewMode"
+        >
           <n-radio-button value="card" label="卡片视图" />
           <n-radio-button value="list" label="列表视图" />
         </n-radio-group>
         <n-switch
+          v-umami="'switch-tunnel-manage-select-all'"
           v-model:value="batchSelectState"
           :round="false"
           size="large"
@@ -28,12 +39,18 @@
       </n-space>
       <n-card v-if="batchSelected.length > 0" embedded>
         <n-space>
-          <n-button type="info" secondary @click="handleBatchEdit">
+          <n-button
+            v-umami="'click-button-tunnel-manage-batch-edit'"
+            type="info"
+            secondary
+            @click="handleBatchEdit"
+          >
             修改
           </n-button>
           <n-popconfirm @positive-click="handleBatchDeleteTunnel">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-batch-delete'"
                 type="error"
                 :loading="loading.batch.delete"
                 :disabled="loading.batch.delete"
@@ -47,6 +64,7 @@
           <n-popconfirm @positive-click="handleBatchForceDownTunnel">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-batch-force-down'"
                 type="warning"
                 :loading="loading.batch.down"
                 :disabled="loading.batch.delete"
@@ -85,7 +103,25 @@
                       <n-icon :component="Error" />
                     </template>
                     <template #description>已封禁</template>
-                    <n-card :title="tunnel.name">
+                    <n-card>
+                      <template #header>
+                        <n-tooltip trigger="hover">
+                          <template #trigger>
+                            <n-el
+                              style="
+                                text-overflow: ellipsis;
+                                white-space: nowrap;
+                                overflow: hidden;
+                                flex: 1;
+                                padding-right: 0.5rem;
+                              "
+                            >
+                              {{ tunnel.name }}
+                            </n-el>
+                          </template>
+                          {{ tunnel.name }}
+                        </n-tooltip>
+                      </template>
                       <template #header-extra>
                         <n-space style="margin-right: 10px">
                           <n-tag type="success">
@@ -95,6 +131,7 @@
                         </n-space>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
+                            v-umami="'click-checkbox-tunnel-manage-select'"
                             :checked="batchSelected.includes(tunnel.id)"
                             size="large"
                           />
@@ -127,6 +164,9 @@
                           <n-tooltip trigger="hover">
                             <template #trigger>
                               <n-button
+                                v-umami="
+                                  'click-button-tunnel-manage-copy-connect-address'
+                                "
                                 text
                                 @click="
                                   $copyToClipboard(computeConnectAddr(tunnel))
@@ -142,6 +182,9 @@
                       <template #action>
                         <n-space>
                           <n-button
+                            v-umami="
+                              'click-button-tunnel-manage-open-info-modal'
+                            "
                             type="info"
                             secondary
                             @click="handleInfoModal(tunnel)"
@@ -149,6 +192,7 @@
                             详细信息
                           </n-button>
                           <n-button
+                            v-umami="'click-button-tunnel-manage-edit'"
                             type="success"
                             secondary
                             @click="handleModifyTunnel(tunnel)"
@@ -160,6 +204,7 @@
                           >
                             <template #trigger>
                               <n-button
+                                v-umami="'click-button-tunnel-manage-delete'"
                                 type="error"
                                 :loading="
                                   loading.tunnel.delete.includes(tunnel.id)
@@ -179,9 +224,16 @@
                           >
                             <template #trigger>
                               <n-button
+                                v-umami="
+                                  'click-button-tunnel-manage-force-down'
+                                "
                                 type="warning"
-                                :loading="loading.tunnel.down === tunnel.id"
-                                :disabled="loading.tunnel.down === tunnel.id"
+                                :loading="
+                                  loading.tunnel.down.includes(tunnel.id)
+                                "
+                                :disabled="
+                                  loading.tunnel.down.includes(tunnel.id)
+                                "
                                 secondary
                               >
                                 强制下线
@@ -223,6 +275,7 @@
                       <n-td>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
+                            v-umami="'click-checkbox-tunnel-manage-select'"
                             :checked="batchSelected.includes(tunnel.id)"
                           />
                         </n-el>
@@ -237,6 +290,7 @@
                       <n-td>{{ tunnel.remotePort }}</n-td>
                       <n-td>
                         <n-a
+                          v-umami="'click-link-tunnel-manage-domain'"
                           v-if="tunnel.domain"
                           :href="`${tunnel.type}://${tunnel.domain}`"
                           target="_blank"
@@ -248,6 +302,9 @@
                         <n-tooltip trigger="hover">
                           <template #trigger>
                             <n-button
+                              v-umami="
+                                'click-button-tunnel-manage-copy-connect-address'
+                              "
                               text
                               @click="
                                 $copyToClipboard(computeConnectAddr(tunnel))
@@ -276,6 +333,9 @@
                           <template #description>已封禁</template>
                           <n-space :inline="true" :wrap="false">
                             <n-button
+                              v-umami="
+                                'click-button-tunnel-manage-open-info-modal'
+                              "
                               type="info"
                               secondary
                               @click="handleInfoModal(tunnel)"
@@ -283,6 +343,7 @@
                               详细信息
                             </n-button>
                             <n-button
+                              v-umami="'click-button-tunnel-manage-edit'"
                               type="success"
                               secondary
                               @click="handleModifyTunnel(tunnel)"
@@ -294,6 +355,7 @@
                             >
                               <template #trigger>
                                 <n-button
+                                  v-umami="'click-button-tunnel-manage-delete'"
                                   type="error"
                                   :loading="
                                     loading.tunnel.delete.includes(tunnel.id)
@@ -313,9 +375,16 @@
                             >
                               <template #trigger>
                                 <n-button
+                                  v-umami="
+                                    'click-button-tunnel-manage-force-down'
+                                  "
                                   type="warning"
-                                  :loading="loading.tunnel.down === tunnel.id"
-                                  :disabled="loading.tunnel.down === tunnel.id"
+                                  :loading="
+                                    loading.tunnel.down.includes(tunnel.id)
+                                  "
+                                  :disabled="
+                                    loading.tunnel.down.includes(tunnel.id)
+                                  "
                                   secondary
                                 >
                                   强制下线
@@ -354,7 +423,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
           </n-space>
         </n-space>
@@ -480,12 +549,20 @@
                   </n-tag>
                 </td>
               </tr>
+              <tr>
+                <td>Proxy Protocol</td>
+                <td>
+                  {{
+                    selectedTunnel.proxyProtocolVersion?.toLowerCase() || "禁用"
+                  }}
+                </td>
+              </tr>
             </tbody>
           </n-table>
         </n-scrollbar>
         <n-space
-          vertical
           v-if="['HTTP', 'HTTPS'].includes(selectedTunnel.type)"
+          vertical
         >
           <n-alert type="info">
             您需要在您的域名 DNS 提供商处添加 DNS
@@ -507,16 +584,18 @@
                 <tr>
                   <td>
                     <n-button
+                      v-umami="'click-button-tunnel-manage-copy-domain'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.domain)"
+                      @click="$copyToClipboard(selectedTunnel.domain!)"
                     >
                       <n-code :code="selectedTunnel.domain!" />
                     </n-button>
                   </td>
                   <td>
                     <n-button
+                      v-umami="'click-button-tunnel-manage-copy-hostname'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.node.host)"
+                      @click="$copyToClipboard(selectedTunnel.node.host!)"
                     >
                       <n-code :code="selectedTunnel.node.host!" />
                     </n-button>
@@ -531,6 +610,7 @@
           <n-tooltip trigger="hover">
             <template #trigger>
               <n-button
+                v-umami="'click-button-tunnel-manage-copy-connect-address'"
                 text
                 @click="$copyToClipboard(computeConnectAddr(selectedTunnel))"
               >
@@ -545,7 +625,12 @@
             <n-text>简易启动命令:</n-text>
             <n-tooltip trigger="click">
               <template #trigger>
-                <n-button type="success" size="small" secondary>
+                <n-button
+                  v-umami="'click-button-tunnel-manage-show-easy-start-command'"
+                  type="success"
+                  size="small"
+                  secondary
+                >
                   点击显示
                 </n-button>
               </template>
@@ -554,6 +639,7 @@
               </n-scrollbar>
             </n-tooltip>
             <n-button
+              v-umami="'click-button-tunnel-manage-copy-easy-start-command'"
               type="info"
               size="small"
               secondary
@@ -565,6 +651,7 @@
         </n-el>
         <n-divider />
         <n-button
+          v-umami="'click-button-tunnel-manage-click-to-run'"
           type="success"
           secondary
           style="width: 100%"
@@ -592,20 +679,26 @@
           remotePort: selectedTunnel.remotePort,
           useEncryption: selectedTunnel.useEncryption,
           useCompression: selectedTunnel.useCompression,
+          proxyProtocolVersion: selectedTunnel.proxyProtocolVersion as
+            | ProxyProtocolVersion
+            | undefined,
           domain: selectedTunnel.domain,
           locations: selectedTunnel.locations,
         }"
         @submit="
-          (tunnelData) =>
+          (tunnelData) => {
+            umTrackEvent('click-button-tunnel-manage-edit-submit');
             handleSubmitModifyTunnel(
               selectedTunnel.id,
               selectedTunnel.status,
               tunnelData,
-            )
+            );
+          }
         "
       >
         <template #node-footer>
           <n-button
+            v-umami="'click-button-tunnel-manage-edit-change-node'"
             type="warning"
             secondary
             @click="
@@ -631,6 +724,7 @@
                   <n-select
                     v-model:value="editNodeSelected"
                     :options="editNodeSelectOptions"
+                    :loading="loading.tunnel.editGetNodeList"
                   />
                   <n-pagination
                     v-model:page="nodePage.current"
@@ -638,22 +732,32 @@
                     :page-count="nodePage.count"
                     :on-update:page="
                       (pageSel) => {
+                        loading.tunnel.editGetNodeList = true;
                         nodePage.current = pageSel;
-                        getNodes();
+                        getNodes().then(() => {
+                          loading.tunnel.editGetNodeList = false;
+                        });
                       }
                     "
                     :on-update:page-size="
                       (pageSizeSel) => {
+                        loading.tunnel.editGetNodeList = true;
                         nodePage.size = pageSizeSel;
-                        getNodes();
+                        getNodes().then(() => {
+                          loading.tunnel.editGetNodeList = false;
+                        });
                       }
                     "
                     show-size-picker
-                    :page-sizes="[10, 25, 50, 100]"
+                    :page-sizes="[15, 25, 50, 100, 250, 500]"
                   />
                 </n-space>
               </n-form-item>
               <n-button
+                v-umami="{
+                  name: 'click-button-tunnel-manage-edit-change-node-submit',
+                  '节点 ID': editNodeSelected,
+                }"
                 type="success"
                 @click="
                   () => {
@@ -686,6 +790,18 @@ import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
 import { DeleteTunnel } from "api/src/api/tunnel.delete";
 import { DeleteBatch as DeleteTunnelBatch } from "api/src/api/tunnel/batch.delete";
 import { PatchTunnel } from "api/src/api/tunnel.patch";
+import { DeleteDown as ForceDownTunnel } from "api/src/api/tunnel/down.delete";
+import {
+  DeleteBatch as ForceDownTunnelBatch,
+  type DeleteBatchResponse as ForceDownTunnelBatchResponse,
+} from "api/src/api/tunnel/down/batch.delete";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/list",
+  },
+});
 
 useHead({
   title: "隧道管理",
@@ -696,6 +812,7 @@ const userStore = useUserStore();
 const client = useApiClient();
 
 const message = useMessage();
+const dialog = useDialog();
 
 const viewMode = ref<string>("card");
 
@@ -706,9 +823,10 @@ const loading = ref<{
     down: boolean;
   };
   tunnel: {
+    editGetNodeList: boolean;
     editSubmit: boolean;
     delete: number[];
-    down: number;
+    down: number[];
   };
 }>({
   page: true,
@@ -717,9 +835,10 @@ const loading = ref<{
     down: false,
   },
   tunnel: {
+    editGetNodeList: false,
     editSubmit: false,
     delete: [],
-    down: 0,
+    down: [],
   },
 });
 
@@ -740,6 +859,8 @@ interface Node {
 
 const nodes = ref<Node[]>([]);
 
+type ProxyProtocolVersion = "V1" | "V2";
+
 interface Tunnel {
   id: number;
   name: string;
@@ -758,6 +879,7 @@ interface Tunnel {
   domain: string | null;
   locations: string[] | null;
   status: string;
+  proxyProtocolVersion: ProxyProtocolVersion | null;
 }
 
 const tunnels = ref<Tunnel[]>([]);
@@ -779,6 +901,7 @@ const selectedTunnel = ref<Tunnel>({
     useCompression: false,
     domain: null,
     locations: null,
+    proxyProtocolVersion: null,
     status: "",
   }),
   selectedNode = ref<Node>({
@@ -840,7 +963,7 @@ const page = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   nodePage = ref<{
@@ -849,13 +972,18 @@ const page = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
 const searchKeyword = ref("");
 const displayTunnels = ref<Tunnel[]>([]);
 
+/**
+ * 根据关键词搜索隧道列表
+ * @param tunnelsList 隧道列表
+ * @param keyword 搜索关键词
+ */
 function filterTunnelsByKeyword(
   tunnelsList: Tunnel[],
   keyword: string,
@@ -866,8 +994,8 @@ function filterTunnelsByKeyword(
 
   const searchTerm = keyword.trim().toLowerCase();
   return tunnelsList.filter((tunnel) => {
-    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm);
-    const idMatch = tunnel.id.toString() === searchTerm;
+    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm); // 名称包含关键词
+    const idMatch = tunnel.id.toString() === searchTerm; // ID与关键词相等
     return nameMatch || idMatch;
   });
 }
@@ -888,7 +1016,11 @@ watch(
   { deep: true },
 );
 
+/**
+ * 处理搜索隧道
+ */
 async function handleSearch() {
+  umTrackEvent("keydown-tunnel-manage-search");
   loading.value.page = true;
   displayTunnels.value = filterTunnelsByKeyword(
     tunnels.value,
@@ -897,21 +1029,52 @@ async function handleSearch() {
   loading.value.page = false;
 }
 
+/**
+ * 处理批量编辑隧道
+ */
 async function handleBatchEdit() {
   // TODO
 }
 
+/**
+ * 处理隧道详情弹窗
+ * @param tunnel 隧道信息
+ */
 async function handleInfoModal(tunnel: Tunnel) {
   selectedTunnel.value = tunnel;
   modal.value.info.show = true;
 }
 
+/**
+ * 处理修改隧道弹窗
+ * @param tunnel 隧道信息
+ */
 async function handleModifyTunnel(tunnel: Tunnel) {
   selectedTunnel.value = tunnel;
-  selectedNode.value = findNode(tunnel.node.id);
+  const fallback = {
+    id: 0,
+    name: "未知节点",
+    description: null,
+    host: "",
+    ip: null,
+    portRange: [],
+    additional: {
+      allowUdp: false,
+      allowHttp: false,
+      allowBigTraffic: false,
+      needIcp: false,
+    },
+  };
+  selectedNode.value = findNode(tunnel.node.id) ?? fallback;
   modal.value.edit.show = true;
 }
 
+/**
+ * 处理提交修改隧道
+ * @param tunnelId 隧道 ID
+ * @param tunnelStatus 隧道状态（仅内部传入）
+ * @param tunnel 隧道信息
+ */
 async function handleSubmitModifyTunnel(
   tunnelId: number,
   tunnelStatus: string,
@@ -923,6 +1086,7 @@ async function handleSubmitModifyTunnel(
     remotePort: number | null;
     useEncryption: boolean;
     useCompression: boolean;
+    proxyProtocolVersion: ProxyProtocolVersion | null;
     domain: string | null;
     locations: string[] | null;
     secretKey: string | null;
@@ -940,39 +1104,49 @@ async function handleSubmitModifyTunnel(
       remote_port: tunnel.remotePort ?? undefined,
       use_encryption: tunnel.useEncryption,
       use_compression: tunnel.useCompression,
+      proxy_protocol_version: tunnel.proxyProtocolVersion ?? undefined,
       node_id: selectedNode.value.id,
       domain: tunnel.domain ?? undefined,
-      locations: tunnel.locations ?? undefined,
+      locations:
+        tunnel.locations?.length === 0
+          ? undefined
+          : (tunnel.locations ?? undefined),
       secret_key: tunnel.secretKey ?? undefined,
     }),
   );
   if (rs.status === 200) {
     modal.value.edit.show = false;
-    const arr = tunnels.value.filter((tunnel) => tunnel.id !== tunnelId);
-    arr.push({
-      id: tunnelId,
-      name: tunnel.name,
-      type: tunnel.type,
-      node: {
-        id: selectedNode.value.id,
-        name: selectedNode.value.name,
-        host: selectedNode.value.host,
-        ip: selectedNode.value.ip,
-      },
-      localIp: tunnel.localIp,
-      localPort: tunnel.localPort,
-      remotePort: tunnel.remotePort,
-      useEncryption: tunnel.useEncryption,
-      useCompression: tunnel.useCompression,
-      domain: tunnel.domain,
-      locations: tunnel.locations,
-      status: tunnelStatus,
-    });
-    tunnels.value = sortTunnelsById(arr);
+    const index = tunnels.value.findIndex((item) => item.id === tunnelId);
+    if (index !== -1) {
+      tunnels.value[index] = {
+        id: tunnelId,
+        name: tunnel.name,
+        type: tunnel.type,
+        node: {
+          id: selectedNode.value.id,
+          name: selectedNode.value.name,
+          host: selectedNode.value.host,
+          ip: selectedNode.value.ip,
+        },
+        localIp: tunnel.localIp,
+        localPort: tunnel.localPort,
+        remotePort: tunnel.remotePort,
+        useEncryption: tunnel.useEncryption,
+        useCompression: tunnel.useCompression,
+        proxyProtocolVersion: tunnel.proxyProtocolVersion,
+        domain: tunnel.domain,
+        locations: tunnel.locations,
+        status: tunnelStatus,
+      };
+    }
   } else message.error(rs.message);
   loading.value.tunnel.editSubmit = false;
 }
 
+/**
+ * 处理删除隧道
+ * @param tunnelId 隧道 ID
+ */
 async function handleDeleteTunnel(tunnelId: number) {
   loading.value.tunnel.delete.push(tunnelId);
   const rs = await client.execute(
@@ -989,6 +1163,9 @@ async function handleDeleteTunnel(tunnelId: number) {
   );
 }
 
+/**
+ * 处理批量删除隧道
+ */
 async function handleBatchDeleteTunnel() {
   const selected = batchSelected.value;
 
@@ -1003,29 +1180,81 @@ async function handleBatchDeleteTunnel() {
     tunnels.value = tunnels.value.filter(
       (tunnel) => !selected.includes(tunnel.id),
     );
+    batchSelected.value.length = 0;
+    batchSelectState.value = false;
   } else message.error(rs.message);
   loading.value.batch.delete = false;
-
-  batchSelected.value.length = 0;
-  batchSelectState.value = false;
 }
 
+/**
+ * 处理强制下线隧道
+ * @param tunnelId 隧道 ID
+ */
 async function handleForceDownTunnel(tunnelId: number) {
-  loading.value.tunnel.down = tunnelId;
-  // TODO
-  loading.value.tunnel.down = 0;
+  loading.value.tunnel.down.push(tunnelId);
+  const rs = await client.execute(
+    new ForceDownTunnel({
+      user_id: mainStore.userId!,
+      tunnel_id: tunnelId,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "操作成功",
+      content: "强制下线指令发送成功。",
+    });
+  } else message.error(rs.message);
+  loading.value.tunnel.down = loading.value.tunnel.down.filter(
+    (id) => id !== tunnelId,
+  );
 }
 
+/**
+ * 处理批量强制下线隧道
+ */
 async function handleBatchForceDownTunnel() {
   loading.value.batch.down = true;
-  // TODO
+  const selected = batchSelected.value;
+
+  const rs = await client.execute<ForceDownTunnelBatchResponse>(
+    new ForceDownTunnelBatch({
+      user_id: mainStore.userId!,
+      tunnel_ids: selected,
+    }),
+  );
+  if (rs.status === 200) {
+    dialog.success({
+      title: "操作成功",
+      content: `强制下线指令发送成功。成功下线 ${rs.data.succeeded.length} 条隧道${
+        rs.data.failed.length > 0
+          ? "，失败隧道: " +
+            rs.data.failed
+              .map((failedId) => {
+                const tunnel = tunnels.value.find((t) => t.id === failedId);
+                return tunnel
+                  ? `${tunnel.name} (${failedId})`
+                  : `未知隧道 (${failedId})`;
+              })
+              .join(", ")
+          : ""
+      }。`,
+    });
+  } else message.error(rs.message);
   loading.value.batch.down = false;
 }
 
+/**
+ * 发起一键启动
+ * @param tunnelId 隧道 ID
+ */
 function handleClickToRun(tunnelId: number) {
   window.open(`locyanfrp://${userStore.frpToken}/${tunnelId}`);
 }
 
+/**
+ * 处理批量选择隧道
+ * @param tunnelId 隧道 ID
+ */
 function handleBatchSelect(tunnelId: number) {
   if (batchSelected.value.includes(tunnelId))
     batchSelected.value = batchSelected.value.filter((id) => id !== tunnelId);
@@ -1035,11 +1264,18 @@ function handleBatchSelect(tunnelId: number) {
     .every((id) => batchSelected.value.includes(id));
 }
 
+/**
+ * 处理全选隧道
+ * @param val 是否全选
+ */
 function handleSelectAll(val: boolean) {
   if (val) tunnels.value.forEach((it) => batchSelected.value.push(it.id));
   else batchSelected.value.length = 0;
 }
 
+/**
+ * 获取隧道列表
+ */
 async function getTunnels() {
   loading.value.page = true;
   const rs = await client.execute<GetTunnelsResponse>(
@@ -1050,35 +1286,51 @@ async function getTunnels() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      page.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      page.value.current = rs.data.pagination.count;
+      await getTunnels();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     tunnels.value.length = 0;
-    rs.data.list.forEach((it) => {
-      tunnels.value.push({
-        id: it.id,
-        name: it.name,
-        type: it.type,
-        node: {
-          id: it.node.id,
-          name: it.node.name,
-          host: it.node.host,
-          ip: it.node.ip,
-        },
-        localIp: it.local_ip,
-        localPort: it.local_port,
-        remotePort: it.remote_port,
-        useEncryption: it.use_encryption,
-        useCompression: it.use_compression,
-        domain: it.domain,
-        locations: it.locations,
-        status: it.status,
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        tunnels.value.push({
+          id: it.id,
+          name: it.name,
+          type: it.type,
+          node: {
+            id: it.node.id,
+            name: it.node.name,
+            host: it.node.host,
+            ip: it.node.ip,
+          },
+          localIp: it.local_ip,
+          localPort: it.local_port,
+          remotePort: it.remote_port,
+          useEncryption: it.use_encryption,
+          useCompression: it.use_compression,
+          proxyProtocolVersion:
+            it.proxy_protocol_version as ProxyProtocolVersion | null,
+          domain: it.domain,
+          locations: it.locations,
+          status: it.status,
+        });
       });
-    });
-    tunnels.value = sortTunnelsById(tunnels.value);
     displayTunnels.value = [...tunnels.value];
   } else message.error(rs.message);
   loading.value.page = false;
 }
 
+/**
+ * 获取节点列表
+ */
 async function getNodes() {
   const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
@@ -1088,30 +1340,45 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      nodePage.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      nodePage.value.current = rs.data.pagination.count;
+      await getNodes();
+      return;
+    }
     nodePage.value.count = rs.data.pagination.count;
+
     nodes.value.length = 0;
-    rs.data.list.forEach((it) => {
-      nodes.value.push({
-        id: it.id,
-        name: it.name,
-        description: it.description,
-        host: it.host,
-        ip: it.ip,
-        portRange: it.port_range,
-        additional: {
-          allowUdp: it.additional.allow_udp,
-          allowHttp: it.additional.allow_http,
-          allowBigTraffic: it.additional.allow_big_traffic,
-          needIcp: it.additional.need_icp,
-        },
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.name.localeCompare(b.name))
+      .forEach((it) => {
+        nodes.value.push({
+          id: it.id,
+          name: it.name,
+          description: it.description,
+          host: it.host,
+          ip: it.ip,
+          portRange: it.port_range,
+          additional: {
+            allowUdp: it.additional.allow_udp,
+            allowHttp: it.additional.allow_http,
+            allowBigTraffic: it.additional.allow_big_traffic,
+            needIcp: it.additional.need_icp,
+          },
+        });
       });
-    });
-    nodes.value = sortNodesByName(nodes.value);
     await buildEditNodeSelectOptions();
   } else message.error(rs.message);
 }
 
+/**
+ * 构建编辑节点选择选项
+ */
 async function buildEditNodeSelectOptions() {
+  editNodeSelectOptions.value.length = 0;
   nodes.value.forEach((it) => {
     editNodeSelectOptions.value.push({
       label: it.name,
@@ -1126,23 +1393,11 @@ onMounted(async () => {
   getNodes();
 });
 
-function sortTunnelsById(data: Tunnel[]): Tunnel[] {
-  return data.sort((a, b) => {
-    if (a.id < b.id) {
-      return -1;
-    }
-    if (a.id > b.id) {
-      return 1;
-    }
-    return 0;
-  });
-}
-function sortNodesByName(data: Node[]): Node[] {
-  return data.sort((a, b) => {
-    return a.name.localeCompare(b.name);
-  });
-}
-
+/**
+ * 计算连接地址
+ * @param tunnel 隧道
+ * @returns 连接地址
+ */
 function computeConnectAddr(tunnel: Tunnel): string {
   switch (tunnel.type) {
     case "HTTP":
@@ -1156,9 +1411,21 @@ function computeConnectAddr(tunnel: Tunnel): string {
       return `${tunnel.node.host}:${tunnel.remotePort}`;
   }
 }
+
+/**
+ * 计算启动命令
+ * @param tunnel 隧道
+ * @returns 启动命令
+ */
 function computeStartCommand(tunnel: Tunnel): string {
   return `./frpc -u ${userStore.frpToken} -p ${tunnel.id}`;
 }
+
+/**
+ * 查找节点
+ * @param nodeId 节点 ID
+ * @returns 节点
+ */
 function findNode(nodeId: number): Node {
   return nodes.value.find((node) => node.id === nodeId) as Node;
 }

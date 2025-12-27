@@ -1,5 +1,5 @@
 <template>
-  <n-el class="reset-box">
+  <n-el class="auth-box">
     <n-h1>重置密码</n-h1>
     <n-card title="修改密码">
       <n-form
@@ -31,21 +31,29 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.emailCode = false;
               }
             "
             @callback="handleEmailCodeSend"
           />
-          <n-button
-            type="success"
-            secondary
-            :loading="loading.emailCode"
-            :disabled="loading.emailCode"
-            @click="handleEmailCodeSendButton"
-          >
-            获取验证码
-          </n-button>
+          <n-tooltip :show="loading.captcha.solving" trigger="manual">
+            <template #trigger>
+              <n-button
+                v-umami="'click-button-auth-reset-password-email-code-send'"
+                type="success"
+                secondary
+                :loading="loading.emailCode"
+                :disabled="loading.emailCode"
+                @click="handleEmailCodeSendButton"
+              >
+                获取验证码
+              </n-button>
+            </template>
+            <n-spin class="captcha-solving" :size="14" />
+            验证中...
+          </n-tooltip>
         </n-form-item>
         <n-form-item label="新密码" path="password">
           <n-input
@@ -58,6 +66,7 @@
         <n-el>
           <n-space style="margin-bottom: 1rem">
             <n-button
+              v-umami="'click-button-auth-reset-password-redirect-login'"
               ghost
               text
               type="success"
@@ -68,6 +77,7 @@
           </n-space>
           <n-space>
             <n-button
+              v-umami="'click-button-auth-reset-password-reset'"
               type="success"
               :loading="loading.reset"
               :disabled="loading.reset"
@@ -83,6 +93,8 @@
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import type { FormInst, FormItemRule } from "naive-ui";
 import {
   GetPassword as GetEmailCode,
@@ -144,9 +156,15 @@ const formRules = {
 const loading = ref<{
   reset: boolean;
   emailCode: boolean;
+  captcha: {
+    solving: boolean;
+  };
 }>({
   reset: false,
   emailCode: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const resetPasswordForm = ref<{
@@ -167,10 +185,12 @@ const data: {
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
+  loading.value.captcha.solving = true;
   captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute<GetEmailCodeResponse>(
     new GetEmailCode({
       user: resetPasswordForm.value.user!,
@@ -211,21 +231,3 @@ function handleResetPassword() {
   });
 }
 </script>
-
-<style scoped>
-.reset-box {
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .reset-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

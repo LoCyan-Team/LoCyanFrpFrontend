@@ -1,5 +1,6 @@
 export default defineNuxtPlugin(() => {
   async function copyToClipboard(text: string): Promise<boolean> {
+    // @ts-expect-error
     const notification = window.$notification;
 
     if (!notification) {

@@ -6,3 +6,16 @@ export class GetUser extends API {
     super("/site/notification/user", Method.GET, params, {});
   }
 }
+
+export interface GetUserResponse {
+  list: {
+    id: number;
+    title: string;
+    content: string;
+    create_time: string;
+    read_time: string | null;
+  }[];
+  pagination: {
+    count: number;
+  };
+}

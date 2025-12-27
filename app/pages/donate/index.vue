@@ -20,6 +20,13 @@
           <n-form-item label="付款方式" path="paymentMethod">
             <n-radio-group
               v-model:value="formData.paymentMethod"
+              v-umami="{
+                name: 'select-donate-payment-method',
+                付款方式:
+                  paymentMethods[
+                    formData.paymentMethod as keyof typeof paymentMethods
+                  ].name,
+              }"
               name="payment-method"
             >
               <n-radio
@@ -31,6 +38,7 @@
             </n-radio-group>
           </n-form-item>
           <n-button
+            v-umami="'click-button-donate-submit'"
             type="success"
             :loading="loading.submit"
             :disabled="loading.submit"
@@ -86,6 +94,7 @@
                     <n-spin :show="loading.donationList.includes(donation.id)">
                       <n-space v-if="donation.status === 'PAID'">
                         <n-button
+                          v-umami="'click-button-donate-comment'"
                           type="success"
                           secondary
                           @click="handleButtonComment(donation.id)"
@@ -95,16 +104,20 @@
                       </n-space>
                       <n-space v-else-if="donation.status === 'UNPAID'">
                         <n-button
+                          v-umami="'click-button-donate-pay'"
                           type="success"
                           @click="handleButtonPayment(donation.id)"
-                          >支付</n-button
                         >
+                          支付
+                        </n-button>
                         <n-button
+                          v-umami="'click-button-donate-cancel'"
                           type="warning"
                           secondary
                           @click="handleButtonCancel(donation.id)"
-                          >取消订单</n-button
                         >
+                          取消订单
+                        </n-button>
                       </n-space>
                     </n-spin>
                   </n-td>
@@ -134,7 +147,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
           </n-space>
         </n-space>
@@ -160,8 +173,14 @@
       </n-form>
       <template #footer>
         <n-space justify="end">
-          <n-button @click="commentModal.show = false">取消</n-button>
           <n-button
+            v-umami="'click-button-donate-comment-cancel'"
+            @click="commentModal.show = false"
+          >
+            取消
+          </n-button>
+          <n-button
+            v-umami="'click-button-donate-comment-submit'"
             type="success"
             @click="
               handleComment(commentModal.form.id);
@@ -193,6 +212,13 @@ import {
   type PostPaymentResponse as PostDonationPaymentResponse,
 } from "api/src/api/donation/payment.post";
 import { DeleteDonation } from "api/src/api/donation.delete";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/donation",
+  },
+});
 
 useHead({
   title: "捐赠",
@@ -259,7 +285,7 @@ const page = ref<{
   count: number;
 }>({
   current: 1,
-  size: 10,
+  size: 15,
   count: 1,
 });
 
@@ -341,7 +367,16 @@ async function getDonations() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      page.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      page.value.current = rs.data.pagination.count;
+      await getDonations();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     donations.value.length = 0;
     rs.data.list.forEach((it) => {
       donations.value.push({

@@ -1,5 +1,5 @@
 <template>
-  <n-el class="register-box">
+  <n-el class="auth-box">
     <n-h1>注册</n-h1>
     <n-card title="账户注册">
       <n-form ref="registerFormRef" :model="registerForm" :rules="formRules">
@@ -33,21 +33,29 @@
             "
             @error="
               (e) => {
+                loading.captcha.solving = false;
                 message.error(e);
                 loading.emailCode = false;
               }
             "
             @callback="handleEmailCodeSend"
           />
-          <n-button
-            type="success"
-            secondary
-            :loading="loading.emailCode"
-            :disabled="loading.emailCode"
-            @click="handleEmailCodeSendButton"
-          >
-            获取验证码
-          </n-button>
+          <n-tooltip :show="loading.captcha.solving" trigger="manual">
+            <template #trigger>
+              <n-button
+                v-umami="'click-button-auth-register-email-code-send'"
+                type="success"
+                secondary
+                :loading="loading.emailCode"
+                :disabled="loading.emailCode"
+                @click="handleEmailCodeSendButton"
+              >
+                获取验证码
+              </n-button>
+            </template>
+            <n-spin class="captcha-solving" :size="14" />
+            验证中...
+          </n-tooltip>
         </n-form-item>
         <n-form-item label="密码" path="password">
           <n-input
@@ -68,6 +76,7 @@
         <n-el>
           <n-space style="margin-bottom: 1rem">
             <n-button
+              v-umami="'click-button-auth-register-redirect-login'"
               ghost
               text
               type="success"
@@ -78,6 +87,7 @@
           </n-space>
           <n-space>
             <n-button
+              v-umami="'click-button-auth-register-register'"
               type="success"
               :loading="loading.register"
               :disabled="loading.register"
@@ -92,6 +102,8 @@
   </n-el>
 </template>
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import type { FormInst, FormItemRule } from "naive-ui";
 import FormValidator from "@/utils/formValidator";
 
@@ -181,9 +193,15 @@ const formRules = {
 const loading = ref<{
   register: boolean;
   emailCode: boolean;
+  captcha: {
+    solving: boolean;
+  };
 }>({
   register: false,
   emailCode: false,
+  captcha: {
+    solving: false,
+  },
 });
 
 const registerForm = ref<{
@@ -202,10 +220,12 @@ const registerForm = ref<{
 
 async function handleEmailCodeSendButton() {
   loading.value.emailCode = true;
+  loading.value.captcha.solving = true;
   captchaRef?.value?.solve();
 }
 
 async function handleEmailCodeSend(captchaToken: string) {
+  loading.value.captcha.solving = false;
   const rs = await client.execute(
     new GetEmailCode({
       email: registerForm.value.email!,
@@ -246,21 +266,3 @@ async function handleRegister() {
   });
 }
 </script>
-
-<style scoped>
-.register-box {
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .register-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

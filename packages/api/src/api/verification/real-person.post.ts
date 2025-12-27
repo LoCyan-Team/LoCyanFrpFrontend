@@ -11,3 +11,7 @@ export class PostRealPerson extends API {
     super("/verification/real-person", Method.POST, params, {});
   }
 }
+
+export interface PostRealPersonResponse {
+  url: string;
+}

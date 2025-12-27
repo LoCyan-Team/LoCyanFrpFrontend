@@ -45,7 +45,7 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
           </n-space>
         </n-card>
@@ -58,6 +58,7 @@
               v-model:value="selectedAssetTag"
               :options="assetsOptions"
               placeholder="请选择要下载的资源"
+              @update:value="() => buildDownloadOptions()"
             />
             <n-pagination
               v-model:page="assetPage.current"
@@ -76,37 +77,42 @@
                 }
               "
               show-size-picker
-              :page-sizes="[10, 25, 50, 100]"
+              :page-sizes="[15, 25, 50, 100, 250, 500]"
             />
-            <n-h3>
-              {{ findAssetByTag(selectedAssetTag)?.name }}
-              <n-tag :bordered="false">{{
-                findAssetByTag(selectedAssetTag)?.tag
-              }}</n-tag>
-            </n-h3>
+            <n-space>
+              <n-h3>
+                {{ findAssetByTag(selectedAssetTag)?.name }}
+              </n-h3>
+              <n-tag :bordered="false">
+                {{ findAssetByTag(selectedAssetTag)?.tag }}
+              </n-tag>
+            </n-space>
             <MDC
               :value="
                 findAssetByTag(selectedAssetTag)?.description ?? '没有介绍'
               "
             />
             <n-divider />
-            <n-button
-              type="primary"
-              @click="
-                // TODO: 让用户选择下载的资源的源
-                navigateTo(
-                  findAssetByTag(selectedAssetTag)?.downloadUrls[0]?.url,
-                  {
+            <n-space>
+              <n-select
+                v-model:value="selectedDownloadUrl"
+                :options="downloadUrlOptions"
+                style="width: 200px"
+              />
+              <n-button
+                type="primary"
+                @click="
+                  navigateTo(selectedDownloadUrl, {
                     external: true,
                     open: {
                       target: '_blank',
                     },
-                  },
-                )
-              "
-            >
-              下载
-            </n-button>
+                  })
+                "
+              >
+                下载
+              </n-button>
+            </n-space>
           </n-space>
         </n-card>
       </n-spin>
@@ -139,6 +145,7 @@ const loading = ref<{
 
 const selectedSoftwareId = ref<number | null>(null);
 const selectedAssetTag = ref<string | null>(null);
+const selectedDownloadUrl = ref<string | null>(null);
 
 interface Software {
   id: number;
@@ -162,6 +169,7 @@ const softwareOptions = ref<SelectOption[]>([]);
 
 let softwareAssets: Asset[] = [];
 const assetsOptions = ref<SelectOption[]>([]);
+const downloadUrlOptions = ref<SelectOption[]>([]);
 
 const softwarePage = ref<{
     current: number;
@@ -169,7 +177,7 @@ const softwarePage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   }),
   assetPage = ref<{
@@ -178,7 +186,7 @@ const softwarePage = ref<{
     count: number;
   }>({
     current: 1,
-    size: 10,
+    size: 15,
     count: 1,
   });
 
@@ -268,6 +276,20 @@ async function buildAssetsOptions() {
       value: item.tag,
     };
   });
+  await buildDownloadOptions();
+}
+
+async function buildDownloadOptions() {
+  downloadUrlOptions.value =
+    findAssetByTag(selectedAssetTag.value)?.downloadUrls.map((url) => ({
+      label: url.name,
+      value: url.url,
+    })) || [];
+  if (downloadUrlOptions.value.length > 0) {
+    selectedDownloadUrl.value = downloadUrlOptions.value[0]?.value as
+      | string
+      | null;
+  }
 }
 
 function findSoftwareById(id: number | null): Software | undefined {

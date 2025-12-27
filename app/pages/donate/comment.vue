@@ -50,7 +50,7 @@
             }
           "
           show-size-picker
-          :page-sizes="[10, 25, 50, 100]"
+          :page-sizes="[15, 25, 50, 100, 250, 500]"
         />
       </n-space>
     </n-space>
@@ -63,6 +63,13 @@ import {
   GetComments,
   type GetCommentsResponse,
 } from "api/src/api/donation/comments.get";
+
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/donation/comment",
+  },
+});
 
 useHead({
   title: "留言",
@@ -90,7 +97,7 @@ const page = ref<{
   count: number;
 }>({
   current: 1,
-  size: 10,
+  size: 15,
   count: 1,
 });
 
@@ -103,7 +110,16 @@ async function getComments() {
     }),
   );
   if (rs.status === 200) {
+    if (
+      page.value.current > rs.data.pagination.count &&
+      rs.data.pagination.count > 0
+    ) {
+      page.value.current = rs.data.pagination.count;
+      await getComments();
+      return;
+    }
     page.value.count = rs.data.pagination.count;
+
     data.value.length = 0;
     rs.data.list.forEach((it) => {
       data.value.push({

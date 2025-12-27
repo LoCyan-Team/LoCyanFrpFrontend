@@ -33,6 +33,10 @@
             将以此身份继续: {{ userStore.username }}
           </n-tooltip>
           <n-button
+            v-umami="{
+              name: 'click-button-auth-oauth-authorize-agree',
+              模式: params.mode,
+            }"
             :loading="loading.accept"
             :disabled="loading.accept"
             type="success"
@@ -64,23 +68,25 @@
         <n-text>授权成功，一次性代码为:</n-text>
         <n-tooltip trigger="hover">
           <template #trigger>
-            <n-code
-              :code="result.code"
+            <n-button
+              v-umami="'click-button-auth-oauth-authorize-copy-code'"
+              text
               @click="$copyToClipboard(result.code)"
-              word-wrap
-            />
+            >
+              <n-code :code="result.code" word-wrap />
+            </n-button>
           </template>
           点击复制
         </n-tooltip>
       </n-card>
-      <n-card v-else title="发生错误">
-        <n-text>{{ error }}</n-text>
-      </n-card>
+      <n-h3 v-else>{{ error }}</n-h3>
     </n-spin>
   </n-el>
 </template>
 
 <script setup lang="ts">
+import "~/assets/css/auth.css";
+
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
@@ -351,21 +357,3 @@ onMounted(async () => {
   loading.value.page = false;
 });
 </script>
-
-<style scoped>
-.auth-box {
-  margin-inline: auto;
-  max-width: 400px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  padding-block: 0.5rem;
-}
-
-@media screen and (max-width: 500px) {
-  .auth-box {
-    margin-inline: 0.5rem;
-  }
-}
-</style>

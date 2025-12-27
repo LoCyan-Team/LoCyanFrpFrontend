@@ -27,6 +27,7 @@ export default defineNuxtConfig({
       capJsSiteKey: "",
       apiUrl: "",
       apiBackupUrl: "",
+      docUrl: "",
     },
   },
   vue: {

@@ -796,6 +796,13 @@ import {
   type DeleteBatchResponse as ForceDownTunnelBatchResponse,
 } from "api/src/api/tunnel/down/batch.delete";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/tunnel/list",
+  },
+});
+
 useHead({
   title: "隧道管理",
 });

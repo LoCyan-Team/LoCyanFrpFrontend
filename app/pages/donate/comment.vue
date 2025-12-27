@@ -64,6 +64,13 @@ import {
   type GetCommentsResponse,
 } from "api/src/api/donation/comments.get";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/donation/comment",
+  },
+});
+
 useHead({
   title: "留言",
 });

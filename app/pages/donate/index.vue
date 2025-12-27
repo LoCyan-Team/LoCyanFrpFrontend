@@ -213,6 +213,13 @@ import {
 } from "api/src/api/donation/payment.post";
 import { DeleteDonation } from "api/src/api/donation.delete";
 
+definePageMeta({
+  document: {
+    enable: true,
+    path: "/web-management/donation",
+  },
+});
+
 useHead({
   title: "捐赠",
 });

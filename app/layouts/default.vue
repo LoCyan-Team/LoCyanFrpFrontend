@@ -142,7 +142,7 @@ onMounted(() => {
   transition: color 0.3s ease;
 }
 
-@media screen and (max-width: 700px) {
+@media screen and (width <= 700px) {
   .sidebar-container {
     position: absolute;
     z-index: 2;

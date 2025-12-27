@@ -591,6 +591,7 @@ async function handleTotpRegisterButton() {
       }),
     );
     if (rs.status === 200) {
+      totpRegistered.value = true;
       totpModal.value.show = false;
       dialog.success({ title: "注册成功", content: "成功注册 TOTP 验证器。" });
     } else {
@@ -607,6 +608,7 @@ async function handleTotpUnregisterButton() {
     }),
   );
   if (rs.status === 200) {
+    totpRegistered.value = false;
     dialog.success({
       title: "解除绑定成功",
       content: "成功解除绑定 TOTP 验证器。",
@@ -617,7 +619,7 @@ async function handleTotpUnregisterButton() {
 }
 
 onMounted(() => {
-  fetchRegisteredPasskeys();
+  // fetchRegisteredPasskeys();
   fetchTotpStatus();
 });
 </script>

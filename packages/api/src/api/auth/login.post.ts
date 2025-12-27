@@ -5,6 +5,7 @@ export class PostLogin extends API {
   constructor(params: {
     user: string;
     password: string;
+    totp_code?: number;
     captcha_token: string;
   }) {
     super("/auth/login", Method.POST, params, {});

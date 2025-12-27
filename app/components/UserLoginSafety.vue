@@ -192,10 +192,14 @@ import { GetEmail as GetUpdateEmailCode } from "api/src/api/email/email.get";
 import { PutEmail } from "api/src/api/user/email.put";
 import FormValidator from "@/utils/formValidator";
 import {
-  GetOptions as GetWebAuthnOptions,
-  type GetOptionsResponse as GetWebAuthnOptionsResponse,
-} from "api/src/api/user/webauthn/options.get";
-import { PutWebAuthn } from "api/src/api/user/webauthn.put";
+  GetOptions as GetPasskeyOptions,
+  type GetOptionsResponse as GetPasskeyOptionsResponse,
+} from "api/src/api/user/webauthn/passkey/options.get";
+import { PutPasskey } from "api/src/api/user/webauthn/passkey.put";
+import {
+  GetPasskeys,
+  type GetPasskeysResponse,
+} from "api/src/api/user/webauthn/passkeys.get";
 
 const mainStore = useMainStore();
 const client = useApiClient();
@@ -378,7 +382,26 @@ async function handleUpdateEmail() {
  * 获取已注册的通行密钥
  */
 async function fetchRegisteredPasskeys() {
-  // TODO
+  const rs = await client.execute<GetPasskeysResponse>(
+    new GetPasskeys({
+      user_id: mainStore.userId!,
+    }),
+  );
+  if (rs.status === 200) {
+    rs.data.list
+      .slice()
+      .sort((a, b) => a.id - b.id)
+      .forEach((it) => {
+        registeredPasskeys.value.push({
+          id: it.id,
+          name: it.name,
+          createTime: it.create_time,
+          lastUsed: it.last_used,
+        });
+      });
+  } else {
+    message.error(rs.message);
+  }
 }
 
 /**
@@ -393,16 +416,16 @@ async function handleRegisterPasskey() {
     message.error("您的浏览器不支持 WebAuthn API，请更换浏览器重试。");
   }
 
-  const rs = await client.execute<GetWebAuthnOptionsResponse>(
-    new GetWebAuthnOptions({
+  const rs = await client.execute<GetPasskeyOptionsResponse>(
+    new GetPasskeyOptions({
       user_id: mainStore.userId!,
     }),
   );
   if (rs.status === 200) {
     let publicKeyConverted;
     try {
-      // @ts-expect-error
       publicKeyConverted = PublicKeyCredential.parseCreationOptionsFromJSON(
+        // @ts-expect-error do not mark publicKey attr as error
         rs.data.options.publicKey,
       );
     } catch (e) {
@@ -415,7 +438,7 @@ async function handleRegisterPasskey() {
       })
       .then(async (response) => {
         const rs = await client.execute(
-          new PutWebAuthn({
+          new PutPasskey({
             user_id: mainStore.userId!,
             response_json: JSON.stringify(response),
           }),

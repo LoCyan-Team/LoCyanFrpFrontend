@@ -1,9 +1,9 @@
-import { API } from "../../../type/api";
-import { Method } from "../../../type/method";
+import { API } from "../../../../type/api";
+import { Method } from "../../../../type/method";
 
 export class PostLogin extends API {
   constructor(params: { response_json: string }) {
-    super("/auth/webauthn/login", Method.POST, params, {});
+    super("/auth/webauthn/passkey/login", Method.POST, params, {});
   }
 }
 

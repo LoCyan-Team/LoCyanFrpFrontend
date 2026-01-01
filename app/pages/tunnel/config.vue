@@ -152,7 +152,7 @@
               v-umami="'click-button-tunnel-config-copy'"
               type="success"
               secondary
-              @click="$copyToClipboard(content)"
+              @click="clipboard.copy(content)"
             >
               复制全部内容
             </n-button>
@@ -177,12 +177,18 @@ import type { SelectOption } from "naive-ui";
 
 import type { Response } from "api/src/type/response";
 
-import { GetTunnels, type GetTunnelsResponse } from "api/src/api/tunnels.get";
-import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
+import {
+  GetTunnels,
+  type GetTunnelsResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/tunnels.get";
+import {
+  GetNodes,
+  type GetNodesResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/nodes.get";
 import {
   GetConfig,
   type GetConfigResponse,
-} from "api/src/api/tunnel/config.get";
+} from "@locyanfrp-dashboard-frontend/api/src/tunnel/config.get";
 
 definePageMeta({
   document: {
@@ -194,6 +200,8 @@ definePageMeta({
 useHead({
   title: "配置文件",
 });
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const client = useApiClient();

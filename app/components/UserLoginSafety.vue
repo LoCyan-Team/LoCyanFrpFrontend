@@ -203,7 +203,7 @@
           />
           <n-thing>
             <n-scrollbar x-scrollable>
-              <n-button text @click="$copyToClipboard(totpModal.secret!)">
+              <n-button text @click="clipboard.copy(totpModal.secret!)">
                 <n-code :code="totpModal.secret!" />
               </n-button>
             </n-scrollbar>
@@ -230,27 +230,36 @@
 <script setup lang="ts">
 import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
-import { PutUsername } from "api/src/api/user/username.put";
-import { PutPassword } from "api/src/api/user/password.put";
-import { GetEmail as GetUpdateEmailCode } from "api/src/api/email/email.get";
-import { PutEmail } from "api/src/api/user/email.put";
+import { PutUsername } from "@locyanfrp-dashboard-frontend/api/src/user/username.put";
+import { PutPassword } from "@locyanfrp-dashboard-frontend/api/src/user/password.put";
+import { GetEmail as GetUpdateEmailCode } from "@locyanfrp-dashboard-frontend/api/src/email/email.get";
+import { PutEmail } from "@locyanfrp-dashboard-frontend/api/src/user/email.put";
 import FormValidator from "@/utils/formValidator";
 import {
   GetOptions as GetPasskeyOptions,
   type GetOptionsResponse as GetPasskeyOptionsResponse,
-} from "api/src/api/user/webauthn/passkey/options.get";
-import { PutPasskey } from "api/src/api/user/webauthn/passkey.put";
+} from "@locyanfrp-dashboard-frontend/api/src/user/webauthn/passkey/options.get";
+import { PutPasskey } from "@locyanfrp-dashboard-frontend/api/src/user/webauthn/passkey.put";
 import {
   GetPasskeys,
   type GetPasskeysResponse,
-} from "api/src/api/user/webauthn/passkeys.get";
-import { GetTotp, type GetTotpResponse } from "api/src/api/user/totp.get";
-import { PostTotp, type PostTotpResponse } from "api/src/api/user/totp.post";
-import { PutTotp } from "api/src/api/user/totp.put";
-import { DeleteTotp } from "api/src/api/user/totp.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/user/webauthn/passkeys.get";
+import {
+  GetTotp,
+  type GetTotpResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/user/totp.get";
+import {
+  PostTotp,
+  type PostTotpResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/user/totp.post";
+import { PutTotp } from "@locyanfrp-dashboard-frontend/api/src/user/totp.put";
+import { DeleteTotp } from "@locyanfrp-dashboard-frontend/api/src/user/totp.delete";
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const client = useApiClient();
+
 const message = useMessage();
 const dialog = useDialog();
 const notification = useNotification();

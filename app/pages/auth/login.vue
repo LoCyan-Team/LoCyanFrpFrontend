@@ -126,15 +126,18 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { PostLogin, type PostLoginResponse } from "api/src/api/auth/login.post";
+import {
+  PostLogin,
+  type PostLoginResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/auth/login.post";
 import {
   PostLogin as PostPasskeyLogin,
   type PostLoginResponse as PostPasskeyLoginResponse,
-} from "api/src/api/auth/webauthn/passkey/login.post";
+} from "@locyanfrp-dashboard-frontend/api/src/auth/webauthn/passkey/login.post";
 import {
   GetLogin as GetQqLogin,
   type GetLoginResponse as GetQqLoginResponse,
-} from "api/src/api/auth/third-party/qq/login.get";
+} from "@locyanfrp-dashboard-frontend/api/src/auth/third-party/qq/login.get";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
 import FormValidator from "~/utils/formValidator";
 

@@ -126,11 +126,11 @@ import type { SelectOption } from "naive-ui";
 import {
   GetSoftware,
   type GetSoftwareResponse,
-} from "api/src/api/software.get";
+} from "@locyanfrp-dashboard-frontend/api/src/software.get";
 import {
   GetAssets,
   type GetAssetsResponse,
-} from "api/src/api/software/assets.get";
+} from "@locyanfrp-dashboard-frontend/api/src/software/assets.get";
 
 const client = useApiClient();
 const message = useMessage();

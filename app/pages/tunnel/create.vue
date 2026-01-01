@@ -77,8 +77,11 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
-import { PutTunnel } from "api/src/api/tunnel.put";
+import {
+  GetNodes,
+  type GetNodesResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/nodes.get";
+import { PutTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel.put";
 
 definePageMeta({
   document: {

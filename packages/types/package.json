@@ -1,0 +1,13 @@
+{
+  "name": "@locyanfrp-dashboard-frontend/types",
+  "type": "module",
+  "scripts": {
+    "format": "prettier -w ."
+  },
+  "devDependencies": {
+    "prettier": "^3.6.2"
+  },
+  "peerDependencies": {
+    "typescript": "^5.8.3"
+  }
+}

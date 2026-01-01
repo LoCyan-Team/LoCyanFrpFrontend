@@ -54,8 +54,14 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetSign, type GetSignResponse } from "api/src/api/sign.get";
-import { PostSign, type PostSignResponse } from "api/src/api/sign.post";
+import {
+  GetSign,
+  type GetSignResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/sign.get";
+import {
+  PostSign,
+  type PostSignResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/sign.post";
 
 definePageMeta({
   document: {

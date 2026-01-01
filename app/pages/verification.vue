@@ -269,19 +269,19 @@ import FileDownloadDoneOutlined from "@vicons/material/FileDownloadDoneOutlined"
 import {
   GetVerification as GetStatus,
   type GetVerificationResponse as GetStatusResponse,
-} from "api/src/api/verification.get";
+} from "@locyanfrp-dashboard-frontend/api/src/verification.get";
 import {
   PostPayment as PostBuyAccreditation,
   type PostPaymentResponse as PostBuyAccreditationResponse,
-} from "api/src/api/verification/real-person/payment.post";
-import { PostGiven as PostGivenAccreditation } from "api/src/api/verification/real-person/given.post";
+} from "@locyanfrp-dashboard-frontend/api/src/verification/real-person/payment.post";
+import { PostGiven as PostGivenAccreditation } from "@locyanfrp-dashboard-frontend/api/src/verification/real-person/given.post";
 import {
   PostRealPerson,
   type PostRealPersonResponse,
-} from "api/src/api/verification/real-person.post";
-import { GetRealPerson } from "api/src/api/verification/real-person.get";
-import { DeleteRealPerson } from "api/src/api/verification/real-person.delete";
-import { PostRealName } from "api/src/api/verification/real-name.post";
+} from "@locyanfrp-dashboard-frontend/api/src/verification/real-person.post";
+import { GetRealPerson } from "@locyanfrp-dashboard-frontend/api/src/verification/real-person.get";
+import { DeleteRealPerson } from "@locyanfrp-dashboard-frontend/api/src/verification/real-person.delete";
+import { PostRealName } from "@locyanfrp-dashboard-frontend/api/src/verification/real-name.post";
 
 definePageMeta({
   document: {

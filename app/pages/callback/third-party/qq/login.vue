@@ -13,7 +13,7 @@ import { useUserStore } from "@/store/user";
 import {
   PostLogin,
   type PostLoginResponse,
-} from "api/src/api/auth/third-party/qq/login.post";
+} from "@locyanfrp-dashboard-frontend/api/src/auth/third-party/qq/login.post";
 
 definePageMeta({
   needLogin: false,

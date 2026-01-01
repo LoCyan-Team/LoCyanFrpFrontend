@@ -169,7 +169,7 @@
                                 "
                                 text
                                 @click="
-                                  $copyToClipboard(computeConnectAddr(tunnel))
+                                  clipboard.copy(computeConnectAddr(tunnel))
                                 "
                               >
                                 <n-code :code="computeConnectAddr(tunnel)" />
@@ -307,7 +307,7 @@
                               "
                               text
                               @click="
-                                $copyToClipboard(computeConnectAddr(tunnel))
+                                clipboard.copy(computeConnectAddr(tunnel))
                               "
                             >
                               <n-code :code="computeConnectAddr(tunnel)" />
@@ -496,7 +496,7 @@
                     <template #trigger>
                       <n-button
                         text
-                        @click="$copyToClipboard(selectedTunnel.node.host!)"
+                        @click="clipboard.copy(selectedTunnel.node.host!)"
                       >
                         <n-code :code="selectedTunnel.node.host!" />
                       </n-button>
@@ -512,7 +512,7 @@
                     <template #trigger>
                       <n-button
                         text
-                        @click="$copyToClipboard(selectedTunnel.node.ip!)"
+                        @click="clipboard.copy(selectedTunnel.node.ip!)"
                       >
                         <n-code :code="selectedTunnel.node.ip" />
                       </n-button>
@@ -586,7 +586,7 @@
                     <n-button
                       v-umami="'click-button-tunnel-manage-copy-domain'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.domain!)"
+                      @click="clipboard.copy(selectedTunnel.domain!)"
                     >
                       <n-code :code="selectedTunnel.domain!" />
                     </n-button>
@@ -595,7 +595,7 @@
                     <n-button
                       v-umami="'click-button-tunnel-manage-copy-hostname'"
                       text
-                      @click="$copyToClipboard(selectedTunnel.node.host!)"
+                      @click="clipboard.copy(selectedTunnel.node.host!)"
                     >
                       <n-code :code="selectedTunnel.node.host!" />
                     </n-button>
@@ -612,7 +612,7 @@
               <n-button
                 v-umami="'click-button-tunnel-manage-copy-connect-address'"
                 text
-                @click="$copyToClipboard(computeConnectAddr(selectedTunnel))"
+                @click="clipboard.copy(computeConnectAddr(selectedTunnel))"
               >
                 <n-code :code="computeConnectAddr(selectedTunnel)" />
               </n-button>
@@ -643,7 +643,7 @@
               type="info"
               size="small"
               secondary
-              @click="$copyToClipboard(computeStartCommand(selectedTunnel))"
+              @click="clipboard.copy(computeStartCommand(selectedTunnel))"
             >
               点击复制
             </n-button>
@@ -785,16 +785,26 @@ import type { SelectOption } from "naive-ui";
 import Error from "@vicons/carbon/Error";
 import Search from "@vicons/ionicons5/Search";
 
-import { GetTunnels, type GetTunnelsResponse } from "api/src/api/tunnels.get";
-import { GetNodes, type GetNodesResponse } from "api/src/api/nodes.get";
-import { DeleteTunnel } from "api/src/api/tunnel.delete";
-import { DeleteBatch as DeleteTunnelBatch } from "api/src/api/tunnel/batch.delete";
-import { PatchTunnel } from "api/src/api/tunnel.patch";
-import { DeleteDown as ForceDownTunnel } from "api/src/api/tunnel/down.delete";
+import {
+  GetTunnels,
+  type GetTunnelsResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/tunnels.get";
+import {
+  GetNodes,
+  type GetNodesResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/nodes.get";
+import { DeleteTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel.delete";
+import { DeleteBatch as DeleteTunnelBatch } from "@locyanfrp-dashboard-frontend/api/src/tunnel/batch.delete";
+import { PatchTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel.patch";
+import { DeleteDown as ForceDownTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel/down.delete";
 import {
   DeleteBatch as ForceDownTunnelBatch,
   type DeleteBatchResponse as ForceDownTunnelBatchResponse,
-} from "api/src/api/tunnel/down/batch.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/tunnel/down/batch.delete";
+
+import type { Node } from "@locyanfrp-dashboard-frontend/types/src/node";
+import type { Tunnel } from "@locyanfrp-dashboard-frontend/types/src/tunnel";
+import type { ProxyProtocolVersion } from "@locyanfrp-dashboard-frontend/types/src/tunnel/proxyProtocolVersion";
 
 definePageMeta({
   document: {
@@ -806,6 +816,8 @@ definePageMeta({
 useHead({
   title: "隧道管理",
 });
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();
@@ -842,46 +854,7 @@ const loading = ref<{
   },
 });
 
-interface Node {
-  id: number;
-  name: string;
-  description: string | null;
-  host: string;
-  ip: string | null;
-  portRange: string[];
-  additional: {
-    allowUdp: boolean;
-    allowHttp: boolean;
-    allowBigTraffic: boolean;
-    needIcp: boolean;
-  };
-  verificationLevel: string;
-}
-
 const nodes = ref<Node[]>([]);
-
-type ProxyProtocolVersion = "V1" | "V2";
-
-interface Tunnel {
-  id: number;
-  name: string;
-  type: string;
-  node: {
-    id: number;
-    name: string | null;
-    host: string | null;
-    ip: string | null;
-  };
-  localIp: string;
-  localPort: number;
-  remotePort: number | null;
-  useEncryption: boolean;
-  useCompression: boolean;
-  domain: string | null;
-  locations: string[] | null;
-  status: string;
-  proxyProtocolVersion: ProxyProtocolVersion | null;
-}
 
 const tunnels = ref<Tunnel[]>([]);
 

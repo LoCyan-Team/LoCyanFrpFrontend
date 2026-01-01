@@ -59,7 +59,7 @@
               type="info"
               size="small"
               secondary
-              @click="$copyToClipboard(userStore.frpToken!)"
+              @click="clipboard.copy(userStore.frpToken!)"
             >
               点击复制
             </n-button>
@@ -153,21 +153,23 @@ import Qq from "@vicons/fa/Qq";
 import {
   GetThirdParty as GetThirdPartyBind,
   type GetThirdPartyResponse as GetThirdPartyBindResponse,
-} from "api/src/api/user/third-party.get";
+} from "@locyanfrp-dashboard-frontend/api/src/user/third-party.get";
 import {
   GetBind as GetQqBind,
   type GetBindResponse as GetQqBindResponse,
-} from "api/src/api/user/third-party/qq/bind.get";
-import { DeleteBind as DeleteQqBind } from "api/src/api/user/third-party/qq/bind.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/user/third-party/qq/bind.get";
+import { DeleteBind as DeleteQqBind } from "@locyanfrp-dashboard-frontend/api/src/user/third-party/qq/bind.delete";
 import {
   PostToken as PostResetFrpToken,
   type PostTokenResponse as PostResetFrpTokenResponse,
-} from "api/src/api/user/frp/token.post";
-import { DeleteAll as DeleteAllToken } from "api/src/api/user/token/all.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/user/frp/token.post";
+import { DeleteAll as DeleteAllToken } from "@locyanfrp-dashboard-frontend/api/src/user/token/all.delete";
 
 const emit = defineEmits<{
   (e: "logout"): void;
 }>();
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

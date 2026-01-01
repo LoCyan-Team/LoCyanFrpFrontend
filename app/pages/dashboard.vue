@@ -94,8 +94,11 @@ import { useUserStore } from "@/store/user";
 
 import { useOsTheme } from "naive-ui";
 
-import { GetNotice, type GetNoticeResponse } from "api/src/api/site/notice.get";
-import { PostTraffic as PostResetTraffic } from "api/src/api/user/traffic.post";
+import {
+  GetNotice,
+  type GetNoticeResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/site/notice.get";
+import { PostTraffic as PostResetTraffic } from "@locyanfrp-dashboard-frontend/api/src/user/traffic.post";
 
 const naiveOsTheme = useOsTheme();
 if (naiveOsTheme.value === "dark") await import("highcharts/themes/dark-unica");

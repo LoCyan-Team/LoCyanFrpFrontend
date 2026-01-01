@@ -48,9 +48,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetPrize, type GetPrizeResponse } from "api/src/api/prize.get";
+import {
+  GetPrize,
+  type GetPrizeResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/prize.get";
 
-import { PostPrize } from "api/src/api/prize.post";
+import { PostPrize } from "@locyanfrp-dashboard-frontend/api/src/prize.post";
 
 const dayjs = useDayjs();
 

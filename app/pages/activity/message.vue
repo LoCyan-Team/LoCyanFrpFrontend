@@ -35,9 +35,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetMessage, type GetMessageResponse } from "api/src/api/message.get";
+import {
+  GetMessage,
+  type GetMessageResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/message.get";
 
-import { PostMessage } from "api/src/api/message.post";
+import { PostMessage } from "@locyanfrp-dashboard-frontend/api/src/message.post";
 
 const dayjs = useDayjs();
 

@@ -6,7 +6,10 @@
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { GetUser, type GetUserResponse } from "api/src/api/user.get";
+import {
+  GetUser,
+  type GetUserResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/user.get";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

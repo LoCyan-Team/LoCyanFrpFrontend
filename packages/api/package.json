@@ -1,12 +1,10 @@
 {
-  "name": "api",
-  "module": "index.ts",
+  "name": "@locyanfrp-dashboard-frontend/api",
   "type": "module",
   "scripts": {
     "format": "prettier -w ."
   },
   "devDependencies": {
-    "@types/bun": "latest",
     "prettier": "^3.6.2"
   },
   "peerDependencies": {

@@ -117,15 +117,15 @@ import { useMainStore } from "@/store/main";
 import {
   GetSystem,
   type GetSystemResponse,
-} from "api/src/api/site/notification/system.get";
+} from "@locyanfrp-dashboard-frontend/api/src/site/notification/system.get";
 import {
   GetUser,
   type GetUserResponse,
-} from "api/src/api/site/notification/user.get";
-import { PutRead as PutSystemRead } from "api/src/api/site/notification/system/read.put";
-import { PutBatch as PutSystemReadBatch } from "api/src/api/site/notification/system/read/batch.put";
-import { PutRead as PutUserRead } from "api/src/api/site/notification/user/read.put";
-import { PutBatch as PutUserReadBatch } from "api/src/api/site/notification/user/read/batch.put";
+} from "@locyanfrp-dashboard-frontend/api/src/site/notification/user.get";
+import { PutRead as PutSystemRead } from "@locyanfrp-dashboard-frontend/api/src/site/notification/system/read.put";
+import { PutBatch as PutSystemReadBatch } from "@locyanfrp-dashboard-frontend/api/src/site/notification/system/read/batch.put";
+import { PutRead as PutUserRead } from "@locyanfrp-dashboard-frontend/api/src/site/notification/user/read.put";
+import { PutBatch as PutUserReadBatch } from "@locyanfrp-dashboard-frontend/api/src/site/notification/user/read/batch.put";
 
 const dayjs = useDayjs();
 

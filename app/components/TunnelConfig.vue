@@ -154,7 +154,10 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import { useMainStore } from "@/store/main";
 import FormValidator from "@/utils/formValidator";
 
-import { GetPort, type GetPortResponse } from "api/src/api/node/port.get";
+import {
+  GetPort,
+  type GetPortResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/node/port.get";
 
 const mainStore = useMainStore();
 

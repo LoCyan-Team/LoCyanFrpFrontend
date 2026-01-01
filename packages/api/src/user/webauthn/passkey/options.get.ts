@@ -1,0 +1,12 @@
+import { API } from "../../../../types/api";
+import { Method } from "../../../../types/method";
+
+export class GetOptions extends API {
+  constructor(params: { user_id: number }) {
+    super("/user/webauthn/passkey/options", Method.GET, params, {});
+  }
+}
+
+export interface GetOptionsResponse {
+  options: object;
+}

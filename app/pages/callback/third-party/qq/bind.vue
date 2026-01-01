@@ -17,7 +17,7 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { PostBind } from "api/src/api/user/third-party/qq/bind.post";
+import { PostBind } from "@locyanfrp-dashboard-frontend/api/src/user/third-party/qq/bind.post";
 
 definePageMeta({
   sidebar: false,

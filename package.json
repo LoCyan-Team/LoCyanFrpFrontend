@@ -2,6 +2,9 @@
   "name": "locyanfrp-dashboard-frontend",
   "private": true,
   "type": "module",
+  "workspaces": [
+    "packages/*"
+  ],
   "scripts": {
     "dev": "nuxt dev --dotenv .env.development",
     "format": "prettier -w .",
@@ -32,7 +35,6 @@
     "@vicons/ionicons4": "^0.13.0",
     "@vicons/ionicons5": "^0.13.0",
     "@vicons/material": "^0.13.0",
-    "api": "./packages/api",
     "dayjs": "^1.11.19",
     "dayjs-nuxt": "^2.1.11",
     "highcharts-vue": "^2.0.1",
@@ -43,6 +45,8 @@
     "pinia": "^3.0.4",
     "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.5.26",
-    "vue-router": "^4.6.3"
+    "vue-router": "^4.6.3",
+    "@locyanfrp-dashboard-frontend/api": "workspace:api",
+    "@locyanfrp-dashboard-frontend/types": "workspace:types"
   }
 }

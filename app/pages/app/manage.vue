@@ -92,9 +92,12 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetApps, type GetAppsResponse } from "api/src/api/apps.get";
-import { DeleteApp } from "api/src/api/app.delete";
-import { PatchApp } from "api/src/api/app.patch";
+import {
+  GetApps,
+  type GetAppsResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/apps.get";
+import { DeleteApp } from "@locyanfrp-dashboard-frontend/api/src/app.delete";
+import { PatchApp } from "@locyanfrp-dashboard-frontend/api/src/app.patch";
 
 const mainStore = useMainStore();
 const client = useApiClient();

@@ -71,7 +71,7 @@
             <n-button
               v-umami="'click-button-auth-oauth-authorize-copy-code'"
               text
-              @click="$copyToClipboard(result.code)"
+              @click="clipboard.copy(result.code)"
             >
               <n-code :code="result.code" word-wrap />
             </n-button>
@@ -94,12 +94,15 @@ import {
   PostAuthorize,
   type PostAuthorizeCallbackResponse,
   type PostAuthorizeCodeResponse,
-} from "api/src/api/auth/oauth/authorize.post";
+} from "@locyanfrp-dashboard-frontend/api/src/auth/oauth/authorize.post";
 import {
   GetPermissions,
   type GetPermissionsResponse,
-} from "api/src/api/auth/oauth/permissions.get";
-import { GetApp, type GetAppResponse } from "api/src/api/app.get";
+} from "@locyanfrp-dashboard-frontend/api/src/auth/oauth/permissions.get";
+import {
+  GetApp,
+  type GetAppResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/app.get";
 
 definePageMeta({
   sidebar: false,
@@ -108,6 +111,8 @@ definePageMeta({
 useHead({
   title: "应用授权",
 });
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

@@ -193,22 +193,28 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import { GetDomains, type GetDomainsResponse } from "api/src/api/domains.get";
+import {
+  GetDomains,
+  type GetDomainsResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/domains.get";
 import {
   GetIcp as GetIcpDomains,
   type GetIcpResponse as GetIcpDomainsResponse,
-} from "api/src/api/domain/icp.get";
+} from "@locyanfrp-dashboard-frontend/api/src/domain/icp.get";
 import {
   GetImage as GetMiitCaptchaImage,
   type GetImageResponse as GetMiitCaptchaImageResponse,
-} from "api/src/api/domain/icp/miit/image.get";
+} from "@locyanfrp-dashboard-frontend/api/src/domain/icp/miit/image.get";
 import {
   PostSign as PostMiitCaptchaSign,
   type PostSignResponse as PostMiitCaptchaSignResponse,
-} from "api/src/api/domain/icp/miit/sign.post";
-import { PutIcp, type PutIcpResponse } from "api/src/api/domain/icp.put";
-import { DeleteIcp } from "api/src/api/domain/icp.delete";
-import { DeleteBatch as DeleteIcpBatch } from "api/src/api/domain/icp/batch.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/domain/icp/miit/sign.post";
+import {
+  PutIcp,
+  type PutIcpResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/domain/icp.put";
+import { DeleteIcp } from "@locyanfrp-dashboard-frontend/api/src/domain/icp.delete";
+import { DeleteBatch as DeleteIcpBatch } from "@locyanfrp-dashboard-frontend/api/src/domain/icp/batch.delete";
 
 const mainStore = useMainStore();
 const client = useApiClient();

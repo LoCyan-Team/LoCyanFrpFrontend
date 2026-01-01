@@ -85,7 +85,7 @@ import ManageAccountsOutlined from "@vicons/material/ManageAccountsOutlined";
 import { useMainStore } from "@/store/main";
 import { useUserStore } from "@/store/user";
 
-import { DeleteToken } from "api/src/api/user/token.delete";
+import { DeleteToken } from "@locyanfrp-dashboard-frontend/api/src/user/token.delete";
 
 const mainStore = useMainStore();
 const userStore = useUserStore();

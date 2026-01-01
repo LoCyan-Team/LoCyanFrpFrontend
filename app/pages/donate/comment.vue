@@ -62,7 +62,7 @@ import { useMainStore } from "@/store/main";
 import {
   GetComments,
   type GetCommentsResponse,
-} from "api/src/api/donation/comments.get";
+} from "@locyanfrp-dashboard-frontend/api/src/donation/comments.get";
 
 definePageMeta({
   document: {

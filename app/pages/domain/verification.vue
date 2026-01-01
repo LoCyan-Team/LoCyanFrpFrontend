@@ -179,7 +179,7 @@
                                 'click-button-domain-verification-verify-content-copy'
                               "
                               text
-                              @click="$copyToClipboard(verification.recordData)"
+                              @click="clipboard.copy(verification.recordData)"
                             >
                               <n-code :code="verification.recordData" />
                             </n-button>
@@ -249,7 +249,7 @@
                     'click-button-domain-verification-verify-copy-hostname'
                   "
                   text
-                  @click="$copyToClipboard(`_lcf-verify.${formData.domain}.`)"
+                  @click="clipboard.copy(`_lcf-verify.${formData.domain}.`)"
                 >
                   <n-code :code="`_lcf-verify.${formData.domain}.`" />
                 </n-button>
@@ -265,7 +265,7 @@
                     'click-button-domain-verification-verify-copy-content'
                   "
                   text
-                  @click="$copyToClipboard(modal.verification.record.data)"
+                  @click="clipboard.copy(modal.verification.record.data)"
                 >
                   <n-code :code="modal.verification.record.data" />
                 </n-button>
@@ -290,18 +290,23 @@
 <script setup lang="ts">
 import { useMainStore } from "@/store/main";
 
-import { GetDomains, type GetDomainsResponse } from "api/src/api/domains.get";
+import {
+  GetDomains,
+  type GetDomainsResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/domains.get";
 import {
   GetVerifications,
   type GetVerificationsResponse,
-} from "api/src/api/domain/verifications.get";
+} from "@locyanfrp-dashboard-frontend/api/src/domain/verifications.get";
 import {
   PutDns as PutDnsVerification,
   type PutDnsResponse as PutDnsVerificationResponse,
-} from "api/src/api/domain/verification/dns.put";
-import { PostDns as PostDnsVerification } from "api/src/api/domain/verification/dns.post";
-import { DeleteDomain } from "api/src/api/domain.delete";
-import { DeleteBatch as DeleteDomainBatch } from "api/src/api/domain/batch.delete";
+} from "@locyanfrp-dashboard-frontend/api/src/domain/verification/dns.put";
+import { PostDns as PostDnsVerification } from "@locyanfrp-dashboard-frontend/api/src/domain/verification/dns.post";
+import { DeleteDomain } from "@locyanfrp-dashboard-frontend/api/src/domain.delete";
+import { DeleteBatch as DeleteDomainBatch } from "@locyanfrp-dashboard-frontend/api/src/domain/batch.delete";
+
+const clipboard = useClipboard();
 
 const mainStore = useMainStore();
 const client = useApiClient();

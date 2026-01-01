@@ -99,8 +99,8 @@ import type { FormInst, FormItemRule } from "naive-ui";
 import {
   GetPassword as GetEmailCode,
   type GetPasswordResponse as GetEmailCodeResponse,
-} from "api/src/api/email/password.get";
-import { PutPassword } from "api/src/api/user/password.put";
+} from "@locyanfrp-dashboard-frontend/api/src/email/password.get";
+import { PutPassword } from "@locyanfrp-dashboard-frontend/api/src/user/password.put";
 import CaptchaDialog from "@/components/CaptchaDialog.vue";
 import FormValidator from "~/utils/formValidator";
 

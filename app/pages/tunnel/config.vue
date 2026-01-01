@@ -175,7 +175,7 @@ import { useMainStore } from "@/store/main";
 
 import type { SelectOption } from "naive-ui";
 
-import type { Response } from "api/src/type/response";
+import type { Response } from "@locyanfrp-dashboard-frontend/api/types/response";
 
 import {
   GetTunnels,

@@ -6,7 +6,7 @@
       "name": "nuxt-app",
       "dependencies": {
         "@bg-dev/nuxt-naiveui": "2.0.0",
-        "@cap.js/widget": "^0.1.32",
+        "@cap.js/widget": "^0.1.33",
         "@locyanfrp-dashboard-frontend/api": "workspace:api",
         "@locyanfrp-dashboard-frontend/types": "workspace:types",
         "@nuxt/eslint": "1.12.1",
@@ -128,7 +128,7 @@
 
     "@bomb.sh/tab": ["@bomb.sh/tab@0.0.9", "", { "peerDependencies": { "cac": "^6.7.14", "citty": "^0.1.6", "commander": "^13.1.0" }, "optionalPeers": ["cac", "citty", "commander"], "bin": { "tab": "dist/bin/cli.js" } }, "sha512-HUJ0b+LkZpLsyn0u7G/H5aJioAdSLqWMWX5ryuFS6n70MOEFu+SGrF8d8u6HzI1gINVQTvsfoxDLcjWkmI0AWg=="],
 
-    "@cap.js/widget": ["@cap.js/widget@0.1.32", "", {}, "sha512-20qTwJBoR8uGuQGVxiFfY8pupwEqNcq5+SCDXtgGE6AEkyww/HAvUbdwFP4/O46w0yW/xo9n3KNFcn6opGpFqw=="],
+    "@cap.js/widget": ["@cap.js/widget@0.1.33", "", {}, "sha512-opQqn8sWIe4tIFSkQ06pAiGzlljCIqQ7QWEqLt2sV6MlQLrmQT8EUNWAgfrB1hTFoYygutnVViWEaaJr3Vb44A=="],
 
     "@clack/core": ["@clack/core@0.5.0", "", { "dependencies": { "picocolors": "^1.0.0", "sisteransi": "^1.0.5" } }, "sha512-p3y0FIOwaYRUPRcMO7+dlmLh8PSRcrjuTndsiA0WAFbWES0mLZlrjVoBRZ9DzkPFJZG6KGkJmoEAY0ZcVWTkow=="],
 

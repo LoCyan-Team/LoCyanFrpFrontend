@@ -41,7 +41,7 @@
               ghost
               text
               type="success"
-              @click="() => navigateTo('/auth/register')"
+              @click="navigateTo('/auth/register')"
             >
               没有账户？去注册
             </n-button>
@@ -102,13 +102,13 @@
       :mask-closable="false"
       style="width: auto"
     >
-      <n-spin :show="loading.login" style="margin-inline: 2rem">
+      <n-spin :show="loading.totp" style="margin-inline: 2rem">
         <n-form ref="totpFormRef" :model="totpForm" :rules="totpFormRules">
           <n-form-item label="TOTP 验证代码" path="code">
             <n-input-otp
               v-model:value="totpForm.code"
               :allow-input="(value: string) => !value || /^\d+$/.test(value)"
-              @finish="handleLoginButton"
+              @finish="handleTotpInputFinish"
             />
           </n-form-item>
         </n-form>
@@ -194,6 +194,7 @@ const loading = ref<{
     captcha: {
       solving: boolean;
     };
+    totp: boolean;
   }>({
     login: false,
     threeSide: false,
@@ -201,6 +202,7 @@ const loading = ref<{
     captcha: {
       solving: false,
     },
+    totp: false,
   }),
   totpFormRules = {
     code: [
@@ -233,6 +235,14 @@ async function handleLoginButton() {
   loginFormRef.value.validate().then(async () => {
     loading.value.login = true;
     loading.value.captcha.solving = true;
+    captchaRef?.value?.solve();
+  });
+}
+
+async function handleTotpInputFinish() {
+  if (!loginFormRef.value) return;
+  loginFormRef.value.validate().then(async () => {
+    loading.value.totp = true;
     captchaRef?.value?.solve();
   });
 }
@@ -276,6 +286,7 @@ async function handleLogin(captchaToken: string) {
     showTotpModal.value = true;
   } else message.error(rs.message);
   loading.value.login = false;
+  loading.value.totp = false;
 }
 
 async function handlePasskeyLogin() {

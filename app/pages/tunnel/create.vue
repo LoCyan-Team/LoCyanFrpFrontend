@@ -112,6 +112,7 @@ interface Node {
     allowBigTraffic: boolean;
     needIcp: boolean;
   };
+  verificationLevel: string;
 }
 
 const loading = ref<{
@@ -225,6 +226,7 @@ async function getNodes() {
             allowBigTraffic: it.additional.allow_big_traffic,
             needIcp: it.additional.need_icp,
           },
+          verificationLevel: it.verification_level,
         });
       });
   } else message.error(rs.message);

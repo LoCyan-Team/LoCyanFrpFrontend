@@ -8,7 +8,7 @@
         <n-tag
           :type="renderNodeTagColor(props.node.additional.allowBigTraffic)"
         >
-          <span>大流量</span>
+          大流量
           <template #icon>
             <n-icon
               v-if="props.node.additional.allowBigTraffic"
@@ -18,7 +18,7 @@
           </template>
         </n-tag>
         <n-tag :type="renderNodeTagColor(props.node.additional.allowUdp)">
-          <span>UDP</span>
+          UDP
           <template #icon>
             <n-icon
               v-if="props.node.additional.allowUdp"
@@ -28,7 +28,7 @@
           </template>
         </n-tag>
         <n-tag :type="renderNodeTagColor(props.node.additional.allowHttp)">
-          <span>HTTP(s) 虚拟映射</span>
+          HTTP(s) 虚拟映射
           <template #icon>
             <n-icon
               v-if="props.node.additional.allowHttp"
@@ -42,12 +42,14 @@
       <n-p>
         <n-text>节点地址: {{ props.node.host }}</n-text>
         <n-el>
+          <n-text>认证等级: </n-text>
+          <n-tag type="info">{{ verificationLevelText }}</n-tag>
+        </n-el>
+        <n-el>
           <n-text>ICP 备案: </n-text>
           <n-tag type="info">
-            <span
-              >{{ props.node.additional.needIcp ? "需要" : "无需" }} ICP
-              备案</span
-            >
+            {{ props.node.additional.needIcp ? "需要" : "无需" }}
+            ICP 备案
           </n-tag>
         </n-el>
         <n-el>
@@ -86,8 +88,20 @@ const props = defineProps<{
       allowBigTraffic: boolean;
       needIcp: boolean;
     };
+    verificationLevel: string;
   };
 }>();
+
+const verificationLevelText = computed(() => {
+  switch (props.node.verificationLevel) {
+    case "REAL_NAME":
+      return "二级认证";
+    case "REAL_PERSON":
+      return "一级认证";
+    default:
+      return "未知";
+  }
+});
 
 function renderNodeTagColor(b: boolean) {
   return b ? "success" : "error";

@@ -22,6 +22,7 @@ export interface GetNodesResponse {
       allow_http: boolean;
       need_icp: boolean;
     };
+    verification_level: string;
   }[];
   pagination: {
     count: number;

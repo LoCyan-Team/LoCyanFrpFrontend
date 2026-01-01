@@ -855,6 +855,7 @@ interface Node {
     allowBigTraffic: boolean;
     needIcp: boolean;
   };
+  verificationLevel: string;
 }
 
 const nodes = ref<Node[]>([]);
@@ -917,6 +918,7 @@ const selectedTunnel = ref<Tunnel>({
       allowBigTraffic: false,
       needIcp: false,
     },
+    verificationLevel: "",
   });
 
 const editNodeSelected = ref<number | null>(null);
@@ -1368,6 +1370,7 @@ async function getNodes() {
             allowBigTraffic: it.additional.allow_big_traffic,
             needIcp: it.additional.need_icp,
           },
+          verificationLevel: it.verification_level,
         });
       });
     await buildEditNodeSelectOptions();

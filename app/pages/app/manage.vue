@@ -99,6 +99,8 @@ import {
 import { DeleteApp } from "@locyanfrp-dashboard-frontend/api/src/app.delete";
 import { PatchApp } from "@locyanfrp-dashboard-frontend/api/src/app.patch";
 
+import type { App } from "@locyanfrp-dashboard-frontend/types/src/app";
+
 const mainStore = useMainStore();
 const client = useApiClient();
 
@@ -108,13 +110,6 @@ useHead({
 
 const message = useMessage();
 const dialog = useDialog();
-
-interface App {
-  id: number;
-  name: string;
-  description: string | null;
-  redirectUrl: string;
-}
 
 const loading = ref<{
   page: boolean;

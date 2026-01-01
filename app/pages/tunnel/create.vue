@@ -83,6 +83,9 @@ import {
 } from "@locyanfrp-dashboard-frontend/api/src/nodes.get";
 import { PutTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel.put";
 
+import type { Node } from "@locyanfrp-dashboard-frontend/types/src/node";
+import type { ProxyProtocolVersion } from "@locyanfrp-dashboard-frontend/types/src/tunnel/proxyProtocolVersion";
+
 definePageMeta({
   document: {
     enable: true,
@@ -99,24 +102,6 @@ const client = useApiClient();
 
 const message = useMessage();
 const dialog = useDialog();
-
-type ProxyProtocolVersion = "V1" | "V2";
-
-interface Node {
-  id: number;
-  name: string;
-  description: string | null;
-  host: string;
-  ip: string | null;
-  portRange: string[];
-  additional: {
-    allowUdp: boolean;
-    allowHttp: boolean;
-    allowBigTraffic: boolean;
-    needIcp: boolean;
-  };
-  verificationLevel: string;
-}
 
 const loading = ref<{
   nodes: boolean;

@@ -420,9 +420,13 @@ async function handleSubmitDomain() {
       type: rs.data.record_type,
       data: rs.data.record_data,
     };
+    const domainValue = formData.value.domain!.toLowerCase(),
+      domainFormatted = domainValue.endsWith(".")
+        ? domainValue.slice(0, -1)
+        : domainValue;
     modal.value.verification.show = true;
     verificationData.value.push({
-      domain: formData.value.domain!,
+      domain: domainFormatted,
       recordType: rs.data.record_type,
       recordData: rs.data.record_data,
     });

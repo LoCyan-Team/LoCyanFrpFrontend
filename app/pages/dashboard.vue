@@ -47,8 +47,9 @@
                     v-umami="'click-button-dashboard-reset-traffic'"
                     :loading="loading.resetTraffic"
                     :disabled="loading.resetTraffic"
-                    >重置流量</n-button
                   >
+                    重置流量
+                  </n-button>
                 </template>
                 此操作不可撤销，请确认。
               </n-popconfirm>

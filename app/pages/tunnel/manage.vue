@@ -725,32 +725,36 @@
                     v-model:value="editNodeSelected"
                     :options="editNodeSelectOptions"
                     :loading="loading.tunnel.editGetNodeList"
+                    :render-tag="renderNodeSelectOptionTag"
+                    :render-label="renderNodeSelectOptionLabel"
+                    :reset-menu-on-options-change="false"
+                    @scroll="handleNodeSelectScroll"
                   />
-                  <n-pagination
-                    v-model:page="nodePage.current"
-                    v-model:page-size="nodePage.size"
-                    :page-count="nodePage.count"
-                    :on-update:page="
-                      (pageSel) => {
-                        loading.tunnel.editGetNodeList = true;
-                        nodePage.current = pageSel;
-                        getNodes().then(() => {
-                          loading.tunnel.editGetNodeList = false;
-                        });
-                      }
-                    "
-                    :on-update:page-size="
-                      (pageSizeSel) => {
-                        loading.tunnel.editGetNodeList = true;
-                        nodePage.size = pageSizeSel;
-                        getNodes().then(() => {
-                          loading.tunnel.editGetNodeList = false;
-                        });
-                      }
-                    "
-                    show-size-picker
-                    :page-sizes="[15, 25, 50, 100, 250, 500]"
-                  />
+<!--                  <n-pagination-->
+<!--                    v-model:page="nodePage.current"-->
+<!--                    v-model:page-size="nodePage.size"-->
+<!--                    :page-count="nodePage.count"-->
+<!--                    :on-update:page="-->
+<!--                      (pageSel) => {-->
+<!--                        loading.tunnel.editGetNodeList = true;-->
+<!--                        nodePage.current = pageSel;-->
+<!--                        getNodes().then(() => {-->
+<!--                          loading.tunnel.editGetNodeList = false;-->
+<!--                        });-->
+<!--                      }-->
+<!--                    "-->
+<!--                    :on-update:page-size="-->
+<!--                      (pageSizeSel) => {-->
+<!--                        loading.tunnel.editGetNodeList = true;-->
+<!--                        nodePage.size = pageSizeSel;-->
+<!--                        getNodes().then(() => {-->
+<!--                          loading.tunnel.editGetNodeList = false;-->
+<!--                        });-->
+<!--                      }-->
+<!--                    "-->
+<!--                    show-size-picker-->
+<!--                    :page-sizes="[15, 25, 50, 100, 250, 500]"-->
+<!--                  />-->
                 </n-space>
               </n-form-item>
               <n-button
@@ -784,6 +788,8 @@ import type { SelectOption } from "naive-ui";
 
 import Error from "@vicons/carbon/Error";
 import Search from "@vicons/ionicons5/Search";
+import CheckmarkCircle from "@vicons/ionicons5/CheckmarkCircle";
+import CloseCircle from "@vicons/ionicons5/CloseCircle";
 
 import {
   GetTunnels,
@@ -1306,7 +1312,7 @@ async function getTunnels() {
 /**
  * 获取节点列表
  */
-async function getNodes() {
+async function getNodes(option?: { append: boolean }) {
   const rs = await client.execute<GetNodesResponse>(
     new GetNodes({
       user_id: mainStore.userId!,
@@ -1325,7 +1331,7 @@ async function getNodes() {
     }
     nodePage.value.count = rs.data.pagination.count;
 
-    nodes.value.length = 0;
+    if (!option?.append) nodes.value.length = 0;
     rs.data.list
       .slice()
       .sort((a, b) => a.name.localeCompare(b.name))
@@ -1404,5 +1410,139 @@ function computeStartCommand(tunnel: Tunnel): string {
  */
 function findNode(nodeId: number): Node {
   return nodes.value.find((node) => node.id === nodeId) as Node;
+}
+
+/**
+ * 渲染截断选择选项显示
+ */
+function renderNodeSelectOptionTag({ option }: { option: SelectOption }) {
+  return h(NText, () => option.label);
+}
+
+/**
+ * 渲染节点选择选项标签
+ */
+function renderNodeSelectOptionLabel(option: SelectOption) {
+  // 1. 处理分组标签
+  if (option.type === "group") return option.label;
+
+  function renderTagIcon(b: boolean) {
+    function wrap(component: Component) {
+      return h(NIcon, {
+        component: component,
+      });
+    }
+    return wrap(b ? CheckmarkCircle : CloseCircle);
+  }
+
+  function renderTagColor(b: boolean) {
+    return b ? "success" : "error";
+  }
+
+  const node = findNode(option.value as number);
+
+  const verificationLevelText = () => {
+    switch (node.verificationLevel) {
+      case "REAL_NAME":
+        return "二级认证";
+      case "REAL_PERSON":
+        return "一级认证";
+      default:
+        return "未知";
+    }
+  };
+
+  function renderHeadTags() {
+    return h(NSpace, () => [
+      h(
+        NTag,
+        {
+          size: "small",
+          type: "info",
+        },
+        {
+          default: () => verificationLevelText(),
+        },
+      ),
+    ]);
+  }
+
+  function renderLimitTags() {
+    function wrap(
+      text: string,
+      b: boolean,
+      type?: "info" | "default" | "success" | "warning" | "error" | "primary",
+    ) {
+      return h(
+        NTag,
+        {
+          size: "small",
+          bordered: false,
+          type: type ?? renderTagColor(b),
+        },
+        {
+          default: () => text,
+          icon: () => renderTagIcon(b),
+        },
+      );
+    }
+    return h(
+      NSpace,
+      {
+        size: "small",
+      },
+      () => [
+        wrap("大流量", node.additional.allowBigTraffic),
+        wrap("UDP", node.additional.allowUdp),
+        h(NTooltip, null, {
+          default: () =>
+            (node.additional.needIcp ? "需要" : "无需") + " ICP 备案",
+          trigger: () => wrap("HTTP(s) 虚拟映射", node.additional.allowHttp),
+        }),
+      ],
+    );
+  }
+
+  return h(
+    NThing,
+    {
+      style: {
+        marginTop: "3px",
+        marginBottom: "3px",
+      },
+    },
+    () => [
+      h(
+        NSpace,
+        {
+          size: "small",
+          style: {
+            marginBottom: "3px",
+          },
+        },
+        () => [renderHeadTags(), h(NText, () => option.label)],
+      ),
+      renderLimitTags(),
+    ],
+  );
+}
+
+async function handleNodeSelectScroll(e: Event) {
+  const currentTarget = e.currentTarget as HTMLElement
+  if (
+    currentTarget.scrollTop + currentTarget.offsetHeight + 1
+    >= currentTarget.scrollHeight
+  ) {
+    if (nodePage.value.count > nodePage.value.current) {
+      loading.value.tunnel.editGetNodeList = true;
+
+      nodePage.value.current++;
+      await getNodes({
+        append: true,
+      });
+
+      loading.value.tunnel.editGetNodeList = false;
+    }
+  }
 }
 </script>

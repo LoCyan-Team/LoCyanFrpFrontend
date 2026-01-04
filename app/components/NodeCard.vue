@@ -43,18 +43,18 @@
         <n-text>节点地址: {{ props.node.host }}</n-text>
         <n-el>
           <n-text>认证等级: </n-text>
-          <n-tag type="info">{{ verificationLevelText }}</n-tag>
+          <n-tag type="info" size="small">{{ verificationLevelText }}</n-tag>
         </n-el>
         <n-el>
           <n-text>ICP 备案: </n-text>
-          <n-tag type="info">
+          <n-tag type="info" size="small">
             {{ props.node.additional.needIcp ? "需要" : "无需" }}
             ICP 备案
           </n-tag>
         </n-el>
         <n-el>
           <n-text>可用端口范围: </n-text>
-          <n-tag v-for="port in props.node.portRange" :key="port">
+          <n-tag v-for="port in props.node.portRange" :key="port" size="small">
             {{ port.replace(":", "-") }}
           </n-tag>
         </n-el>

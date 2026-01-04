@@ -19,16 +19,16 @@
           搜索
         </n-button>
         <n-radio-group
-          v-umami="'switch-tunnel-manage-view-mode'"
           v-model:value="viewMode"
+          v-umami="'switch-tunnel-manage-view-mode'"
           name="viewMode"
         >
           <n-radio-button value="card" label="卡片视图" />
           <n-radio-button value="list" label="列表视图" />
         </n-radio-group>
         <n-switch
-          v-umami="'switch-tunnel-manage-select-all'"
           v-model:value="batchSelectState"
+          v-umami="'switch-tunnel-manage-select-all'"
           :round="false"
           size="large"
           @update:value="handleSelectAll"
@@ -43,6 +43,8 @@
             v-umami="'click-button-tunnel-manage-batch-edit'"
             type="info"
             secondary
+            :loading="loading.tunnel.editButton"
+            :disabled="loading.tunnel.editButton"
             @click="handleBatchEdit"
           >
             修改
@@ -195,6 +197,8 @@
                             v-umami="'click-button-tunnel-manage-edit'"
                             type="success"
                             secondary
+                            :loading="loading.tunnel.editButton"
+                            :disabled="loading.tunnel.editButton"
                             @click="handleModifyTunnel(tunnel)"
                           >
                             修改
@@ -290,8 +294,8 @@
                       <n-td>{{ tunnel.remotePort }}</n-td>
                       <n-td>
                         <n-a
-                          v-umami="'click-link-tunnel-manage-domain'"
                           v-if="tunnel.domain"
+                          v-umami="'click-link-tunnel-manage-domain'"
                           :href="`${tunnel.type}://${tunnel.domain}`"
                           target="_blank"
                         >
@@ -704,6 +708,7 @@
             @click="
               () => {
                 editNodeSelected = null;
+                getNodes();
                 modal.edit.nodeSelector = true;
               }
             "
@@ -730,31 +735,6 @@
                     :reset-menu-on-options-change="false"
                     @scroll="handleNodeSelectScroll"
                   />
-<!--                  <n-pagination-->
-<!--                    v-model:page="nodePage.current"-->
-<!--                    v-model:page-size="nodePage.size"-->
-<!--                    :page-count="nodePage.count"-->
-<!--                    :on-update:page="-->
-<!--                      (pageSel) => {-->
-<!--                        loading.tunnel.editGetNodeList = true;-->
-<!--                        nodePage.current = pageSel;-->
-<!--                        getNodes().then(() => {-->
-<!--                          loading.tunnel.editGetNodeList = false;-->
-<!--                        });-->
-<!--                      }-->
-<!--                    "-->
-<!--                    :on-update:page-size="-->
-<!--                      (pageSizeSel) => {-->
-<!--                        loading.tunnel.editGetNodeList = true;-->
-<!--                        nodePage.size = pageSizeSel;-->
-<!--                        getNodes().then(() => {-->
-<!--                          loading.tunnel.editGetNodeList = false;-->
-<!--                        });-->
-<!--                      }-->
-<!--                    "-->
-<!--                    show-size-picker-->
-<!--                    :page-sizes="[15, 25, 50, 100, 250, 500]"-->
-<!--                  />-->
                 </n-space>
               </n-form-item>
               <n-button
@@ -796,6 +776,10 @@ import {
   type GetTunnelsResponse,
 } from "@locyanfrp-dashboard-frontend/api/src/tunnels.get";
 import {
+  GetNode,
+  type GetNodeResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/node.get";
+import {
   GetNodes,
   type GetNodesResponse,
 } from "@locyanfrp-dashboard-frontend/api/src/nodes.get";
@@ -811,6 +795,7 @@ import {
 import type { Node } from "@locyanfrp-dashboard-frontend/types/src/node";
 import type { Tunnel } from "@locyanfrp-dashboard-frontend/types/src/tunnel";
 import type { ProxyProtocolVersion } from "@locyanfrp-dashboard-frontend/types/src/tunnel/proxyProtocolVersion";
+import type { VNodeChild } from "vue";
 
 definePageMeta({
   document: {
@@ -841,6 +826,7 @@ const loading = ref<{
     down: boolean;
   };
   tunnel: {
+    editButton: boolean;
     editGetNodeList: boolean;
     editSubmit: boolean;
     delete: number[];
@@ -853,6 +839,7 @@ const loading = ref<{
     down: false,
   },
   tunnel: {
+    editButton: false,
     editGetNodeList: false,
     editSubmit: false,
     delete: [],
@@ -1031,6 +1018,7 @@ async function handleInfoModal(tunnel: Tunnel) {
  * @param tunnel 隧道信息
  */
 async function handleModifyTunnel(tunnel: Tunnel) {
+  loading.value.tunnel.editButton = true;
   selectedTunnel.value = tunnel;
   const fallback = {
     id: 0,
@@ -1045,8 +1033,12 @@ async function handleModifyTunnel(tunnel: Tunnel) {
       allowBigTraffic: false,
       needIcp: false,
     },
+    verificationLevel: "",
   };
-  selectedNode.value = findNode(tunnel.node.id) ?? fallback;
+  await getNode(tunnel.node.id).then((node) => {
+    selectedNode.value = node ?? fallback;
+  });
+  loading.value.tunnel.editButton = false;
   modal.value.edit.show = true;
 }
 
@@ -1310,6 +1302,41 @@ async function getTunnels() {
 }
 
 /**
+ * 获取节点信息
+ * @return 节点信息
+ */
+async function getNode(nodeId: number): Promise<Node | null> {
+  const rs = await client.execute<GetNodeResponse>(
+    new GetNode({
+      user_id: mainStore.userId!,
+      node_id: nodeId,
+    }),
+  );
+  if (rs.status === 200) {
+    return {
+      id: rs.data.id,
+      name: rs.data.name,
+      description: rs.data.description,
+      host: rs.data.host,
+      ip: rs.data.ip,
+      portRange: rs.data.port_range,
+      additional: {
+        allowUdp: rs.data.additional.allow_udp,
+        allowHttp: rs.data.additional.allow_http,
+        allowBigTraffic: rs.data.additional.allow_big_traffic,
+        needIcp: rs.data.additional.need_icp,
+      },
+      verificationLevel: rs.data.verification_level,
+    };
+  } else if (rs.status === 404) {
+    return null;
+  } else {
+    message.error(rs.message);
+    throw new Error(rs.message);
+  }
+}
+
+/**
  * 获取节点列表
  */
 async function getNodes(option?: { append: boolean }) {
@@ -1371,8 +1398,6 @@ async function buildEditNodeSelectOptions() {
 
 onMounted(async () => {
   await getTunnels();
-  // noinspection ES6MissingAwait
-  getNodes();
 });
 
 /**
@@ -1415,16 +1440,20 @@ function findNode(nodeId: number): Node {
 /**
  * 渲染截断选择选项显示
  */
-function renderNodeSelectOptionTag({ option }: { option: SelectOption }) {
+function renderNodeSelectOptionTag({
+  option,
+}: {
+  option: SelectOption;
+}): VNodeChild {
   return h(NText, () => option.label);
 }
 
 /**
  * 渲染节点选择选项标签
  */
-function renderNodeSelectOptionLabel(option: SelectOption) {
+function renderNodeSelectOptionLabel(option: SelectOption): VNodeChild {
   // 1. 处理分组标签
-  if (option.type === "group") return option.label;
+  if (option.type === "group") return h(NText, () => option.label);
 
   function renderTagIcon(b: boolean) {
     function wrap(component: Component) {
@@ -1528,10 +1557,10 @@ function renderNodeSelectOptionLabel(option: SelectOption) {
 }
 
 async function handleNodeSelectScroll(e: Event) {
-  const currentTarget = e.currentTarget as HTMLElement
+  const currentTarget = e.currentTarget as HTMLElement;
   if (
-    currentTarget.scrollTop + currentTarget.offsetHeight + 1
-    >= currentTarget.scrollHeight
+    currentTarget.scrollTop + currentTarget.offsetHeight + 1 >=
+    currentTarget.scrollHeight
   ) {
     if (nodePage.value.count > nodePage.value.current) {
       loading.value.tunnel.editGetNodeList = true;

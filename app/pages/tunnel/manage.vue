@@ -5,6 +5,7 @@
         <n-input
           v-model:value="searchKeyword"
           placeholder="搜索项目..."
+          :loading="loading.tunnel.search"
           @keydown.enter="handleSearch"
         >
           <template #prefix>
@@ -14,6 +15,7 @@
         <n-button
           v-umami="'click-button-tunnel-manage-search'"
           type="success"
+          :disabled="loading.tunnel.search"
           @click="handleSearch"
         >
           搜索
@@ -43,8 +45,8 @@
             v-umami="'click-button-tunnel-manage-batch-edit'"
             type="info"
             secondary
-            :loading="loading.tunnel.editButton"
-            :disabled="loading.tunnel.editButton"
+            :loading="loading.batch.editButton"
+            :disabled="loading.batch.editButton"
             @click="handleBatchEdit"
           >
             修改
@@ -82,13 +84,13 @@
 
       <n-spin :show="loading.page">
         <n-space vertical>
-          <n-empty v-if="displayTunnels.length === 0" />
+          <n-empty v-if="tunnels.length === 0" />
           <n-el v-else>
             <!-- 卡片模式 -->
             <n-el v-if="viewMode === 'card'">
               <n-grid :y-gap="8" :x-gap="12" :cols="4" item-responsive>
                 <n-grid-item
-                  v-for="tunnel in displayTunnels"
+                  v-for="tunnel in tunnels"
                   :key="tunnel.id"
                   span="0:4 1000:1"
                 >
@@ -197,8 +199,12 @@
                             v-umami="'click-button-tunnel-manage-edit'"
                             type="success"
                             secondary
-                            :loading="loading.tunnel.editButton"
-                            :disabled="loading.tunnel.editButton"
+                            :loading="
+                              loading.tunnel.editButton.includes(tunnel.id)
+                            "
+                            :disabled="
+                              loading.tunnel.editButton.includes(tunnel.id)
+                            "
                             @click="handleModifyTunnel(tunnel)"
                           >
                             修改
@@ -275,7 +281,7 @@
                     </n-tr>
                   </n-thead>
                   <n-tbody>
-                    <n-tr v-for="tunnel in displayTunnels" :key="tunnel.id">
+                    <n-tr v-for="tunnel in tunnels" :key="tunnel.id">
                       <n-td>
                         <n-el @click="handleBatchSelect(tunnel.id)">
                           <n-checkbox
@@ -417,13 +423,13 @@
               :on-update:page="
                 (pageSel) => {
                   page.current = pageSel;
-                  getTunnels();
+                  loadTunnels();
                 }
               "
               :on-update:page-size="
                 (pageSizeSel) => {
                   page.size = pageSizeSel;
-                  getTunnels();
+                  loadTunnels();
                 }
               "
               show-size-picker
@@ -791,6 +797,10 @@ import {
   DeleteBatch as ForceDownTunnelBatch,
   type DeleteBatchResponse as ForceDownTunnelBatchResponse,
 } from "@locyanfrp-dashboard-frontend/api/src/tunnel/down/batch.delete";
+import {
+  GetSearch,
+  type GetSearchResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/tunnels/search.get";
 
 import type { Node } from "@locyanfrp-dashboard-frontend/types/src/node";
 import type { Tunnel } from "@locyanfrp-dashboard-frontend/types/src/tunnel";
@@ -822,28 +832,32 @@ const viewMode = ref<string>("card");
 const loading = ref<{
   page: boolean;
   batch: {
+    editButton: boolean;
     delete: boolean;
     down: boolean;
   };
   tunnel: {
-    editButton: boolean;
+    editButton: number[];
     editGetNodeList: boolean;
     editSubmit: boolean;
     delete: number[];
     down: number[];
+    search: boolean;
   };
 }>({
   page: true,
   batch: {
+    editButton: false,
     delete: false,
     down: false,
   },
   tunnel: {
-    editButton: false,
+    editButton: [],
     editGetNodeList: false,
     editSubmit: false,
     delete: [],
     down: [],
+    search: false,
   },
 });
 
@@ -945,56 +959,24 @@ const page = ref<{
   });
 
 const searchKeyword = ref("");
-const displayTunnels = ref<Tunnel[]>([]);
 
-/**
- * 根据关键词搜索隧道列表
- * @param tunnelsList 隧道列表
- * @param keyword 搜索关键词
- */
-function filterTunnelsByKeyword(
-  tunnelsList: Tunnel[],
-  keyword: string,
-): Tunnel[] {
-  if (!keyword || !keyword.trim()) {
-    return [...tunnelsList];
+async function loadTunnels() {
+  if (searchKeyword.value.trim()) {
+    await getSearchTunnels();
+  } else {
+    await getTunnels();
   }
-
-  const searchTerm = keyword.trim().toLowerCase();
-  return tunnelsList.filter((tunnel) => {
-    const nameMatch = tunnel.name.toLowerCase().includes(searchTerm); // 名称包含关键词
-    const idMatch = tunnel.id.toString() === searchTerm; // ID与关键词相等
-    return nameMatch || idMatch;
-  });
 }
 
-watch(
-  tunnels,
-  (newTunnels) => {
-    // 如果有搜索关键词，需要重新过滤
-    if (searchKeyword.value.trim() !== "")
-      displayTunnels.value = filterTunnelsByKeyword(
-        tunnels.value,
-        searchKeyword.value,
-      );
-    else {
-      displayTunnels.value = [...newTunnels];
-    }
-  },
-  { deep: true },
-);
-
 /**
- * 处理搜索隧道
+ * 处理搜索触发
  */
 async function handleSearch() {
+  loading.value.tunnel.search = true;
   umTrackEvent("keydown-tunnel-manage-search");
-  loading.value.page = true;
-  displayTunnels.value = filterTunnelsByKeyword(
-    tunnels.value,
-    searchKeyword.value,
-  );
-  loading.value.page = false;
+  page.value.current = 1;
+  await loadTunnels();
+  loading.value.tunnel.search = false;
 }
 
 /**
@@ -1018,7 +1000,7 @@ async function handleInfoModal(tunnel: Tunnel) {
  * @param tunnel 隧道信息
  */
 async function handleModifyTunnel(tunnel: Tunnel) {
-  loading.value.tunnel.editButton = true;
+  loading.value.tunnel.editButton.push(tunnel.id);
   selectedTunnel.value = tunnel;
   const fallback = {
     id: 0,
@@ -1038,7 +1020,9 @@ async function handleModifyTunnel(tunnel: Tunnel) {
   await getNode(tunnel.node.id).then((node) => {
     selectedNode.value = node ?? fallback;
   });
-  loading.value.tunnel.editButton = false;
+  loading.value.tunnel.editButton = loading.value.tunnel.editButton.filter(
+    (id) => id !== tunnel.id,
+  );
   modal.value.edit.show = true;
 }
 
@@ -1247,6 +1231,48 @@ function handleSelectAll(val: boolean) {
 }
 
 /**
+ * 处理隧道列表接口返回的通用逻辑
+ */
+function processTunnelResponse(data: GetTunnelsResponse | GetSearchResponse) {
+  // 处理页码溢出
+  if (page.value.current > data.pagination.count && data.pagination.count > 0) {
+    page.value.current = data.pagination.count;
+    loadTunnels(); // 重新加载
+    return;
+  }
+  page.value.count = data.pagination.count;
+
+  // 清空并填充数据
+  tunnels.value.length = 0;
+  data.list
+    .slice()
+    .sort((a, b) => a.id - b.id)
+    .forEach((it) => {
+      tunnels.value.push({
+        id: it.id,
+        name: it.name,
+        type: it.type,
+        node: {
+          id: it.node.id,
+          name: it.node.name,
+          host: it.node.host,
+          ip: it.node.ip,
+        },
+        localIp: it.local_ip,
+        localPort: it.local_port,
+        remotePort: it.remote_port,
+        useEncryption: it.use_encryption,
+        useCompression: it.use_compression,
+        proxyProtocolVersion:
+          it.proxy_protocol_version as ProxyProtocolVersion | null,
+        domain: it.domain,
+        locations: it.locations,
+        status: it.status,
+      });
+    });
+}
+
+/**
  * 获取隧道列表
  */
 async function getTunnels() {
@@ -1259,44 +1285,26 @@ async function getTunnels() {
     }),
   );
   if (rs.status === 200) {
-    if (
-      page.value.current > rs.data.pagination.count &&
-      rs.data.pagination.count > 0
-    ) {
-      page.value.current = rs.data.pagination.count;
-      await getTunnels();
-      return;
-    }
-    page.value.count = rs.data.pagination.count;
+    processTunnelResponse(rs.data);
+  } else message.error(rs.message);
+  loading.value.page = false;
+}
 
-    tunnels.value.length = 0;
-    rs.data.list
-      .slice()
-      .sort((a, b) => a.id - b.id)
-      .forEach((it) => {
-        tunnels.value.push({
-          id: it.id,
-          name: it.name,
-          type: it.type,
-          node: {
-            id: it.node.id,
-            name: it.node.name,
-            host: it.node.host,
-            ip: it.node.ip,
-          },
-          localIp: it.local_ip,
-          localPort: it.local_port,
-          remotePort: it.remote_port,
-          useEncryption: it.use_encryption,
-          useCompression: it.use_compression,
-          proxyProtocolVersion:
-            it.proxy_protocol_version as ProxyProtocolVersion | null,
-          domain: it.domain,
-          locations: it.locations,
-          status: it.status,
-        });
-      });
-    displayTunnels.value = [...tunnels.value];
+/**
+ * 获取搜索隧道列表
+ */
+async function getSearchTunnels() {
+  loading.value.page = true;
+  const rs = await client.execute<GetSearchResponse>(
+    new GetSearch({
+      user_id: mainStore.userId!,
+      keyword: searchKeyword.value,
+      page: page.value.current,
+      size: page.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    processTunnelResponse(rs.data);
   } else message.error(rs.message);
   loading.value.page = false;
 }

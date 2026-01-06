@@ -18,57 +18,79 @@
         </n-spin>
       </n-el>
       <n-el v-else>
-        <n-spin :show="loading.nodes">
-          <n-space vertical>
-            <n-empty v-if="nodes.length === 0" />
-            <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
-              <n-grid-item
-                v-for="node in nodes"
-                :key="node.id"
-                span="0:3 1000:1"
-              >
-                <node-card :node="node">
-                  <template #header-extra>
-                    <n-button
-                      v-umami="'click-button-tunnel-create-node-select'"
-                      type="success"
-                      secondary
-                      @click="handleNodeSelect(node)"
-                    >
-                      选择
-                    </n-button>
-                  </template>
-                </node-card>
-              </n-grid-item>
-            </n-grid>
-
-            <n-space
-              v-if="nodes.length !== 0"
-              justify="center"
-              style="width: 100%"
+        <n-space vertical>
+          <n-space align="center">
+            <n-input
+              v-model:value="nodeSearchKeyword"
+              placeholder="搜索项目..."
+              :loading="loading.search"
+              @keydown.enter="handleNodeSearch"
             >
-              <n-pagination
-                v-model:page="page.current"
-                v-model:page-size="page.size"
-                :page-count="page.count"
-                show-size-picker
-                :on-update:page="
-                  (pageSel) => {
-                    page.current = pageSel;
-                    getNodes();
-                  }
-                "
-                :on-update:page-size="
-                  (pageSizeSel) => {
-                    page.size = pageSizeSel;
-                    getNodes();
-                  }
-                "
-                :page-sizes="[15, 25, 50, 100, 250, 500]"
-              />
-            </n-space>
+              <template #prefix>
+                <n-icon :component="Search" />
+              </template>
+            </n-input>
+            <n-button
+              v-umami="'click-button-tunnel-create-node-search'"
+              type="success"
+              :disabled="loading.search"
+              @click="handleNodeSearch"
+            >
+              搜索
+            </n-button>
           </n-space>
-        </n-spin>
+          <n-spin :show="loading.nodes">
+            <n-space vertical>
+              <n-empty v-if="nodes.length === 0" />
+              <n-grid v-else :x-gap="8" :y-gap="12" :cols="3" item-responsive>
+                <n-grid-item
+                  v-for="node in nodes"
+                  :key="node.id"
+                  span="0:3 1000:1"
+                >
+                  <node-card :node="node">
+                    <template #header-extra>
+                      <n-button
+                        v-umami="'click-button-tunnel-create-node-select'"
+                        type="success"
+                        secondary
+                        @click="handleNodeSelect(node)"
+                      >
+                        选择
+                      </n-button>
+                    </template>
+                  </node-card>
+                </n-grid-item>
+              </n-grid>
+
+              <n-space
+                v-if="nodes.length !== 0"
+                justify="center"
+                style="width: 100%"
+              >
+                <n-pagination
+                  v-model:page="page.current"
+                  v-model:page-size="page.size"
+                  :page-count="page.count"
+                  show-size-picker
+                  :on-update:page="
+                    (pageSel) => {
+                      page.current = pageSel;
+                      getNodes();
+                    }
+                  "
+                  :on-update:page-size="
+                    (pageSizeSel) => {
+                      page.size = pageSizeSel;
+                      getNodes();
+                    }
+                  "
+                  :page-sizes="[15, 25, 50, 100, 250, 500]"
+                />
+              </n-space>
+            </n-space>
+          </n-spin>
+        </n-space>
       </n-el>
     </transition>
   </page-content>
@@ -85,6 +107,11 @@ import { PutTunnel } from "@locyanfrp-dashboard-frontend/api/src/tunnel.put";
 
 import type { Node } from "@locyanfrp-dashboard-frontend/types/src/node";
 import type { ProxyProtocolVersion } from "@locyanfrp-dashboard-frontend/types/src/tunnel/proxyProtocolVersion";
+import Search from "@vicons/ionicons5/Search";
+import {
+  GetSearch as GetSearchNodes,
+  type GetSearchResponse as GetSearchNodesResponse,
+} from "@locyanfrp-dashboard-frontend/api/src/nodes/search.get";
 
 definePageMeta({
   document: {
@@ -105,9 +132,11 @@ const dialog = useDialog();
 
 const loading = ref<{
   nodes: boolean;
+  search: boolean;
   create: boolean;
 }>({
   nodes: true,
+  search: false,
   create: false,
 });
 
@@ -124,6 +153,8 @@ const page = ref<{
   size: 15,
   count: 1,
 });
+
+const nodeSearchKeyword = ref("");
 
 function handleNodeSelect(node: Node) {
   selectedNode.value = node;
@@ -176,6 +207,57 @@ async function handleCreate(tunnel: {
   loading.value.create = false;
 }
 
+async function loadNodes() {
+  if (nodeSearchKeyword.value.trim()) {
+    await getSearchNodes();
+  } else {
+    await getNodes();
+  }
+}
+
+async function handleNodeSearch() {
+  loading.value.search = true;
+  umTrackEvent("keydown-tunnel-create-node-search");
+  page.value.current = 1;
+  await loadNodes();
+  loading.value.search = false;
+}
+
+/**
+ * 处理节点列表接口返回的通用逻辑
+ */
+function processNodeResponse(data: GetNodesResponse | GetSearchNodesResponse) {
+  if (page.value.current > data.pagination.count && data.pagination.count > 0) {
+    page.value.current = data.pagination.count;
+    loadNodes();
+    return;
+  }
+  page.value.count = data.pagination.count;
+
+  // 清空并填充数据
+  nodes.value.length = 0;
+  data.list
+    .slice()
+    .sort((a, b) => a.name.localeCompare(b.name))
+    .forEach((it) => {
+      nodes.value.push({
+        id: it.id,
+        name: it.name,
+        description: it.description,
+        host: it.host,
+        ip: it.ip,
+        portRange: it.port_range,
+        additional: {
+          allowUdp: it.additional.allow_udp,
+          allowHttp: it.additional.allow_http,
+          allowBigTraffic: it.additional.allow_big_traffic,
+          needIcp: it.additional.need_icp,
+        },
+        verificationLevel: it.verification_level,
+      });
+    });
+}
+
 async function getNodes() {
   loading.value.nodes = true;
   const rs = await client.execute<GetNodesResponse>(
@@ -186,37 +268,23 @@ async function getNodes() {
     }),
   );
   if (rs.status === 200) {
-    if (
-      page.value.current > rs.data.pagination.count &&
-      rs.data.pagination.count > 0
-    ) {
-      page.value.current = rs.data.pagination.count;
-      await getNodes();
-      return;
-    }
-    page.value.count = rs.data.pagination.count;
+    processNodeResponse(rs.data);
+  } else message.error(rs.message);
+  loading.value.nodes = false;
+}
 
-    nodes.value.length = 0;
-    rs.data.list
-      .slice()
-      .sort((a, b) => a.name.localeCompare(b.name))
-      .forEach((it) => {
-        nodes.value.push({
-          id: it.id,
-          name: it.name,
-          description: it.description,
-          host: it.host,
-          ip: it.ip,
-          portRange: it.port_range,
-          additional: {
-            allowUdp: it.additional.allow_udp,
-            allowHttp: it.additional.allow_http,
-            allowBigTraffic: it.additional.allow_big_traffic,
-            needIcp: it.additional.need_icp,
-          },
-          verificationLevel: it.verification_level,
-        });
-      });
+async function getSearchNodes() {
+  loading.value.nodes = true;
+  const rs = await client.execute<GetSearchNodesResponse>(
+    new GetSearchNodes({
+      user_id: mainStore.userId!,
+      keyword: nodeSearchKeyword.value,
+      page: page.value.current,
+      size: page.value.size,
+    }),
+  );
+  if (rs.status === 200) {
+    processNodeResponse(rs.data);
   } else message.error(rs.message);
   loading.value.nodes = false;
 }

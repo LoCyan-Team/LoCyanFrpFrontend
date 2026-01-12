@@ -1433,7 +1433,7 @@ function computeConnectAddr(tunnel: Tunnel): string {
  * @returns 启动命令
  */
 function computeStartCommand(tunnel: Tunnel): string {
-  return `./frpc -u ${userStore.frpToken} -p ${tunnel.id}`;
+  return `./frpc -u ${userStore.frpToken} -t ${tunnel.id}`;
 }
 
 /**

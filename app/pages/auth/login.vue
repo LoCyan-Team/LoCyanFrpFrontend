@@ -281,7 +281,7 @@ async function handleLogin(captchaToken: string) {
       content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
       duration: 2500,
     });
-    navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
+    navigateTo((route.query.redirect as string | undefined) ?? "/");
   } else if (rs.status === 202) {
     showTotpModal.value = true;
   } else message.error(rs.message);
@@ -316,7 +316,7 @@ async function handlePasskeyLogin() {
       content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
       duration: 2500,
     });
-    navigateTo((route.query.redirect as string | undefined) ?? "/dashboard");
+    navigateTo((route.query.redirect as string | undefined) ?? "/");
   } else message.error(rs.message);
   loading.value.passkey = false;
 }

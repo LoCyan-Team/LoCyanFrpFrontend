@@ -67,7 +67,7 @@ onMounted(async () => {
       content: "欢迎回来，指挥官 " + rs.data.user_info.username + "！",
       duration: 2500,
     });
-    navigateTo("/dashboard");
+    navigateTo("/");
   } else {
     message.error(rs.message);
     navigateTo("/auth/login");

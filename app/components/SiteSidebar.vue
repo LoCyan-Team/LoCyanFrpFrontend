@@ -85,7 +85,7 @@ const guestMenuOptions: MenuOption[] = [
 
 const loggedInMenuOptions: MenuOption[] = [
   {
-    path: "/dashboard",
+    path: "/",
     label: "仪表盘",
     key: "dashboard",
     icon: renderIcon(CompassSharp),

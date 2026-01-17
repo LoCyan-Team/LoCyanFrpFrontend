@@ -15,7 +15,12 @@
             <n-input-number
               v-model:value="formData.amount"
               placeholder="请输入金额"
-            />
+              :precision="2"
+            >
+              <template #prefix>
+                ￥
+              </template>
+            </n-input-number>
           </n-form-item>
           <n-form-item label="付款方式" path="paymentMethod">
             <n-radio-group

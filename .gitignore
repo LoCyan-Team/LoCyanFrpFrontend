@@ -18,5 +18,8 @@ logs
 .fleet
 .idea
 
-# dotenv
+# Local env files
 .env
+.env.*
+!.env.example
+!.env.development

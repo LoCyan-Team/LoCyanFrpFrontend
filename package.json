@@ -13,8 +13,7 @@
     "postinstall": "nuxt prepare"
   },
   "devDependencies": {
-    "@types/bun": "latest",
-    "@types/git-rev-sync": "^2.0.2",
+    "@nuxt/eslint": "^1.12.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
     "eslint-plugin-prettier": "^5.5.4",
@@ -26,7 +25,6 @@
   "dependencies": {
     "@bg-dev/nuxt-naiveui": "2.0.0",
     "@cap.js/widget": "^0.1.33",
-    "@nuxt/eslint": "^1.12.1",
     "@nuxtjs/mdc": "^0.19.2",
     "@pinia/nuxt": "^0.11.3",
     "@vicons/carbon": "^0.13.0",

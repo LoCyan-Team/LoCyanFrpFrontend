@@ -103,8 +103,7 @@ export default defineNuxtConfig({
       htmlAttrs: {
         lang: "zh-CN",
       },
-      title: "仪表盘",
-      titleTemplate: "乐青映射 - LoCyanFrp | %s",
+      title: "乐青映射 - LoCyanFrp 用户面板",
       meta: [{ name: "color-scheme", content: "dark light" }],
     },
   },

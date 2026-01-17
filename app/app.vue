@@ -7,7 +7,12 @@
   </nuxt-layout>
 </template>
 
-<script setup lang="ts"></script>
+<script setup lang="ts">
+useHead({
+  titleTemplate: (title?: string) =>
+    `乐青映射 - LoCyanFrp | ${title ?? "未知界面"}`,
+});
+</script>
 
 <style scoped>
 .content {

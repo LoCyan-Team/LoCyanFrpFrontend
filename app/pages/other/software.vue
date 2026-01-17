@@ -132,6 +132,10 @@ import {
   type GetAssetsResponse,
 } from "@locyanfrp-dashboard-frontend/api/src/software/assets.get";
 
+useHead({
+  title: "软件下载",
+});
+
 const client = useApiClient();
 const message = useMessage();
 

@@ -158,9 +158,9 @@ const loggedInMenuOptions: MenuOption[] = [
         icon: renderIcon(AttachMoneyFilled),
       },
       {
-        path: "/donate/comment",
+        path: "/donate/comments",
         label: "留言",
-        key: "donate-comment",
+        key: "donate-comments",
         icon: renderIcon(CommentMultiple16Regular),
       },
     ],

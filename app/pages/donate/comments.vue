@@ -4,7 +4,7 @@
       <n-alert type="success" title="坚持本心，用爱发电">
         感谢他们的赞助，让 LCF 变得更好。
       </n-alert>
-      <n-spin :loading="loading">
+      <n-spin :show="loading">
         <n-space vertical>
         <n-empty v-if="data.length === 0" />
         <n-grid v-else :y-gap="8" :x-gap="12" :cols="3" item-responsive>
@@ -146,6 +146,5 @@ async function getComments() {
 
 onMounted(async () => {
   await getComments();
-  loading.value = false;
 });
 </script>

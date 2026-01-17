@@ -5,6 +5,7 @@
         感谢他们的赞助，让 LCF 变得更好。
       </n-alert>
       <n-spin :loading="loading">
+        <n-space vertical>
         <n-empty v-if="data.length === 0" />
         <n-grid v-else :y-gap="8" :x-gap="12" :cols="3" item-responsive>
           <n-grid-item
@@ -57,6 +58,7 @@
             show-size-picker
             :page-sizes="[15, 25, 50, 100, 250, 500]"
           />
+        </n-space>
         </n-space>
       </n-spin>
     </n-space>

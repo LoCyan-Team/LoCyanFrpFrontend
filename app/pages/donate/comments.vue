@@ -146,5 +146,6 @@ async function getComments() {
 
 onMounted(async () => {
   await getComments();
+  loading.value = false;
 });
 </script>

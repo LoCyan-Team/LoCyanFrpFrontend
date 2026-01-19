@@ -16,7 +16,7 @@
     "@nuxt/eslint": "^1.12.1",
     "eslint": "^9.39.2",
     "eslint-config-prettier": "^10.1.8",
-    "eslint-plugin-prettier": "^5.5.4",
+    "eslint-plugin-prettier": "^5.5.5",
     "nuxt-build-info": "^1.1.0",
     "prettier": "^3.7.4",
     "unplugin-auto-import": "^20.3.0",

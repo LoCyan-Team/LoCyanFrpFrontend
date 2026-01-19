@@ -36,7 +36,7 @@
         "eslint-plugin-prettier": "^5.5.4",
         "nuxt-build-info": "^1.1.0",
         "prettier": "^3.7.4",
-        "unplugin-auto-import": "^20.3.0",
+        "unplugin-auto-import": "^21.0.0",
         "unplugin-vue-components": "^30.0.0",
       },
     },
@@ -1916,7 +1916,7 @@
 
     "unplugin": ["unplugin@2.3.11", "", { "dependencies": { "@jridgewell/remapping": "^2.3.5", "acorn": "^8.15.0", "picomatch": "^4.0.3", "webpack-virtual-modules": "^0.6.2" } }, "sha512-5uKD0nqiYVzlmCRs01Fhs2BdkEgBS3SAVP6ndrBsuK42iC2+JHyxM05Rm9G8+5mkmRtzMZGY8Ct5+mliZxU/Ww=="],
 
-    "unplugin-auto-import": ["unplugin-auto-import@20.3.0", "", { "dependencies": { "local-pkg": "^1.1.2", "magic-string": "^0.30.21", "picomatch": "^4.0.3", "unimport": "^5.5.0", "unplugin": "^2.3.11", "unplugin-utils": "^0.3.1" }, "peerDependencies": { "@nuxt/kit": "^4.0.0", "@vueuse/core": "*" }, "optionalPeers": ["@nuxt/kit", "@vueuse/core"] }, "sha512-RcSEQiVv7g0mLMMXibYVKk8mpteKxvyffGuDKqZZiFr7Oq3PB1HwgHdK5O7H4AzbhzHoVKG0NnMnsk/1HIVYzQ=="],
+    "unplugin-auto-import": ["unplugin-auto-import@21.0.0", "", { "dependencies": { "local-pkg": "^1.1.2", "magic-string": "^0.30.21", "picomatch": "^4.0.3", "unimport": "^5.6.0", "unplugin": "^2.3.11", "unplugin-utils": "^0.3.1" }, "peerDependencies": { "@nuxt/kit": "^4.0.0", "@vueuse/core": "*" }, "optionalPeers": ["@nuxt/kit", "@vueuse/core"] }, "sha512-vWuC8SwqJmxZFYwPojhOhOXDb5xFhNNcEVb9K/RFkyk/3VnfaOjzitWN7v+8DEKpMjSsY2AEGXNgt6I0yQrhRQ=="],
 
     "unplugin-utils": ["unplugin-utils@0.3.1", "", { "dependencies": { "pathe": "^2.0.3", "picomatch": "^4.0.3" } }, "sha512-5lWVjgi6vuHhJ526bI4nlCOmkCIF3nnfXkCMDeMJrtdvxTs6ZFCM8oNufGTsDbKv/tJ/xj8RpvXjRuPBZJuJog=="],
 

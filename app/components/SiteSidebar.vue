@@ -103,7 +103,7 @@ const loggedInMenuOptions: MenuOption[] = [
     icon: renderIcon(PencilSharp),
   },
   {
-    label: "跨年活动",
+    label: "新年活动",
     key: "yearly-event",
     icon: renderIcon(LocalActivityFilled),
     children: [

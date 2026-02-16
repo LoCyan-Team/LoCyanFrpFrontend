@@ -19,7 +19,7 @@
     "eslint-plugin-prettier": "^5.5.4",
     "nuxt-build-info": "^1.1.0",
     "prettier": "^3.7.4",
-    "unplugin-auto-import": "^20.3.0",
+    "unplugin-auto-import": "^21.0.0",
     "unplugin-vue-components": "^30.0.0"
   },
   "dependencies": {
